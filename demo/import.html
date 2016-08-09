@@ -1,0 +1,14 @@
+
+<!-- notice that here the src is relative -->
+<script src="import.js"></script>
+<div>
+  This is part of the import fragment
+</div>
+<script>
+;(function() {
+  'use strict';
+  console.log('this is an "inline" script fromt the import fragment');
+})();
+</script>
+<!-- the most strange part is the scripts order loading -->
+
