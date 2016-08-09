@@ -1,0 +1,26 @@
+<html>
+  <head>
+    <link href="../resources/testharness.js/testharness.css" rel="stylesheet">
+    <script src="../resources/testharness.js/testharness.js"></script>
+    <script src="../index.js"></script>
+  </head>
+  <script>
+    window.tests = [];                                  // 1)
+    add_result_callback(() => {                         // 2)
+      window.call_next_test();
+    });
+    window.call_next_test = function call_next_test() { // 3)
+      if (this.tests.length > 0) {
+        var next = this.tests.shift();
+        next();
+      }
+    };
+  </script>
+  <body>
+    <pseudoimport-html src="/test/import.html"></pseudoimport-html>
+  </body>
+  <script src="test.js"></script>
+  <script>
+    window.call_next_test();                            // 4)
+  </script>
+</html>
