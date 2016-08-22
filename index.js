@@ -60,16 +60,29 @@
     records.forEach(record => {
       var pims = record.target.querySelectorAll(tagContent);
       for (var i = 0; i < pims.length; i++) {
-        instance.observe(pims[i], { childList: true });
+        if (!pims[i].ALREADY_OBSERVING) {
+          instance.observe(pims[i], { childList: true });
+          pims[i].ALREAD_OBSERVING = true;
+        }
       }
     });
     updateAll();
   });
 
-  var pims = document.querySelectorAll(tagContent);
-  for (var i = 0; i < pims.length; i++) {
-    pimsOb.observe(pims[i], { childList: true });
+  function run() {
+    var pims = document.querySelectorAll(tagContent);
+    for (var i = 0; i < pims.length; i++) {
+      if (!pims[i].ALREADY_OBSERVING) {
+        pimsOb.observe(pims[i], { childList: true });
+        pims[i].ALREADY_OBSERVING = true;
+      }
+    }
+    updateAll();
   }
-  updateAll();
+  run();
+
+  window.PseudoimportHTML = {
+    run: run
+  };
 
 })();
