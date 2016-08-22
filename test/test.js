@@ -1,12 +1,20 @@
 ;(_ => {
   'use strict';
   var tagImport = 'pseudoimport-html';
-  var el = document.querySelector(tagImport);
+  var el = document.querySelector(`${tagImport}[first]`);
+  var el2 = document.querySelector(`${tagImport}[second]`);
 
   var async1 = async_test('Check if content was fetched correctly');
   var async2 = async_test('Check if content executes an script');
   var async3 = async_test('Check if nested content was fetched correctly');
   var async4 = async_test('Check if nested-nested content was fetched correctly');
+  var async11 = async_test('Check if second content was fetched correctly');
+
+  el2.addEventListener('load', async11.step_func(e => {
+
+    assert_true(e.detail.element.innerHTML.includes('iwhrgiuwhr3743n4398y2u3i2398h2on33oig434'));
+    async11.done();
+  }));
 
   el.addEventListener('load', async1.step_func(e => {
 
