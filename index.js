@@ -2,10 +2,12 @@
   'use strict';
   var tagContent = 'pseudoimport-html';
 
-  function rewriteScripts(element) {
+  // I don't want to reinvent the wheel by creating a clone
+  // system for replacing all the content given at tagContent
+  var tagContentSrc = 'pseudoimport-html-src';
 
+  function rewriteScripts(element) {
     var scripts = element.querySelectorAll('script');
-    var i;
     for (var i = 0; i < scripts.length; i++) {
       var old_script = scripts[i];
       var new_script = document.createElement('script');
@@ -31,12 +33,10 @@
     return fetch(url).then(function(response) {
       return response.text();
     }).then(function(text) {
-//      var temporal = document.createElement(element.tagName); // or whatever!
-//      temporal.innerHTML = text;
-//      rewriteScripts(element);
-
-      element.innerHTML = text;
-      rewriteScripts(element);
+      var temporal = document.createElement(tagContentSrc);
+      temporal.innerHTML = text;
+      rewriteScripts(temporal);
+      element.appendChild(temporal);
       element.dispatchEvent(new CustomEvent('load'));
 
       return element;
