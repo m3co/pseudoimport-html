@@ -1,9 +1,6 @@
 ;(function() {
   'use strict';
   var tagContent = 'pseudoimport-html';
-
-  // I don't want to reinvent the wheel by creating a clone
-  // system for replacing all the content given at tagContent
   var tagContentSrc = 'pseudoimport-html-src';
 
   function rewriteScripts(element) {
@@ -37,7 +34,12 @@
       temporal.innerHTML = text;
       rewriteScripts(temporal);
       element.appendChild(temporal);
-      element.dispatchEvent(new CustomEvent('load'));
+      element.dispatchEvent(new CustomEvent('load', {
+        detail: {
+          element: element,
+          url: url
+        }
+      }));
 
       return element;
     });
@@ -54,6 +56,20 @@
     }
   }
 
+  var pimsOb = new MutationObserver((records, instance) => {
+    records.forEach(record => {
+      var pims = record.target.querySelectorAll(tagContent);
+      for (var i = 0; i < pims.length; i++) {
+        instance.observe(pims[i], { childList: true });
+      }
+    });
+    updateAll();
+  });
+
+  var pims = document.querySelectorAll(tagContent);
+  for (var i = 0; i < pims.length; i++) {
+    pimsOb.observe(pims[i], { childList: true });
+  }
   updateAll();
 
 })();
