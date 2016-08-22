@@ -54,8 +54,6 @@
     }
   }
 
-  window.addEventListener('load', function(e) {
-    updateAll();
-  });
+  updateAll();
 
 })();
