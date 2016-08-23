@@ -26,7 +26,7 @@
     }
   }
 
-  function pseudoImportHTML(element, url) {
+  function pseudoImportHTML(element, url, tagContentSrc) {
     return fetch(url).then(function(response) {
       return response.text();
     }).then(function(text) {
@@ -45,31 +45,31 @@
     });
   }
 
-  function updateAll() {
+  function updateAll(tagContent, tagContentSrc) {
     var containers = document.querySelectorAll(tagContent);
     for (var i = 0; i < containers.length; i++) {
       var container = containers[i];
       if (!container.updatePromise && container.hasAttribute('src')) {
         var url = container.getAttribute('src');
-        container.updatePromise = pseudoImportHTML(container, url);
+        container.updatePromise = pseudoImportHTML(container, url, tagContentSrc);
       }
     }
   }
 
-  var pimsOb = new MutationObserver((records, instance) => {
-    records.forEach(record => {
-      var pims = record.target.querySelectorAll(tagContent);
-      for (var i = 0; i < pims.length; i++) {
-        if (!pims[i].ALREADY_OBSERVING) {
-          instance.observe(pims[i], { childList: true });
-          pims[i].ALREAD_OBSERVING = true;
+  function run(tagContent, tagContentSrc) {
+    var pimsOb = new MutationObserver((records, instance) => {
+      records.forEach(record => {
+        var pims = record.target.querySelectorAll(tagContent);
+        for (var i = 0; i < pims.length; i++) {
+          if (!pims[i].ALREADY_OBSERVING) {
+            instance.observe(pims[i], { childList: true });
+            pims[i].ALREAD_OBSERVING = true;
+          }
         }
-      }
+      });
+      updateAll(tagContent, tagContentSrc);
     });
-    updateAll();
-  });
 
-  function run() {
     var pims = document.querySelectorAll(tagContent);
     for (var i = 0; i < pims.length; i++) {
       if (!pims[i].ALREADY_OBSERVING) {
@@ -77,12 +77,13 @@
         pims[i].ALREADY_OBSERVING = true;
       }
     }
-    updateAll();
+    updateAll(tagContent, tagContentSrc);
   }
-  run();
+  run(tagContent, tagContentSrc);
 
   window.PseudoimportHTML = {
-    run: run
+    run: run,
+    importHTML: pseudoImportHTML
   };
 
 })();
