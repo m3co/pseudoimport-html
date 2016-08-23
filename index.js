@@ -27,10 +27,18 @@
   }
 
   function pseudoImportHTML(element, url, tagContentSrc) {
+    var temporal;
+    if (tagContentSrc instanceof HTMLElement) {
+      temporal = tagContentSrc;
+    } else if (typeof(tagContentSrc) === "string") {
+      temporal = document.createElement(tagContentSrc);
+    } else {
+      throw new Error('define a tagContentSrc');
+    }
+
     return fetch(url).then(function(response) {
       return response.text();
     }).then(function(text) {
-      var temporal = document.createElement(tagContentSrc);
       temporal.innerHTML = text;
       rewriteScripts(temporal);
       element.appendChild(temporal);
