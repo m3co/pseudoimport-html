@@ -9,6 +9,15 @@
   var async3 = async_test('Check if nested content was fetched correctly');
   var async4 = async_test('Check if nested-nested content was fetched correctly');
   var async11 = async_test('Check if second content was fetched correctly');
+  var async5 = async_test('Check if run return a promise after fetching all tags');
+
+  window.addEventListener('load', async5.step_func(e => {
+    var run = window.PseudoimportHTML.run();
+    assert_true(run.then instanceof Function);
+    run.then(_ => {
+      async5.done();
+    });
+  }));
 
   el2.addEventListener('load', async11.step_func(e => {
 

@@ -2,6 +2,7 @@
   'use strict';
   var tagContent = 'pseudoimport-html';
   var tagContentSrc = 'pseudoimport-html-src';
+  var fetchs = [];
 
   function rewriteScripts(element) {
     var scripts = element.querySelectorAll('script');
@@ -36,7 +37,7 @@
       throw new Error('define a tagContentSrc');
     }
 
-    return fetch(url).then(function(response) {
+    var fetching = fetch(url).then(function(response) {
       return response.text();
     }).then(function(text) {
       temporal.innerHTML = text;
@@ -51,6 +52,9 @@
 
       return element;
     });
+
+    fetchs.push(fetching);
+    return fetching;
   }
 
   function updateAll(tagContent, tagContentSrc) {
@@ -60,8 +64,10 @@
       if (!container.updatePromise && container.hasAttribute('src')) {
         var url = container.getAttribute('src');
         container.updatePromise = pseudoImportHTML(container, url, tagContentSrc);
+        fetchs.push(container.updatePromise);
       }
     }
+    return Promise.all(fetchs);
   }
 
   function run(tagContent, tagContentSrc) {
@@ -85,7 +91,7 @@
         pims[i].ALREADY_OBSERVING = true;
       }
     }
-    updateAll(tagContent, tagContentSrc);
+    return updateAll(tagContent, tagContentSrc);
   }
   run(tagContent, tagContentSrc);
 
