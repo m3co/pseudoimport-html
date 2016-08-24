@@ -9,6 +9,11 @@
   <body>
     <pseudoimport-html first src="/test/import.html"></pseudoimport-html>
     <pseudoimport-html second src="/test/import2.html"></pseudoimport-html>
+    <pseudoimport-html third src="import3.html">
+      <div id="div1">This is the first div</div>
+      <pseudoimport-html-src></pseudoimport-html-src>
+      <div id="div2">This is the second div</div>
+    </pseudoimport-html>
   </body>
   <script src="test.js"></script>
 </html>

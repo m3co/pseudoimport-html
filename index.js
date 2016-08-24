@@ -28,11 +28,17 @@
   }
 
   function pseudoImportHTML(element, url, tagContentSrc) {
-    var temporal;
+    var temporal, ALREADY_IN_ELEMENT = false;
     if (tagContentSrc instanceof HTMLElement) {
       temporal = tagContentSrc;
     } else if (typeof(tagContentSrc) === "string") {
-      temporal = document.createElement(tagContentSrc);
+      var srcTag = element.querySelector(tagContentSrc);
+      if (srcTag instanceof HTMLElement) {
+        temporal = srcTag;
+        ALREADY_IN_ELEMENT = true;
+      } else {
+        temporal = document.createElement(tagContentSrc);
+      }
     } else {
       throw new Error('define a tagContentSrc');
     }
@@ -42,7 +48,9 @@
     }).then(function(text) {
       temporal.innerHTML = text;
       rewriteScripts(temporal);
-      element.appendChild(temporal);
+      if (!ALREADY_IN_ELEMENT) {
+        element.appendChild(temporal);
+      }
       element.dispatchEvent(new CustomEvent('load', {
         detail: {
           element: element,
