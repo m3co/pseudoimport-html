@@ -13,5 +13,10 @@
     "bower_components",
     "test",
     "tests"
-  ]
+  ],
+  "dependencies": {
+    "customevent-polyfill": "^1.0.0",
+    "es6-promise": "^4.0.5",
+    "fetch": "^1.0.0"
+  }
 }
