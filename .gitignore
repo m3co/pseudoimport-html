@@ -1,2 +1,4 @@
 .*.sw*
-bower_components
+npm-debug.log
+/bower_components/
+/node_modules/

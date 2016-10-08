@@ -1,6 +1,4 @@
-'use strict';
-
-;(function () {
+;(function() {
   var tagContent = 'pseudoimport-html';
   var tagContentSrc = 'pseudoimport-html-src';
   var fetchs = [];
@@ -29,11 +27,10 @@
   }
 
   function pseudoImportHTML(element, url, tagContentSrc) {
-    var temporal,
-        ALREADY_IN_ELEMENT = false;
+    var temporal, ALREADY_IN_ELEMENT = false;
     if (tagContentSrc instanceof HTMLElement) {
       temporal = tagContentSrc;
-    } else if (typeof tagContentSrc === "string") {
+    } else if (typeof(tagContentSrc) === "string") {
       var srcTag = element.querySelector(tagContentSrc);
       if (srcTag instanceof HTMLElement) {
         temporal = srcTag;
@@ -45,9 +42,9 @@
       throw new Error('define a tagContentSrc');
     }
 
-    var fetching = fetch(url).then(function (response) {
+    var fetching = fetch(url).then(function(response) {
       return response.text();
-    }).then(function (text) {
+    }).then(function(text) {
       temporal.innerHTML = text;
       rewriteScripts(temporal);
       if (!ALREADY_IN_ELEMENT) {
@@ -81,8 +78,8 @@
   }
 
   function run(tagContent, tagContentSrc) {
-    var pimsOb = new MutationObserver(function (records, instance) {
-      records.forEach(function (record) {
+    var pimsOb = new MutationObserver((records, instance) => {
+      records.forEach(record => {
         var pims = record.target.querySelectorAll(tagContent);
         for (var i = 0; i < pims.length; i++) {
           if (!pims[i].ALREADY_OBSERVING) {
@@ -109,4 +106,5 @@
     run: run,
     importHTML: pseudoImportHTML
   };
+
 })();

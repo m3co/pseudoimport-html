@@ -1,0 +1,30 @@
+{
+  "name": "pseudoimport-html",
+  "version": "0.0.4",
+  "description": "Yeah yeah! I know! I'm using ```innerHTML = response``` in order to import an external code from a given __URL__",
+  "main": "pseudoimport-html.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/m3co/pseudoimport-html.git"
+  },
+  "author": "Andres Rios <rianby64@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/m3co/pseudoimport-html/issues"
+  },
+  "homepage": "https://github.com/m3co/pseudoimport-html#readme",
+  "devDependencies": {
+    "eslint": "^3.7.1",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-eslint": "^3.0.1",
+    "babel-preset-es2015": "^6.16.0"
+  }
+}
