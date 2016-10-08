@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html>
-  <script src="../index.js" defer></script>
+  <head>
+    <script src="https://cdn.ravenjs.com/3.7.0/raven.min.js"></script>
+    <script>
+      'use strict';
+      Raven.config('https://fa54258dc11647fa901fef0aa3d38006@sentry.io/104730').install();
+    </script>
+    <script src="/pseudoimport-html.js" defer></script>
+  </head>
   <body>
     <!-- notice that here the src isn't relative -->
     <pseudoimport-html src="/demo/import.html"></pseudoimport-html>
@@ -12,7 +19,6 @@
       console.log(records, instance);
     });
     m.observe(document.querySelector('pseudoimport-html'), { childList: true });
-
   </script>
 </html>
 

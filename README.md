@@ -4,6 +4,11 @@ Yeah yeah! I know! I'm using ```innerHTML = response``` in order to import an ex
 
 So, feel free to try this fake version of ```<link rel="import">```
 
+Do you want to see in action? Check the [demo](http://pseudoimport-html.m3c.space/demo).
+
+Do you want to see if everything is ok? Check the [tests](http://pseudoimport-html.m3c.space/test).
+
+
 ## How to?
 ```
 <script src="bower_components/customevent-polyfill/customevent-polyfill.min.js"></script>
