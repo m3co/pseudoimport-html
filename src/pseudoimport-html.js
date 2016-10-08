@@ -1,4 +1,4 @@
-;(function() {
+;(() => {
   var tagContent = 'pseudoimport-html';
   var tagContentSrc = 'pseudoimport-html-src';
   var fetchs = [];
@@ -42,9 +42,9 @@
       throw new Error('define a tagContentSrc');
     }
 
-    var fetching = fetch(url).then(function(response) {
+    var fetching = fetch(url).then(response => {
       return response.text();
-    }).then(function(text) {
+    }).then(text => {
       temporal.innerHTML = text;
       rewriteScripts(temporal);
       if (!ALREADY_IN_ELEMENT) {
