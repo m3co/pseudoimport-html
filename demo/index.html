@@ -15,7 +15,7 @@
   </body>
   <script>
     'use strict';
-    var m = new MutationObserver((records, instance) => {
+    var m = new MutationObserver(function (records, instance) {
       console.log(records, instance);
     });
     m.observe(document.querySelector('pseudoimport-html'), { childList: true });
