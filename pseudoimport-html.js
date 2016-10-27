@@ -74,7 +74,6 @@
       if (!container.updatePromise && container.hasAttribute('src')) {
         var url = container.getAttribute('src');
         container.updatePromise = pseudoImportHTML(container, url, tagContentSrc);
-        fetchs.push(container.updatePromise);
       }
     }
     return Promise.all(fetchs);
