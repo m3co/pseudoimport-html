@@ -1,6 +1,6 @@
 ;(() => {
-  var tagContent = 'pseudoimport-html';
-  var tagContentSrc = 'pseudoimport-html-src';
+  var TAG_CONTENT = 'pseudoimport-html';
+  var TAG_CONTENT_SRC = 'pseudoimport-html-src';
   var fetchs = [];
 
   function rewriteScripts(element) {
@@ -77,6 +77,9 @@
   }
 
   function run(tagContent, tagContentSrc) {
+    tagContent = tagContent || TAG_CONTENT;
+    tagContentSrc = tagContentSrc || TAG_CONTENT_SRC;
+
     var pimsOb = new MutationObserver((records, instance) => {
       records.forEach(record => {
         var pims = record.target.querySelectorAll(tagContent);
@@ -99,7 +102,7 @@
     }
     return updateAll(tagContent, tagContentSrc);
   }
-  run(tagContent, tagContentSrc);
+  run(TAG_CONTENT, TAG_CONTENT_SRC);
 
   window.PseudoimportHTML = {
     run: run,
