@@ -3,6 +3,9 @@
   var TAG_CONTENT_SRC = 'pseudoimport-html-src';
   var fetchs = [];
 
+  var tagContents = [];
+  var tagContentsSrc = [];
+
   function rewriteScripts(element) {
     var scripts = element.querySelectorAll('script');
     for (var i = 0; i < scripts.length; i++) {
@@ -31,12 +34,12 @@
     if (tagContentSrc instanceof HTMLElement) {
       temporal = tagContentSrc;
     } else if (typeof(tagContentSrc) === "string") {
-      var srcTag = element.querySelector(tagContentSrc);
+      var srcTag = element.querySelector(tagContentsSrc.join());
       if (srcTag instanceof HTMLElement) {
         temporal = srcTag;
         ALREADY_IN_ELEMENT = true;
       } else {
-        temporal = document.createElement(tagContentSrc);
+        temporal = document.createElement(TAG_CONTENT_SRC);
       }
     } else {
       throw new Error('define a tagContentSrc');
@@ -66,7 +69,7 @@
   }
 
   function updateAll(tagContent, tagContentSrc) {
-    var containers = document.querySelectorAll(tagContent);
+    var containers = document.querySelectorAll(tagContents.join());
     for (var i = 0; i < containers.length; i++) {
       var container = containers[i];
       if (!container.updatePromise && container.hasAttribute('src')) {
@@ -78,38 +81,30 @@
   }
 
   var runPromise;
-  var resolved = false;
-
-  // <Please, consider another way to achive the following behavior
-  var last_tagContent;
-  var last_tagContentSrc;
-  // >
-
   function run(tagContent, tagContentSrc) {
     tagContent = tagContent || TAG_CONTENT;
     tagContentSrc = tagContentSrc || TAG_CONTENT_SRC;
 
-    // <Please, consider another way to achive the following behavior
-    if (!last_tagContent) last_tagContent = tagContent;
-    if (!last_tagContentSrc) last_tagContentSrc = tagContentSrc;
-    // >
+    var l_tagContents = tagContents.length;
+    if (!tagContents.includes(tagContent)) {
+      tagContents.push(tagContent);
+    }
+    var l_tagContentsSrc = tagContentsSrc.length;
+    if (!tagContentsSrc.includes(tagContentSrc)) {
+      tagContentsSrc.push(tagContentSrc);
+    }
 
-    if (runPromise) {
-      // <Please, consider another way to achive the following behavior
-      if (last_tagContent != tagContent ||
-          last_tagContentSrc != tagContentSrc) {
-        last_tagContent = tagContent;
-        last_tagContentSrc = tagContentSrc;
-      } else {
-        return runPromise;
-      }
-      // >
+    if (runPromise &&
+        l_tagContents == tagContents.length &&
+        l_tagContentsSrc == tagContentsSrc.length) {
+      return runPromise;
     }
 
     runPromise = new Promise((resolve, reject) => {
+      var resolved = false;
       var pimsOb = new MutationObserver((records, instance) => {
         records.forEach(record => {
-          var pims = record.target.querySelectorAll(tagContent);
+          var pims = record.target.querySelectorAll(tagContents.join());
           for (var i = 0; i < pims.length; i++) {
             if (!pims[i].ALREADY_OBSERVING) {
               instance.observe(pims[i], { childList: true });
@@ -118,7 +113,8 @@
           }
         });
         updateAll(tagContent, tagContentSrc).then(elements => {
-          if (!document.querySelector(`${tagContent}:not([ready])`)) {
+          var s = tagContents.map(item => `${item}:not([ready])`).join();
+          if (!document.querySelector(s)) {
             if (!resolved) {
               resolved = true;
               resolve(elements);
@@ -127,7 +123,7 @@
         });
       });
 
-      var pims = document.querySelectorAll(tagContent);
+      var pims = document.querySelectorAll(tagContents.join());
       for (var i = 0; i < pims.length; i++) {
         if (!pims[i].ALREADY_OBSERVING) {
           pimsOb.observe(pims[i], { childList: true });
@@ -135,7 +131,8 @@
         }
       }
       updateAll(tagContent, tagContentSrc).then(elements => {
-        if (!document.querySelector(`${tagContent}:not([ready])`)) {
+        var s = tagContents.map(item => `${item}:not([ready])`).join();
+        if (!document.querySelector(s)) {
           if (!resolved) {
             resolved = true;
             resolve(elements);
