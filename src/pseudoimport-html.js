@@ -80,12 +80,30 @@
   var runPromise;
   var resolved = false;
 
+  // <Please, consider another way to achive the following behavior
+  var last_tagContent;
+  var last_tagContentSrc;
+  // >
+
   function run(tagContent, tagContentSrc) {
     tagContent = tagContent || TAG_CONTENT;
     tagContentSrc = tagContentSrc || TAG_CONTENT_SRC;
 
+    // <Please, consider another way to achive the following behavior
+    if (!last_tagContent) last_tagContent = tagContent;
+    if (!last_tagContentSrc) last_tagContentSrc = tagContentSrc;
+    // >
+
     if (runPromise) {
-      return runPromise;
+      // <Please, consider another way to achive the following behavior
+      if (last_tagContent != tagContent ||
+          last_tagContentSrc != tagContentSrc) {
+        last_tagContent = tagContent;
+        last_tagContentSrc = tagContentSrc;
+      } else {
+        return runPromise;
+      }
+      // >
     }
 
     runPromise = new Promise((resolve, reject) => {
