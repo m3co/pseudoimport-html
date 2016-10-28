@@ -50,6 +50,7 @@
       if (!ALREADY_IN_ELEMENT) {
         element.appendChild(temporal);
       }
+      element.setAttribute('ready', '');
       element.dispatchEvent(new CustomEvent('load', {
         detail: {
           element: element,
@@ -76,31 +77,56 @@
     return Promise.all(fetchs);
   }
 
+  var runPromise;
+  var resolved = false;
+
   function run(tagContent, tagContentSrc) {
     tagContent = tagContent || TAG_CONTENT;
     tagContentSrc = tagContentSrc || TAG_CONTENT_SRC;
 
-    var pimsOb = new MutationObserver((records, instance) => {
-      records.forEach(record => {
-        var pims = record.target.querySelectorAll(tagContent);
-        for (var i = 0; i < pims.length; i++) {
-          if (!pims[i].ALREADY_OBSERVING) {
-            instance.observe(pims[i], { childList: true });
-            pims[i].ALREAD_OBSERVING = true;
+    if (runPromise) {
+      return runPromise;
+    }
+
+    runPromise = new Promise((resolve, reject) => {
+      var pimsOb = new MutationObserver((records, instance) => {
+        records.forEach(record => {
+          var pims = record.target.querySelectorAll(tagContent);
+          for (var i = 0; i < pims.length; i++) {
+            if (!pims[i].ALREADY_OBSERVING) {
+              instance.observe(pims[i], { childList: true });
+              pims[i].ALREAD_OBSERVING = true;
+            }
+          }
+        });
+        updateAll(tagContent, tagContentSrc).then(elements => {
+          if (!document.querySelector(`${tagContent}:not([ready])`)) {
+            if (!resolved) {
+              resolved = true;
+              resolve(elements);
+            }
+          }
+        });
+      });
+
+      var pims = document.querySelectorAll(tagContent);
+      for (var i = 0; i < pims.length; i++) {
+        if (!pims[i].ALREADY_OBSERVING) {
+          pimsOb.observe(pims[i], { childList: true });
+          pims[i].ALREADY_OBSERVING = true;
+        }
+      }
+      updateAll(tagContent, tagContentSrc).then(elements => {
+        if (!document.querySelector(`${tagContent}:not([ready])`)) {
+          if (!resolved) {
+            resolved = true;
+            resolve(elements);
           }
         }
       });
-      updateAll(tagContent, tagContentSrc);
     });
 
-    var pims = document.querySelectorAll(tagContent);
-    for (var i = 0; i < pims.length; i++) {
-      if (!pims[i].ALREADY_OBSERVING) {
-        pimsOb.observe(pims[i], { childList: true });
-        pims[i].ALREADY_OBSERVING = true;
-      }
-    }
-    return updateAll(tagContent, tagContentSrc);
+    return runPromise;
   }
   run(TAG_CONTENT, TAG_CONTENT_SRC);
 

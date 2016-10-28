@@ -16,8 +16,9 @@
   window.addEventListener('load', async5.step_func(e => {
     var run = window.PseudoimportHTML.run();
     assert_true(run.then instanceof Function);
+
     run.then(elements => {
-      //assert_equals(elements.length, document.querySelectorAll(tagImport).length);
+      assert_equals(elements.length, document.querySelectorAll(tagImport).length);
       async5.done();
     });
   }));
