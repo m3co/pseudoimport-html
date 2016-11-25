@@ -108,22 +108,22 @@
     return fetching;
   }
 
-  function updateAll(tagContent, tagContentSrc) {
+  function updateAll(tagContent) {
     var containers = document.querySelectorAll(tagContents.join());
     for (var i = 0; i < containers.length; i++) {
       var container = containers[i];
       if (!container.updatePromise && container.hasAttribute('src')) {
         var url = container.getAttribute('src');
-        container.updatePromise = pseudoImportHTML(container, url, tagContentSrc);
+        container.updatePromise = pseudoImportHTML(container, url, TAG_CONTENT_SRC);
       }
     }
     return Promise.all(fetchs);
   }
 
   var runPromise;
-  function run(tagContent, tagContentSrc) {
+  function run(tagContent) {
     tagContent = tagContent || TAG_CONTENT;
-    tagContentSrc = tagContentSrc || TAG_CONTENT_SRC;
+    var tagContentSrc = TAG_CONTENT_SRC;
 
     var l_tagContents = tagContents.length;
     if (!tagContents.includes(tagContent)) {
@@ -150,7 +150,7 @@
             }
           }
         });
-        updateAll(tagContent, tagContentSrc).then(function (elements) {
+        updateAll(tagContent).then(function (elements) {
           var s = tagContents.map(function (item) {
             return item + ':not([ready])';
           }).join();
@@ -170,7 +170,7 @@
           pims[i].ALREADY_OBSERVING = true;
         }
       }
-      updateAll(tagContent, tagContentSrc).then(function (elements) {
+      updateAll(tagContent).then(function (elements) {
         var s = tagContents.map(function (item) {
           return item + ':not([ready])';
         }).join();
