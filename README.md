@@ -18,4 +18,4 @@ Do you want to see if everything is ok? Check the [tests](http://pseudoimport-ht
 ```
 
 Notice that ```pseudoimport-html.js``` is being loaded with ```defer``` flag.
-```customevent-polyfill```, ```es6-promise```, ```fetch``` scripts are optional.
+```customevent-polyfill```, ```promise-polyfill```, ```fetch``` scripts are optional.
