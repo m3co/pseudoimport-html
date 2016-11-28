@@ -1,49 +1,9 @@
 'use strict';
 
-// Polyfill token from
-// https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Array/includes#Polyfill
-(function () {
-  if (!Array.prototype.includes) {
-    Array.prototype.includes = function (searchElement /*, fromIndex*/) {
-      if (this == null) {
-        throw new TypeError('Array.prototype.includes called on null or undefined');
-      }
-
-      var O = Object(this);
-      var len = parseInt(O.length, 10) || 0;
-      if (len === 0) {
-        return false;
-      }
-      var n = parseInt(arguments[1], 10) || 0;
-      var k;
-      if (n >= 0) {
-        k = n;
-      } else {
-        k = len + n;
-        if (k < 0) {
-          k = 0;
-        }
-      }
-      var currentElement;
-      while (k < len) {
-        currentElement = O[k];
-        if (searchElement === currentElement || searchElement !== searchElement && currentElement !== currentElement) {
-          // NaN !== NaN
-          return true;
-        }
-        k++;
-      }
-      return false;
-    };
-  }
-})();
-(function () {
+;(function () {
   var TAG_CONTENT = 'pseudoimport-html';
   var TAG_CONTENT_SRC = 'pseudoimport-html-src';
   var fetchs = [];
-
-  var tagContents = [];
-  var tagContentsSrc = [];
 
   function rewriteScripts(element) {
     var scripts = element.querySelectorAll('script');
@@ -74,12 +34,12 @@
     if (tagContentSrc instanceof HTMLElement) {
       temporal = tagContentSrc;
     } else if (typeof tagContentSrc === "string") {
-      var srcTag = element.querySelector(tagContentsSrc.join());
+      var srcTag = element.querySelector(tagContentSrc);
       if (srcTag instanceof HTMLElement) {
         temporal = srcTag;
         ALREADY_IN_ELEMENT = true;
       } else {
-        temporal = document.createElement(TAG_CONTENT_SRC);
+        temporal = document.createElement(tagContentSrc);
       }
     } else {
       throw new Error('define a tagContentSrc');
@@ -93,7 +53,6 @@
       if (!ALREADY_IN_ELEMENT) {
         element.appendChild(temporal);
       }
-      element.setAttribute('ready', '');
       element.dispatchEvent(new CustomEvent('load', {
         detail: {
           element: element,
@@ -108,82 +67,43 @@
     return fetching;
   }
 
-  function updateAll(tagContent) {
-    var containers = document.querySelectorAll(tagContents.join());
+  function updateAll(tagContent, tagContentSrc) {
+    var containers = document.querySelectorAll(tagContent);
     for (var i = 0; i < containers.length; i++) {
       var container = containers[i];
       if (!container.updatePromise && container.hasAttribute('src')) {
         var url = container.getAttribute('src');
-        container.updatePromise = pseudoImportHTML(container, url, TAG_CONTENT_SRC);
+        container.updatePromise = pseudoImportHTML(container, url, tagContentSrc);
       }
     }
     return Promise.all(fetchs);
   }
 
-  var runPromise;
-  function run(tagContent) {
+  function run(tagContent, tagContentSrc) {
     tagContent = tagContent || TAG_CONTENT;
-    var tagContentSrc = TAG_CONTENT_SRC;
+    tagContentSrc = tagContentSrc || TAG_CONTENT_SRC;
 
-    var l_tagContents = tagContents.length;
-    if (!tagContents.includes(tagContent)) {
-      tagContents.push(tagContent);
-    }
-    var l_tagContentsSrc = tagContentsSrc.length;
-    if (!tagContentsSrc.includes(tagContentSrc)) {
-      tagContentsSrc.push(tagContentSrc);
-    }
-
-    if (runPromise && l_tagContents == tagContents.length && l_tagContentsSrc == tagContentsSrc.length) {
-      return runPromise;
-    }
-
-    runPromise = new Promise(function (resolve, reject) {
-      var resolved = false;
-      var pimsOb = new MutationObserver(function (records, instance) {
-        records.forEach(function (record) {
-          var pims = record.target.querySelectorAll(tagContents.join());
-          for (var i = 0; i < pims.length; i++) {
-            if (!pims[i].ALREADY_OBSERVING) {
-              instance.observe(pims[i], { childList: true });
-              pims[i].ALREAD_OBSERVING = true;
-            }
-          }
-        });
-        updateAll(tagContent).then(function (elements) {
-          var s = tagContents.map(function (item) {
-            return item + ':not([ready])';
-          }).join();
-          if (!document.querySelector(s)) {
-            if (!resolved) {
-              resolved = true;
-              resolve(elements);
-            }
-          }
-        });
-      });
-
-      var pims = document.querySelectorAll(tagContents.join());
-      for (var i = 0; i < pims.length; i++) {
-        if (!pims[i].ALREADY_OBSERVING) {
-          pimsOb.observe(pims[i], { childList: true });
-          pims[i].ALREADY_OBSERVING = true;
-        }
-      }
-      updateAll(tagContent).then(function (elements) {
-        var s = tagContents.map(function (item) {
-          return item + ':not([ready])';
-        }).join();
-        if (!document.querySelector(s)) {
-          if (!resolved) {
-            resolved = true;
-            resolve(elements);
+    var pimsOb = new MutationObserver(function (records, instance) {
+      records.forEach(function (record) {
+        var pims = record.target.querySelectorAll(tagContent);
+        for (var i = 0; i < pims.length; i++) {
+          if (!pims[i].ALREADY_OBSERVING) {
+            instance.observe(pims[i], { childList: true });
+            pims[i].ALREAD_OBSERVING = true;
           }
         }
       });
+      updateAll(tagContent, tagContentSrc);
     });
 
-    return runPromise;
+    var pims = document.querySelectorAll(tagContent);
+    for (var i = 0; i < pims.length; i++) {
+      if (!pims[i].ALREADY_OBSERVING) {
+        pimsOb.observe(pims[i], { childList: true });
+        pims[i].ALREADY_OBSERVING = true;
+      }
+    }
+    return updateAll(tagContent, tagContentSrc);
   }
   run(TAG_CONTENT, TAG_CONTENT_SRC);
 
