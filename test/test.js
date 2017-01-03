@@ -17,10 +17,10 @@
     var run = window.PseudoimportHTML.run();
     assert_true(run.then instanceof Function);
 
-    run.then(elements => {
+    run.then(async5.step_func(elements => {
       assert_equals(elements.length, document.querySelectorAll(tagImport).length);
       async5.done();
-    });
+    }));
   }));
 
   el2.addEventListener('load', async11.step_func(e => {
