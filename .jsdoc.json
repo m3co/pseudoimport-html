@@ -1,0 +1,7 @@
+{
+  "opts": {
+    "destination": "./docs",
+    "recurse": true,
+    "tutorials": "./demo"
+  }
+}
