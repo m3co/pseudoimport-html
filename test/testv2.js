@@ -29,9 +29,8 @@ onload_test(function(e) {
   this.done();
 }, "Check the API");
 
-
 /**
- * Do a simple import
+ * Do a simple import from absolute path
  */
 onload_test(function(e) {
   // [setup]
@@ -39,7 +38,6 @@ onload_test(function(e) {
   fragment.setAttribute('src', '/test/fixtures/fragment1.html');
   fragment.classList.add(cssFragment);
   fragment.addEventListener('load', this.step_func(() => {
-    console.log('loaded');
     // [verify]
     var fragment1 = fragment.querySelector('#fragment1');
     assert_true(fragment1 instanceof HTMLElement);
@@ -54,5 +52,29 @@ onload_test(function(e) {
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 }, "Import from src='/test/fixtures/fragment1.html' absolute path, default insertion");
+
+/**
+ * Do a simple import from relative path
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment1.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func(() => {
+    // [verify]
+    var fragment1 = fragment.querySelector('#fragment1');
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment1.textContent, "Fragment 1");
+
+    // [teardown]
+    fragment.remove();
+    this.done();
+  }));
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Import from src='/test/fixtures/fragment1.html' relative path, default insertion");
 
 })();
