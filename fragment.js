@@ -19,6 +19,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    */
 
   var MaterialFragment = function () {
+
+    /**
+     * Class constructor for dropdown MDL component.
+     * Implements {@link https://github.com/jasonmayes/mdl-component-design-pattern|MDL component design pattern}
+     *
+     * @param {HTMLElement} element - The element that will be upgraded.
+     */
     function MaterialFragment(element) {
       _classCallCheck(this, MaterialFragment);
 
@@ -26,12 +33,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.init();
     }
 
+    /**
+     * Initialize element.
+     *
+     */
+
+
     _createClass(MaterialFragment, [{
       key: 'init',
       value: function init() {
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
         fetchFragment(this.element_, src).then(function (element) {
           delete element.dataset.baseURI;
+
+          /**
+           * On load the fragment.
+           * All scrips loaded from a fragment are executed asynchronously.
+           *
+           * @event MaterialFragment#load
+           * @type {CustomEvent}
+           * @property {HTMLElement} fragment - The loaded fragment
+           */
           element.dispatchEvent(new CustomEvent('load', {
             detail: {
               fragment: element
@@ -44,10 +66,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return MaterialFragment;
   }();
 
+  /**
+   * Clean unnecessary spaces.
+   *
+   * @param {String} str - String to clean
+   * @return {String} - Cleaned string
+   * @private
+   */
+
+
   function clean(str) {
     return str.replace(/\n{1,} {0,}/g, ' ').replace(/> </g, '><').trim();
   }
 
+  /**
+   * Fetch HTML code from src to fragment.
+   *
+   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
+   * @param {String} src - The URI to fetch
+   * @return {Promise} - The fetch request
+   * @private
+   */
   function fetchFragment(fragment, src) {
     return fetch(src).then(function (response) {
       return response.text();
@@ -62,6 +101,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     });
   }
 
+  /**
+   * Extract the base dir from path.
+   *
+   * @param {String} path
+   * @return {String}
+   * @private
+   */
   function basedir(path) {
     return path.split('/').reduce(function (acc, curr, index, array) {
       if (index === array.length - 1) {
@@ -71,6 +117,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, '');
   }
 
+  /**
+   * Prepare path based on baseURI or document.baseURI
+   *
+   * @param {String} path
+   * @param {String} baseURI
+   * @return {String}
+   * @private
+   */
   function preparePath(path, baseURI) {
     return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
