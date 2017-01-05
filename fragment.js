@@ -48,7 +48,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return fetch(src).then(function (response) {
       return response.text();
     }).then(function (text) {
-      fragment.appendChild(createHTML(clean(text)));
+      return fragment.appendChild(createHTML(clean(text)));
     });
   }
 

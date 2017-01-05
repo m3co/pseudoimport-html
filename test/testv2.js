@@ -38,9 +38,8 @@ onload_test(function(e) {
   var fragment = document.createElement('div');
   fragment.setAttribute('src', '/test/fixtures/fragment1.html');
   fragment.classList.add(cssFragment);
-  document.body.appendChild(fragment);
-
-  fragment.addEventListener('load', step_timeout(() => {
+  fragment.addEventListener('load', this.step_func(() => {
+    console.log('loaded');
     // [verify]
     var fragment1 = fragment.querySelector('#fragment1');
     assert_true(fragment1 instanceof HTMLElement);
@@ -52,6 +51,7 @@ onload_test(function(e) {
   }));
 
   // [run]
+  document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 }, "Import from src='/test/fixtures/fragment1.html' absolute path, default insertion");
 

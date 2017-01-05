@@ -32,7 +32,7 @@
     return fetch(src).then((response) => {
       return response.text();
     }).then((text) => {
-      fragment.appendChild(createHTML(clean(text)));
+      return fragment.appendChild(createHTML(clean(text)));
     });
   }
 
