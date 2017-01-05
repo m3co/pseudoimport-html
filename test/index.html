@@ -1,20 +1,18 @@
 <!doctype html>
 <html>
   <head>
-    <link href="../resources/testharness.js/testharness.css" rel="stylesheet">
-    <script src="../resources/testharness.js/testharness.js"></script>
+    <title>Fragmet test page</title>
+    <script src="/resources/testharness.js/testharness.js"></script>
+    <script src="helper.js"></script>
 
-    <!-- be aware to set this script as defered -->
-    <script src="../fragment.js" defer></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link href="/bower_components/material-design-lite/material.css" rel="stylesheet">
+    <script src="/bower_components/material-design-lite/material.js"></script>
+    <script src="/fragment.js"></script>
   </head>
   <body>
-    <fragment-html first src="/test/import.html"></fragment-html>
-    <fragment-html second src="/test/import2.html"></fragment-html>
-    <fragment-html third src="import3.html">
-      <div id="div1">This is the first div</div>
-      <fragment-html-src></fragment-html-src>
-      <div id="div2">This is the second div</div>
-    </fragment-html>
+    <div class="mdl-fragment" src="/test/import.html"></div>
   </body>
   <script src="testv2.js"></script>
 </html>
