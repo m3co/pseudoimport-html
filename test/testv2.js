@@ -79,26 +79,28 @@ onload_test(function(e) {
 }, "Import from src='/test/fixtures/fragment1.html' relative path, default insertion");
 
 /**
- * Do a nested import from relative path
+ * Do a nested import from absolute path
  */
 onload_test(function(e) {
   // [setup]
   var fragment = document.createElement('div');
   fragment.setAttribute('src', '/test/fixtures/fragment2.html');
   fragment.classList.add(cssFragment);
-  fragment.addEventListener('load', this.step_func(() => {
+  fragment.addEventListener('load', this.step_func((e) => {
     // [verify]
     var fragment1 = fragment.querySelector(selFragment);
     var fragment2 = fragment.querySelector('#fragment2');
     assert_true(fragment2 instanceof HTMLElement);
     assert_true(fragment1 instanceof HTMLElement);
     assert_equals(fragment2.textContent, 'Fragment 2');
+    assert_equals(e.detail.fragment, fragment);
 
-    fragment1.addEventListener('load', this.step_func(() => {
-      var fragment1 = fragment.querySelector('#fragment1');
+    fragment1.addEventListener('load', this.step_func((e) => {
+      var fragment1_ = fragment.querySelector('#fragment1');
 
-      assert_true(fragment1 instanceof HTMLElement);
-      assert_equals(fragment1.textContent, 'Fragment 1');
+      assert_true(fragment1_ instanceof HTMLElement);
+      assert_equals(fragment1_.textContent, 'Fragment 1');
+      assert_equals(e.detail.fragment, fragment1);
 
       // [teardown]
       fragment.remove();
