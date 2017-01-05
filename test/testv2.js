@@ -7,7 +7,6 @@ const selFragment = `.${cssFragment}`;
 (() => {
 /**
  * Do not move this test to any other place and
- * Do not remove the unique <ul class="mdl-tree3" /> element
  * from the index.html
  */
 onload_test(function(e) {
@@ -19,7 +18,6 @@ onload_test(function(e) {
 
 /**
  * Do not move this test to any other place and
- * Do not remove the unique <ul class="mdl-tree3" /> element
  * from the index.html
  */
 onload_test(function(e) {
@@ -30,5 +28,29 @@ onload_test(function(e) {
   document.querySelector(selFragment).remove();
   this.done();
 }, "Check the API");
+
+
+/**
+ * Do a simple import
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', '/test/fixtures/fragment1.html');
+  fragment.classList.add(cssFragment);
+  document.body.appendChild(fragment);
+
+  // [run]
+  componentHandler.upgradeElement(fragment);
+
+  // [verify]
+  var fragment1 = fragment.querySelector('#fragment1');
+  assert_true(fragment1 instanceof HTMLElement);
+  assert_equals(fragment1.textContent, "Fragment 1");
+
+  // [teardown]
+  fragment.remove();
+  this.done();
+}, "Import from src='/test/fixtures/fragment1.html' absolute path, default insertion");
 
 })();
