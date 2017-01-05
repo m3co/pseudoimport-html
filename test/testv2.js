@@ -113,4 +113,40 @@ onload_test(function(e) {
   componentHandler.upgradeElement(fragment);
 }, "Import from src='/test/fixtures/fragment2.html' absolute path, nested, default insertion");
 
+/**
+ * Do a nested import from relative path
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment3.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func((e) => {
+    // [verify]
+    var fragment1 = fragment.querySelector(selFragment);
+    var fragment3 = fragment.querySelector('#fragment3');
+
+    assert_true(fragment3 instanceof HTMLElement);
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment3.textContent, 'Fragment 3');
+    assert_equals(e.detail.fragment, fragment);
+
+    fragment1.addEventListener('load', this.step_func((e) => {
+      var fragment1_ = fragment.querySelector('#fragment1');
+
+      assert_true(fragment1_ instanceof HTMLElement);
+      assert_equals(fragment1_.textContent, 'Fragment 1');
+      assert_equals(e.detail.fragment, fragment1);
+
+      // [teardown]
+      fragment.remove();
+      this.done();
+    }));
+  }));
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Import from src='fixtures/fragment3.html' relative path, nested, default insertion");
+
 })();
