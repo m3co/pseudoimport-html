@@ -21,12 +21,16 @@
     }
   }
 
+  function clean(str) {
+    return str.replace(/\n{1,} {0,}/g, ' ').replace(/> </g, '><').trim();
+  }
+
   function fetchFragment(fragment) {
     let src = preparePath(fragment.getAttribute('src'));
     fetch(src).then((response) => {
       return response.text();
     }).then((text) => {
-      fragment.appendChild(createHTML(text));
+      fragment.appendChild(createHTML(clean(text)));
     });
   }
 
