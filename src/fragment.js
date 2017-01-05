@@ -18,7 +18,10 @@
     }
 
     init() {
-      fetchFragment(this.element_).then((element) => {
+      var src = preparePath(this.element_.getAttribute('src'),
+                            this.element_.dataset.baseURI);
+      fetchFragment(this.element_, src).then((element) => {
+        delete element.dataset.baseURI;
         element.dispatchEvent(new CustomEvent('load', {
           detail: {
             fragment: element
@@ -32,13 +35,16 @@
     return str.replace(/\n{1,} {0,}/g, ' ').replace(/> </g, '><').trim();
   }
 
-  function fetchFragment(fragment) {
-    var src = preparePath(fragment.getAttribute('src'));
+  function fetchFragment(fragment, src) {
     return fetch(src).then((response) => {
       return response.text();
     }).then((text) => {
       fragment.appendChild(createHTML(clean(text)));
-      componentHandler.upgradeElements(fragment.querySelectorAll(selClass));
+      var fragments = fragment.querySelectorAll(selClass);
+      for (let i = 0; i < fragments.length; i++) {
+        fragments[i].dataset.baseURI = basedir(src);
+        componentHandler.upgradeElement(fragments[i]);
+      }
       return fragment;
     });
   }
@@ -50,8 +56,8 @@
     }, '');
   }
 
-  function preparePath(path) {
-    return path[0] === '/' ? path : basedir(document.baseURI) + path;
+  function preparePath(path, baseURI) {
+    return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
   window[classAsString] = MaterialFragment;

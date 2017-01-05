@@ -29,7 +29,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(MaterialFragment, [{
       key: 'init',
       value: function init() {
-        fetchFragment(this.element_).then(function (element) {
+        var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
+        fetchFragment(this.element_, src).then(function (element) {
+          delete element.dataset.baseURI;
           element.dispatchEvent(new CustomEvent('load', {
             detail: {
               fragment: element
@@ -46,13 +48,16 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return str.replace(/\n{1,} {0,}/g, ' ').replace(/> </g, '><').trim();
   }
 
-  function fetchFragment(fragment) {
-    var src = preparePath(fragment.getAttribute('src'));
+  function fetchFragment(fragment, src) {
     return fetch(src).then(function (response) {
       return response.text();
     }).then(function (text) {
       fragment.appendChild(createHTML(clean(text)));
-      componentHandler.upgradeElements(fragment.querySelectorAll(selClass));
+      var fragments = fragment.querySelectorAll(selClass);
+      for (var i = 0; i < fragments.length; i++) {
+        fragments[i].dataset.baseURI = basedir(src);
+        componentHandler.upgradeElement(fragments[i]);
+      }
       return fragment;
     });
   }
@@ -66,8 +71,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }, '');
   }
 
-  function preparePath(path) {
-    return path[0] === '/' ? path : basedir(document.baseURI) + path;
+  function preparePath(path, baseURI) {
+    return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
   window[classAsString] = MaterialFragment;
