@@ -17,7 +17,28 @@
     }
 
     init() {
+      fetchFragment(this.element_);
     }
+  }
+
+  function fetchFragment(fragment) {
+    let src = preparePath(fragment.getAttribute('src'));
+    fetch(src).then((response) => {
+      return response.text();
+    }).then((text) => {
+      fragment.appendChild(createHTML(text));
+    });
+  }
+
+  function basedir(path) {
+    return path.split("/").reduce((acc, curr, index, array) => {
+      if (index == array.length - 1) { return acc; }
+      return acc += curr + '/';
+    }, "");
+  }
+
+  function preparePath(path) {
+    return path[0] === '/' ? path : basedir(document.baseURI) + path;
   }
 
   window[classAsString] = MaterialFragment;

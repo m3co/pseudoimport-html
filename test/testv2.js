@@ -43,14 +43,16 @@ onload_test(function(e) {
   // [run]
   componentHandler.upgradeElement(fragment);
 
-  // [verify]
-  var fragment1 = fragment.querySelector('#fragment1');
-  assert_true(fragment1 instanceof HTMLElement);
-  assert_equals(fragment1.textContent, "Fragment 1");
+  this.step_timeout(() => {
+    // [verify]
+    var fragment1 = fragment.querySelector('#fragment1');
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment1.textContent, "Fragment 1");
 
-  // [teardown]
-  fragment.remove();
-  this.done();
+    // [teardown]
+    fragment.remove();
+    this.done();
+  }, 100);
 }, "Import from src='/test/fixtures/fragment1.html' absolute path, default insertion");
 
 })();

@@ -27,11 +27,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
     _createClass(MaterialFragment, [{
       key: 'init',
-      value: function init() {}
+      value: function init() {
+        fetchFragment(this.element_);
+      }
     }]);
 
     return MaterialFragment;
   }();
+
+  function fetchFragment(fragment) {
+    var src = preparePath(fragment.getAttribute('src'));
+    fetch(src).then(function (response) {
+      return response.text();
+    }).then(function (text) {
+      fragment.appendChild(createHTML(text));
+    });
+  }
+
+  function basedir(path) {
+    return path.split("/").reduce(function (acc, curr, index, array) {
+      if (index == array.length - 1) {
+        return acc;
+      }
+      return acc += curr + '/';
+    }, "");
+  }
+
+  function preparePath(path) {
+    return path[0] === '/' ? path : basedir(document.baseURI) + path;
+  }
 
   window[classAsString] = MaterialFragment;
 
