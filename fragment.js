@@ -28,10 +28,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(MaterialFragment, [{
       key: 'init',
       value: function init() {
-        var _this = this;
-
-        fetchFragment(this.element_).then(function () {
-          _this.element_.dispatchEvent(new CustomEvent('load'));
+        fetchFragment(this.element_).then(function (element) {
+          element.dispatchEvent(new CustomEvent('load'));
         });
       }
     }]);
@@ -48,7 +46,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return fetch(src).then(function (response) {
       return response.text();
     }).then(function (text) {
-      return fragment.appendChild(createHTML(clean(text)));
+      fragment.appendChild(createHTML(clean(text)));
+      componentHandler.upgradeElement(fragment);
+      return fragment;
     });
   }
 
