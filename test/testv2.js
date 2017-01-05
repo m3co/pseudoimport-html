@@ -40,10 +40,7 @@ onload_test(function(e) {
   fragment.classList.add(cssFragment);
   document.body.appendChild(fragment);
 
-  // [run]
-  componentHandler.upgradeElement(fragment);
-
-  this.step_timeout(() => {
+  fragment.addEventListener('load', step_timeout(() => {
     // [verify]
     var fragment1 = fragment.querySelector('#fragment1');
     assert_true(fragment1 instanceof HTMLElement);
@@ -52,7 +49,10 @@ onload_test(function(e) {
     // [teardown]
     fragment.remove();
     this.done();
-  }, 100);
+  }));
+
+  // [run]
+  componentHandler.upgradeElement(fragment);
 }, "Import from src='/test/fixtures/fragment1.html' absolute path, default insertion");
 
 })();

@@ -17,7 +17,9 @@
     }
 
     init() {
-      fetchFragment(this.element_);
+      fetchFragment(this.element_).then(() => {
+       this.element_.dispatchEvent(new CustomEvent('load'));
+      });
     }
   }
 
@@ -27,7 +29,7 @@
 
   function fetchFragment(fragment) {
     let src = preparePath(fragment.getAttribute('src'));
-    fetch(src).then((response) => {
+    return fetch(src).then((response) => {
       return response.text();
     }).then((text) => {
       fragment.appendChild(createHTML(clean(text)));
