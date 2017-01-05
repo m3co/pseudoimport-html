@@ -19,7 +19,11 @@
 
     init() {
       fetchFragment(this.element_).then((element) => {
-        element.dispatchEvent(new CustomEvent('load'));
+        element.dispatchEvent(new CustomEvent('load', {
+          detail: {
+            fragment: element
+          }
+        }));
       });
     }
   }

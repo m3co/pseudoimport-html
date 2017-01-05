@@ -30,7 +30,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: 'init',
       value: function init() {
         fetchFragment(this.element_).then(function (element) {
-          element.dispatchEvent(new CustomEvent('load'));
+          element.dispatchEvent(new CustomEvent('load', {
+            detail: {
+              fragment: element
+            }
+          }));
         });
       }
     }]);
