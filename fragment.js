@@ -12,6 +12,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   var classAsString = 'MaterialFragment';
   var cssClass = 'mdl-fragment';
+  var selClass = '.' + cssClass;
 
   /**
    * Class MaterialFragment
@@ -47,18 +48,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return response.text();
     }).then(function (text) {
       fragment.appendChild(createHTML(clean(text)));
-      componentHandler.upgradeElement(fragment);
+      componentHandler.upgradeElements(fragment.querySelectorAll(selClass));
       return fragment;
     });
   }
 
   function basedir(path) {
-    return path.split("/").reduce(function (acc, curr, index, array) {
-      if (index == array.length - 1) {
+    return path.split('/').reduce(function (acc, curr, index, array) {
+      if (index === array.length - 1) {
         return acc;
       }
       return acc += curr + '/';
-    }, "");
+    }, '');
   }
 
   function preparePath(path) {

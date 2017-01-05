@@ -5,6 +5,7 @@
 
   var classAsString = 'MaterialFragment';
   var cssClass = 'mdl-fragment';
+  var selClass = `.${cssClass}`;
 
   /**
    * Class MaterialFragment
@@ -33,16 +34,16 @@
       return response.text();
     }).then((text) => {
       fragment.appendChild(createHTML(clean(text)));
-      componentHandler.upgradeElement(fragment);
+      componentHandler.upgradeElements(fragment.querySelectorAll(selClass));
       return fragment;
     });
   }
 
   function basedir(path) {
-    return path.split("/").reduce((acc, curr, index, array) => {
-      if (index == array.length - 1) { return acc; }
+    return path.split('/').reduce((acc, curr, index, array) => {
+      if (index === array.length - 1) { return acc; }
       return acc += curr + '/';
-    }, "");
+    }, '');
   }
 
   function preparePath(path) {
