@@ -43,7 +43,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: 'init',
       value: function init() {
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
-        fetchFragment(this.element_, src).then(function (element) {
+        this.fetch(this.element_, src).then(function (element) {
           delete element.dataset.baseURI;
 
           /**
@@ -61,6 +61,41 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }));
         });
       }
+
+      /**
+       * Fetch HTML code from src to fragment.
+       *
+       * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
+       * @param {String} src - The URI to fetch
+       * @return {Promise} - The fetch request
+       * @private
+       */
+
+    }, {
+      key: 'fetch',
+      value: function (_fetch) {
+        function fetch(_x, _x2) {
+          return _fetch.apply(this, arguments);
+        }
+
+        fetch.toString = function () {
+          return _fetch.toString();
+        };
+
+        return fetch;
+      }(function (fragment, src) {
+        return fetch(src).then(function (response) {
+          return response.text();
+        }).then(function (text) {
+          fragment.appendChild(createHTML(clean(text)));
+          var fragments = fragment.querySelectorAll(selClass);
+          for (var i = 0; i < fragments.length; i++) {
+            fragments[i].dataset.baseURI = basedir(src);
+            componentHandler.upgradeElement(fragments[i]);
+          }
+          return fragment;
+        });
+      })
     }]);
 
     return MaterialFragment;
@@ -77,28 +112,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   function clean(str) {
     return str.replace(/\n{1,} {0,}/g, ' ').replace(/> </g, '><').trim();
-  }
-
-  /**
-   * Fetch HTML code from src to fragment.
-   *
-   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
-   * @param {String} src - The URI to fetch
-   * @return {Promise} - The fetch request
-   * @private
-   */
-  function fetchFragment(fragment, src) {
-    return fetch(src).then(function (response) {
-      return response.text();
-    }).then(function (text) {
-      fragment.appendChild(createHTML(clean(text)));
-      var fragments = fragment.querySelectorAll(selClass);
-      for (var i = 0; i < fragments.length; i++) {
-        fragments[i].dataset.baseURI = basedir(src);
-        componentHandler.upgradeElement(fragments[i]);
-      }
-      return fragment;
-    });
   }
 
   /**

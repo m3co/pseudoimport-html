@@ -30,7 +30,7 @@
     init() {
       var src = preparePath(this.element_.getAttribute('src'),
                             this.element_.dataset.baseURI);
-      fetchFragment(this.element_, src).then((element) => {
+      this.fetch(this.element_, src).then((element) => {
         delete element.dataset.baseURI;
 
         /**
@@ -48,6 +48,28 @@
         }));
       });
     }
+
+    /**
+     * Fetch HTML code from src to fragment.
+     *
+     * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
+     * @param {String} src - The URI to fetch
+     * @return {Promise} - The fetch request
+     * @private
+     */
+    fetch(fragment, src) {
+      return fetch(src).then((response) => {
+        return response.text();
+      }).then((text) => {
+        fragment.appendChild(createHTML(clean(text)));
+        var fragments = fragment.querySelectorAll(selClass);
+        for (let i = 0; i < fragments.length; i++) {
+          fragments[i].dataset.baseURI = basedir(src);
+          componentHandler.upgradeElement(fragments[i]);
+        }
+        return fragment;
+      });
+    }
   }
 
   /**
@@ -59,28 +81,6 @@
    */
   function clean(str) {
     return str.replace(/\n{1,} {0,}/g, ' ').replace(/> </g, '><').trim();
-  }
-
-  /**
-   * Fetch HTML code from src to fragment.
-   *
-   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
-   * @param {String} src - The URI to fetch
-   * @return {Promise} - The fetch request
-   * @private
-   */
-  function fetchFragment(fragment, src) {
-    return fetch(src).then((response) => {
-      return response.text();
-    }).then((text) => {
-      fragment.appendChild(createHTML(clean(text)));
-      var fragments = fragment.querySelectorAll(selClass);
-      for (let i = 0; i < fragments.length; i++) {
-        fragments[i].dataset.baseURI = basedir(src);
-        componentHandler.upgradeElement(fragments[i]);
-      }
-      return fragment;
-    });
   }
 
   /**
