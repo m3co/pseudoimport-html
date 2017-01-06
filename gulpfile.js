@@ -75,7 +75,7 @@ gulp.task('connect', function() {
   connect.server({
     root: paths.dst,
     livereload: true,
-    port: 9001
+    port: 9004
   });
 });
 
