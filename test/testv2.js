@@ -157,10 +157,17 @@ onload_test(function(e) {
   var fragment = document.createElement('div');
   fragment.setAttribute('src', 'fixtures/fragment4.html');
   fragment.classList.add(cssFragment);
-
-  fragment.addEventListener('load', (e) => {
+  fragment.addEventListener('load', this.step_func((e) => {
+    // [verify]
     var fragment = e.detail.fragment;
-    console.log(e.detail.fragment);
+    assert_true(fragment.querySelector('[src="nested/fragment5.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested/fragment6.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested1/fragment7.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested1/fragment8.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested1/fragment9.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested1/fragment10.html"]') instanceof HTMLElement);
+
+    // [setup]
     fragment.querySelector('[src="nested/fragment5.html"]')
             .addEventListener('load', (e) => {
       var fragment = e.detail.fragment;
@@ -187,13 +194,16 @@ onload_test(function(e) {
         console.log(e.detail.fragment);
       });
     });
-  });
+
+    // [teardown]
+    fragment.remove();
+    this.done();
+  }));
 
   // [run]
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 
-  this.done();
 }, "Import from src='fixtures/fragment4.html' relative path, nested directory, default insertion");
 
 })();
