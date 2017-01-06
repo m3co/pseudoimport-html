@@ -149,4 +149,51 @@ onload_test(function(e) {
   componentHandler.upgradeElement(fragment);
 }, "Import from src='fixtures/fragment3.html' relative path, nested, default insertion");
 
+/**
+ * Do nested import following FIFO event calling
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment4.html');
+  fragment.classList.add(cssFragment);
+
+  fragment.addEventListener('load', (e) => {
+    var fragment = e.detail.fragment;
+    console.log(e.detail.fragment);
+    fragment.querySelector('[src="nested/fragment5.html"]')
+            .addEventListener('load', (e) => {
+      var fragment = e.detail.fragment;
+      console.log(e.detail.fragment);
+      fragment.querySelector('[src="nested1/fragment7.html"]')
+              .addEventListener('load', (e) => {
+        console.log(e.detail.fragment);
+      });
+      fragment.querySelector('[src="nested1/fragment8.html"]')
+              .addEventListener('load', (e) => {
+        console.log(e.detail.fragment);
+      });
+    });
+    fragment.querySelector('[src="nested/fragment6.html"]')
+            .addEventListener('load', (e) => {
+      var fragment = e.detail.fragment;
+      console.log(e.detail.fragment);
+      fragment.querySelector('[src="nested1/fragment9.html"]')
+              .addEventListener('load', (e) => {
+        console.log(e.detail.fragment);
+      });
+      fragment.querySelector('[src="nested1/fragment10.html"]')
+              .addEventListener('load', (e) => {
+        console.log(e.detail.fragment);
+      });
+    });
+  });
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+
+  this.done();
+}, "Import from src='fixtures/fragment4.html' relative path, nested directory, default insertion");
+
 })();
