@@ -1,21 +1,22 @@
-# pseudoImport for HTML
+# MDL-fragment
 
-Yeah yeah! I know! I'm using ```innerHTML = response``` in order to import an external code from a given __URL__
+Here's a simple _MDL component_ that allows you to import HTML code.
 
-So, feel free to try this fake version of ```<link rel="import">```
+Check the [docs](http://pseudoimport-html.m3c.space/docs).
 
-Do you want to see in action? Check the [demo](http://pseudoimport-html.m3c.space/demo).
+Check the [tests](http://pseudoimport-html.m3c.space/test).
 
-Do you want to see if everything is ok? Check the [tests](http://pseudoimport-html.m3c.space/test).
+Feel free to import HTML content using
 
-
-## How to?
-```
-<script src="bower_components/customevent-polyfill/customevent-polyfill.min.js"></script>
-<script src="bower_components/promise-polyfill/promise.min.js"></script>
-<script src="bower_components/fetch/fetch.js"></script>
-<script src="bower_components/pseudoimport-html/pseudoimport-html.js" defer></script>
+```html
+<div class="mdl-fragment" src="an_URI.html"></div>
 ```
 
-Notice that ```pseudoimport-html.js``` is being loaded with ```defer``` flag.
-```customevent-polyfill```, ```promise-polyfill```, ```fetch``` scripts are optional.
+If the fetched content should be in some specific place, then
+
+```html
+<div class="mdl-fragment" src="an_URI.html">
+  <div class="mdl-fragment__content"></div>
+  <div>A custom extra content</div>
+</div>
+```
