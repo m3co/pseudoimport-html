@@ -37,7 +37,8 @@
     init() {
       var src = preparePath(this.element_.getAttribute('src'),
                             this.element_.dataset.baseURI);
-      this.fetch_ = fetch_(this.element_, src).then((element) => {
+      this.fetch_ = fetch_(this.element_, src).then(() => {
+        var element = this.element_;
         delete element.dataset.baseURI;
         this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
         return Promise.all(
@@ -90,17 +91,33 @@
     return fetch(src).then((response) => {
       return response.text();
     }).then((text) => {
+      var html = createHTML(text);
+      var scripts = Array.prototype
+        .slice
+        .call(html.querySelectorAll('script'))
+        .map(script => {
+          return new Promise(resolve => {
+            if (script.src === '') {
+              resolve(script);
+            } else {
+              script.addEventListener('load', () => {
+                resolve(script);
+              });
+            }
+          });
+        });
       var content = fragment.querySelector(selClassContent);
-      content ? content.appendChild(createHTML(text)) :
-        fragment.appendChild(createHTML(text));  // jshint ignore:line
-      Array.prototype
-           .slice
-           .call(fragment.querySelectorAll(selClass))
-           .forEach(fragment => {
-        fragment.dataset.baseURI = basedir(src);
-        componentHandler.upgradeElement(fragment);
+      content ? content.appendChild(html) :
+        fragment.appendChild(html);  // jshint ignore:line
+      return Promise.all(scripts).then(() => {
+        Array.prototype
+             .slice
+             .call(fragment.querySelectorAll(selClass))
+             .forEach(fragment => {
+          fragment.dataset.baseURI = basedir(src);
+          componentHandler.upgradeElement(fragment);
+        });
       });
-      return fragment;
     });
   }
 

@@ -52,7 +52,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var _this = this;
 
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
-        this.fetch_ = fetch_(this.element_, src).then(function (element) {
+        this.fetch_ = fetch_(this.element_, src).then(function () {
+          var element = _this.element_;
           delete element.dataset.baseURI;
           _this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
           return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
@@ -109,13 +110,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return fetch(src).then(function (response) {
       return response.text();
     }).then(function (text) {
-      var content = fragment.querySelector(selClassContent);
-      content ? content.appendChild(createHTML(text)) : fragment.appendChild(createHTML(text)); // jshint ignore:line
-      Array.prototype.slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
-        fragment.dataset.baseURI = basedir(src);
-        componentHandler.upgradeElement(fragment);
+      var html = createHTML(text);
+      var scripts = Array.prototype.slice.call(html.querySelectorAll('script')).map(function (script) {
+        return new Promise(function (resolve) {
+          if (script.src === '') {
+            resolve(script);
+          } else {
+            script.addEventListener('load', function () {
+              resolve(script);
+            });
+          }
+        });
       });
-      return fragment;
+      var content = fragment.querySelector(selClassContent);
+      content ? content.appendChild(html) : fragment.appendChild(html); // jshint ignore:line
+      return Promise.all(scripts).then(function () {
+        Array.prototype.slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
+          fragment.dataset.baseURI = basedir(src);
+          componentHandler.upgradeElement(fragment);
+        });
+      });
     });
   }
 
