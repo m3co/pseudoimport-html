@@ -29,8 +29,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     function MaterialFragment(element) {
       _classCallCheck(this, MaterialFragment);
 
+      var parent = element.parentElement.closest(selClass);
+      this.fetch_ = null;
       this.element_ = element;
-      this.fetched_ = null;
+      this.root_ = parent ? parent.MaterialFragment.root_ : element;
+      this.isRoot_ = parent ? false : true;
+      this.resolvers_ = [];
+
       this.init();
     }
 
@@ -43,15 +48,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(MaterialFragment, [{
       key: 'init',
       value: function init() {
+        var _this = this;
+
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
-        this.fetched_ = fetch_(this.element_, src).then(function (element) {
+        this.fetch_ = fetch_(this.element_, src).then(function (element) {
           delete element.dataset.baseURI;
-          var promises = [];
           var fragments = element.querySelectorAll(selClass);
+          var promises = [];
           for (var i = 0; i < fragments.length; i++) {
-            promises.push(fragments[i].MaterialFragment.fetched_);
+            promises.push(fragments[i].MaterialFragment.fetch_);
           }
-          Promise.all(promises).then(resolve.bind(null, element));
+          _this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+          return Promise.all(promises);
+        }).then(function () {
+          if (_this.isRoot_) {
+            _this.resolvers_.forEach(function (resolver) {
+              resolver();
+            });
+          }
         });
       }
     }]);

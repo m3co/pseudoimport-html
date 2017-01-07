@@ -19,8 +19,13 @@
      * @param {HTMLElement} element - The element that will be upgraded.
      */
     constructor(element) {
+      var parent = element.parentElement.closest(selClass);
+      this.fetch_ = null;
       this.element_ = element;
-      this.fetched_ = null;
+      this.root_ = parent ? parent.MaterialFragment.root_ : element;
+      this.isRoot_ = parent ? false : true;
+      this.resolvers_ = [];
+
       this.init();
     }
 
@@ -31,14 +36,19 @@
     init() {
       var src = preparePath(this.element_.getAttribute('src'),
                             this.element_.dataset.baseURI);
-      this.fetched_ = fetch_(this.element_, src).then((element) => {
+      this.fetch_ = fetch_(this.element_, src).then((element) => {
         delete element.dataset.baseURI;
-        var promises = [];
         var fragments = element.querySelectorAll(selClass);
+        var promises = [];
         for (let i = 0; i < fragments.length; i++) {
-          promises.push(fragments[i].MaterialFragment.fetched_);
+          promises.push(fragments[i].MaterialFragment.fetch_);
         }
-        Promise.all(promises).then(resolve.bind(null, element));
+        this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+        return Promise.all(promises);
+      }).then(() => {
+        if (this.isRoot_) {
+          this.resolvers_.forEach((resolver) => { resolver(); });
+        }
       });
     }
   }

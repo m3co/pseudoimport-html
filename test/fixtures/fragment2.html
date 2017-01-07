@@ -1,20 +1,3 @@
 <!doctype html>
 <div id="fragment2">Fragment 2</div>
-<script>
-(() => {
-  'use strict';
-  var fragment = document.currentScript.nextElementSibling;
-  fragment.addEventListener('load', async2.step_func((e) => {
-    var fragment1_ = fragment.querySelector('#fragment1');
-
-    assert_true(fragment1_ instanceof HTMLElement);
-    assert_equals(fragment1_.textContent, 'Fragment 1');
-    assert_equals(e.detail.fragment, fragment);
-
-    // [teardown]
-    fragment.parentNode.remove();
-    async2.done();
-  }));
-})();
-</script>
 <div class="mdl-fragment" src="/test/fixtures/fragment1.html"></div>
