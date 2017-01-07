@@ -93,11 +93,13 @@
       var content = fragment.querySelector(selClassContent);
       content ? content.appendChild(createHTML(text)) :
                 fragment.appendChild(createHTML(text));
-      var fragments = fragment.querySelectorAll(selClass);
-      for (let i = 0; i < fragments.length; i++) {
-        fragments[i].dataset.baseURI = basedir(src);
-        componentHandler.upgradeElement(fragments[i]);
-      }
+      Array.prototype
+           .slice
+           .call(fragment.querySelectorAll(selClass))
+           .forEach(fragment => {
+             fragment.dataset.baseURI = basedir(src);
+             componentHandler.upgradeElement(fragment);
+           });
       return fragment;
     });
   }

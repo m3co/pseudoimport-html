@@ -111,11 +111,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }).then(function (text) {
       var content = fragment.querySelector(selClassContent);
       content ? content.appendChild(createHTML(text)) : fragment.appendChild(createHTML(text));
-      var fragments = fragment.querySelectorAll(selClass);
-      for (var i = 0; i < fragments.length; i++) {
-        fragments[i].dataset.baseURI = basedir(src);
-        componentHandler.upgradeElement(fragments[i]);
-      }
+      Array.prototype.slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
+        fragment.dataset.baseURI = basedir(src);
+        componentHandler.upgradeElement(fragment);
+      });
       return fragment;
     });
   }
