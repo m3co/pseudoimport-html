@@ -248,4 +248,19 @@ onload_test(function(e) {
   componentHandler.upgradeElement(fragment);
 }, "Import from src='/test/fixtures/fragment11.html' absolute path, custom insertion");
 
+/**
+ * Inline scripts should know when fragment(parent) dispatch load event
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment13.html');
+  fragment.classList.add(cssFragment);
+  fragment.currentTest = this;
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Inline scripts should know when fragment(parent) dispatch load event");
+
 })();
