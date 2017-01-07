@@ -30,6 +30,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       _classCallCheck(this, MaterialFragment);
 
       this.element_ = element;
+      this.fetched_ = null;
       this.init();
     }
 
@@ -43,63 +44,67 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: 'init',
       value: function init() {
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
-        this.fetch(this.element_, src).then(function (element) {
+        this.fetched_ = fetch_(this.element_, src).then(function (element) {
           delete element.dataset.baseURI;
-
-          /**
-           * On load the fragment.
-           * All scrips loaded from a fragment are executed asynchronously.
-           *
-           * @event MaterialFragment#load
-           * @type {CustomEvent}
-           * @property {HTMLElement} fragment - The loaded fragment
-           */
-          element.dispatchEvent(new CustomEvent('load', {
-            detail: {
-              fragment: element
-            }
-          }));
+          var promises = [];
+          var fragments = element.querySelectorAll(selClass);
+          for (var i = 0; i < fragments.length; i++) {
+            promises.push(fragments[i].MaterialFragment.fetched_);
+          }
+          Promise.all(promises).then(resolve.bind(null, element));
         });
       }
-
-      /**
-       * Fetch HTML code from src to fragment.
-       *
-       * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
-       * @param {String} src - The URI to fetch
-       * @return {Promise} - The fetch request
-       * @private
-       */
-
-    }, {
-      key: 'fetch',
-      value: function (_fetch) {
-        function fetch(_x, _x2) {
-          return _fetch.apply(this, arguments);
-        }
-
-        fetch.toString = function () {
-          return _fetch.toString();
-        };
-
-        return fetch;
-      }(function (fragment, src) {
-        return fetch(src).then(function (response) {
-          return response.text();
-        }).then(function (text) {
-          fragment.appendChild(createHTML(clean(text)));
-          var fragments = fragment.querySelectorAll(selClass);
-          for (var i = 0; i < fragments.length; i++) {
-            fragments[i].dataset.baseURI = basedir(src);
-            componentHandler.upgradeElement(fragments[i]);
-          }
-          return fragment;
-        });
-      })
     }]);
 
     return MaterialFragment;
   }();
+
+  /**
+   * Resolve, in fact, dispatch load event from an element
+   *
+   * @param {HTMLElement} element - The element that will dispatch the
+   *   load event.
+   * @private
+   */
+
+
+  function resolve(element) {
+    /**
+     * On load the fragment.
+     * All scrips loaded from a fragment will execute asynchronously.
+     *
+     * @event MaterialFragment#load
+     * @type {CustomEvent}
+     * @property {HTMLElement} fragment - The loaded fragment
+     */
+    element.dispatchEvent(new CustomEvent('load', {
+      detail: {
+        fragment: element
+      }
+    }));
+  }
+
+  /**
+   * Fetch HTML code from src to fragment.
+   *
+   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
+   * @param {String} src - The URI to fetch
+   * @return {Promise} - The fetch request
+   * @private
+   */
+  function fetch_(fragment, src) {
+    return fetch(src).then(function (response) {
+      return response.text();
+    }).then(function (text) {
+      fragment.appendChild(createHTML(clean(text)));
+      var fragments = fragment.querySelectorAll(selClass);
+      for (var i = 0; i < fragments.length; i++) {
+        fragments[i].dataset.baseURI = basedir(src);
+        componentHandler.upgradeElement(fragments[i]);
+      }
+      return fragment;
+    });
+  }
 
   /**
    * Clean unnecessary spaces.
@@ -108,8 +113,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @return {String} - Cleaned string
    * @private
    */
-
-
   function clean(str) {
     return str.replace(/\n{1,} {0,}/g, ' ').replace(/> </g, '><').trim();
   }
