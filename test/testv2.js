@@ -3,6 +3,7 @@
 const classAsString = 'MaterialFragment';
 const cssFragment = 'mdl-fragment';
 const selFragment = `.${cssFragment}`;
+const selFragmentContent = `.${cssFragment}__content`;
 
 (() => {
 /**
@@ -215,7 +216,7 @@ onload_test(function(e) {
 }, "Import from src='fixtures/fragment4.html' relative path, nested directory, default insertion");
 
 /**
- * Do a simple import from absolute path
+ * Do an import from absolute path with custom insertion
  */
 onload_test(function(e) {
   // [setup]
@@ -233,7 +234,7 @@ onload_test(function(e) {
     assert_true(fragment2 instanceof HTMLElement);
     assert_equals(fragment2.textContent, 'Fragment 12');
 
-    var fragmentContent = fragment.querySelector('.mdl-fragment__content');
+    var fragmentContent = fragment.querySelector(selFragmentContent);
     assert_true(fragmentContent instanceof HTMLElement);
     assert_equals(fragment2.parentElement, fragmentContent);
 

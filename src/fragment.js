@@ -92,14 +92,14 @@
     }).then((text) => {
       var content = fragment.querySelector(selClassContent);
       content ? content.appendChild(createHTML(text)) :
-                fragment.appendChild(createHTML(text));
+        fragment.appendChild(createHTML(text));  // jshint ignore:line
       Array.prototype
            .slice
            .call(fragment.querySelectorAll(selClass))
            .forEach(fragment => {
-             fragment.dataset.baseURI = basedir(src);
-             componentHandler.upgradeElement(fragment);
-           });
+        fragment.dataset.baseURI = basedir(src);
+        componentHandler.upgradeElement(fragment);
+      });
       return fragment;
     });
   }

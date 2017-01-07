@@ -110,7 +110,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       return response.text();
     }).then(function (text) {
       var content = fragment.querySelector(selClassContent);
-      content ? content.appendChild(createHTML(text)) : fragment.appendChild(createHTML(text));
+      content ? content.appendChild(createHTML(text)) : fragment.appendChild(createHTML(text)); // jshint ignore:line
       Array.prototype.slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
         fragment.dataset.baseURI = basedir(src);
         componentHandler.upgradeElement(fragment);
