@@ -6,6 +6,7 @@
   var classAsString = 'MaterialFragment';
   var cssClass = 'mdl-fragment';
   var selClass = `.${cssClass}`;
+  var selClassContent = `.${cssClass}__content`;
 
   /**
    * Class MaterialFragment
@@ -48,6 +49,7 @@
       }).then(() => {
         if (this.isRoot_) {
           this.resolvers_.forEach((resolver) => { resolver(); });
+          delete this.resolvers_;
         }
       });
     }
@@ -88,7 +90,9 @@
     return fetch(src).then((response) => {
       return response.text();
     }).then((text) => {
-      fragment.appendChild(createHTML(text));
+      var content = fragment.querySelector(selClassContent);
+      content ? content.appendChild(createHTML(text)) :
+                fragment.appendChild(createHTML(text));
       var fragments = fragment.querySelectorAll(selClass);
       for (let i = 0; i < fragments.length; i++) {
         fragments[i].dataset.baseURI = basedir(src);

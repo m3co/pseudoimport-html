@@ -13,6 +13,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var classAsString = 'MaterialFragment';
   var cssClass = 'mdl-fragment';
   var selClass = '.' + cssClass;
+  var selClassContent = '.' + cssClass + '__content';
 
   /**
    * Class MaterialFragment
@@ -62,6 +63,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             _this.resolvers_.forEach(function (resolver) {
               resolver();
             });
+            delete _this.resolvers_;
           }
         });
       }
@@ -107,7 +109,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return fetch(src).then(function (response) {
       return response.text();
     }).then(function (text) {
-      fragment.appendChild(createHTML(text));
+      var content = fragment.querySelector(selClassContent);
+      content ? content.appendChild(createHTML(text)) : fragment.appendChild(createHTML(text));
       var fragments = fragment.querySelectorAll(selClass);
       for (var i = 0; i < fragments.length; i++) {
         fragments[i].dataset.baseURI = basedir(src);
