@@ -53,13 +53,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
         this.fetch_ = fetch_(this.element_, src).then(function (element) {
           delete element.dataset.baseURI;
-          var fragments = element.querySelectorAll(selClass);
-          var promises = [];
-          for (var i = 0; i < fragments.length; i++) {
-            promises.push(fragments[i].MaterialFragment.fetch_);
-          }
           _this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
-          return Promise.all(promises);
+          return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
+            return fragment.MaterialFragment.fetch_;
+          }));
         }).then(function () {
           if (_this.isRoot_) {
             _this.resolvers_.forEach(function (resolver) {

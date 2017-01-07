@@ -38,13 +38,13 @@
                             this.element_.dataset.baseURI);
       this.fetch_ = fetch_(this.element_, src).then((element) => {
         delete element.dataset.baseURI;
-        var fragments = element.querySelectorAll(selClass);
-        var promises = [];
-        for (let i = 0; i < fragments.length; i++) {
-          promises.push(fragments[i].MaterialFragment.fetch_);
-        }
         this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
-        return Promise.all(promises);
+        return Promise.all(
+          Array.prototype
+               .slice
+               .call(element.querySelectorAll(selClass))
+               .map(fragment => fragment.MaterialFragment.fetch_)
+        );
       }).then(() => {
         if (this.isRoot_) {
           this.resolvers_.forEach((resolver) => { resolver(); });
