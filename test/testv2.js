@@ -214,4 +214,37 @@ onload_test(function(e) {
 
 }, "Import from src='fixtures/fragment4.html' relative path, nested directory, default insertion");
 
+/**
+ * Do a simple import from absolute path
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', '/test/fixtures/fragment11.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func((e) => {
+    // [verify]
+    var fragment1 = fragment.querySelector('#fragment11');
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment1.textContent, 'Fragment 11');
+    assert_equals(e.detail.fragment, fragment);
+
+    var fragment2 = fragment.querySelector('#fragment12');
+    assert_true(fragment2 instanceof HTMLElement);
+    assert_equals(fragment2.textContent, 'Fragment 12');
+
+    var fragmentContent = fragment.querySelector('.mdl-fragment__content');
+    assert_true(fragmentContent instanceof HTMLElement);
+    assert_equals(fragment2.parentElement, fragmentContent);
+
+    // [teardown]
+    fragment.remove();
+    this.done();
+  }));
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Import from src='/test/fixtures/fragment11.html' absolute path, custom insertion");
+
 })();
