@@ -78,7 +78,7 @@
     return fetch(src).then((response) => {
       return response.text();
     }).then((text) => {
-      fragment.appendChild(createHTML(clean(text)));
+      fragment.appendChild(createHTML(text));
       var fragments = fragment.querySelectorAll(selClass);
       for (let i = 0; i < fragments.length; i++) {
         fragments[i].dataset.baseURI = basedir(src);
@@ -86,17 +86,6 @@
       }
       return fragment;
     });
-  }
-
-  /**
-   * Clean unnecessary spaces.
-   *
-   * @param {String} str - String to clean
-   * @return {String} - Cleaned string
-   * @private
-   */
-  function clean(str) {
-    return str.replace(/\n{1,} {0,}/g, ' ').replace(/> </g, '><').trim();
   }
 
   /**
