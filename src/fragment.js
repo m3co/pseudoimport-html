@@ -37,8 +37,7 @@
     init() {
       var src = preparePath(this.element_.getAttribute('src'),
                             this.element_.dataset.baseURI);
-      this.fetch_ = fetch_(this.element_, src).then(() => {
-        var element = this.element_;
+      this.fetch_ = fetch_(this.element_, src).then(element => {
         delete element.dataset.baseURI;
         this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
         return Promise.all(
@@ -117,6 +116,7 @@
           fragment.dataset.baseURI = basedir(src);
           componentHandler.upgradeElement(fragment);
         });
+        return fragment;
       });
     });
   }

@@ -52,8 +52,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var _this = this;
 
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
-        this.fetch_ = fetch_(this.element_, src).then(function () {
-          var element = _this.element_;
+        this.fetch_ = fetch_(this.element_, src).then(function (element) {
           delete element.dataset.baseURI;
           _this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
           return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
@@ -129,6 +128,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           fragment.dataset.baseURI = basedir(src);
           componentHandler.upgradeElement(fragment);
         });
+        return fragment;
       });
     });
   }
