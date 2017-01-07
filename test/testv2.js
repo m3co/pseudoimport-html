@@ -95,18 +95,8 @@ onload_test(function(e) {
     assert_equals(fragment2.textContent, 'Fragment 2');
     assert_equals(e.detail.fragment, fragment);
 
-    fragment1.addEventListener('load', this.step_func((e) => {
-      var fragment1_ = fragment.querySelector('#fragment1');
-
-      assert_true(fragment1_ instanceof HTMLElement);
-      assert_equals(fragment1_.textContent, 'Fragment 1');
-      assert_equals(e.detail.fragment, fragment1);
-
-      // [teardown]
-      fragment.remove();
-      this.done();
-    }));
   }));
+  window.async2 = this; // this is an error
 
   // [run]
   document.body.appendChild(fragment);
@@ -130,19 +120,8 @@ onload_test(function(e) {
     assert_true(fragment1 instanceof HTMLElement);
     assert_equals(fragment3.textContent, 'Fragment 3');
     assert_equals(e.detail.fragment, fragment);
-
-    fragment1.addEventListener('load', this.step_func((e) => {
-      var fragment1_ = fragment.querySelector('#fragment1');
-
-      assert_true(fragment1_ instanceof HTMLElement);
-      assert_equals(fragment1_.textContent, 'Fragment 1');
-      assert_equals(e.detail.fragment, fragment1);
-
-      // [teardown]
-      fragment.remove();
-      this.done();
-    }));
   }));
+  window.async3 = this; // this is an error
 
   // [run]
   document.body.appendChild(fragment);
