@@ -171,34 +171,42 @@ onload_test(function(e) {
     fragment.querySelector('[src="nested/fragment5.html"]')
             .addEventListener('load', (e) => {
       var fragment = e.detail.fragment;
-      console.log(e.detail.fragment);
+      assert_true(fragment.querySelector('[src="nested1/fragment7.html"]') instanceof HTMLElement);
+      assert_true(fragment.querySelector('[src="nested1/fragment8.html"]') instanceof HTMLElement);
       fragment.querySelector('[src="nested1/fragment7.html"]')
               .addEventListener('load', (e) => {
-        console.log(e.detail.fragment);
+        exit();
       });
       fragment.querySelector('[src="nested1/fragment8.html"]')
               .addEventListener('load', (e) => {
-        console.log(e.detail.fragment);
+        exit();
       });
     });
     fragment.querySelector('[src="nested/fragment6.html"]')
             .addEventListener('load', (e) => {
       var fragment = e.detail.fragment;
-      console.log(e.detail.fragment);
+      assert_true(fragment.querySelector('[src="nested1/fragment9.html"]') instanceof HTMLElement);
+      assert_true(fragment.querySelector('[src="nested1/fragment10.html"]') instanceof HTMLElement);
       fragment.querySelector('[src="nested1/fragment9.html"]')
               .addEventListener('load', (e) => {
-        console.log(e.detail.fragment);
+        exit();
       });
       fragment.querySelector('[src="nested1/fragment10.html"]')
               .addEventListener('load', (e) => {
-        console.log(e.detail.fragment);
+        exit();
       });
     });
 
-    // [teardown]
-    fragment.remove();
-    this.done();
   }));
+
+  var counterLeafs = 0;
+  var exit = this.step_func(() => {
+    if (++counterLeafs >= 4) {
+      // [teardown]
+      fragment.remove();
+      this.done();
+    }
+  });
 
   // [run]
   document.body.appendChild(fragment);
