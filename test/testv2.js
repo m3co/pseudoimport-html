@@ -263,4 +263,19 @@ onload_test(function(e) {
   componentHandler.upgradeElement(fragment);
 }, "Inline scripts should know when fragment(parent) dispatch load event");
 
+/**
+ * Async scripts should know when fragment(parent) dispatch load event
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment14.html');
+  fragment.classList.add(cssFragment);
+  fragment.currentTest = this;
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Async scripts should know when fragment(parent) dispatch load event");
+
 })();
