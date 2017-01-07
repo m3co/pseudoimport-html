@@ -1,0 +1,11 @@
+{
+  "preset": "google",
+  "disallowSpacesInAnonymousFunctionExpression": null,
+  "validateLineBreaks": "LF",
+  "validateIndentation": 2,
+  "excludeFiles": ["node_modules/**", "bower_components/**", "demo/**", "test/**", "docs/**"],
+  "maximumLineLength": 130,
+  "validateQuoteMarks": "'",
+  "requireDotNotation": false,
+  "fix": true
+}
