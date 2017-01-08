@@ -2,6 +2,11 @@
 <html>
   <head>
     <title>MDL-Fragment Demo 1</title>
+    <script src="https://cdn.ravenjs.com/3.9.1/raven.min.js"></script>
+    <script>
+      'use strict';
+      Raven.config('https://fa54258dc11647fa901fef0aa3d38006@sentry.io/104730').install();
+    </script>
     <script src="/bower_components/material-design-lite/material.min.js"></script>
     <link rel="stylesheet" href="/bower_components/material-design-lite/material.min.css">
     <script src="/fragment.js"></script>
