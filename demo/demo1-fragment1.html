@@ -3,7 +3,7 @@
 <a href="/docs/tutorial-demo1.html">This fragment is part of Demo 1</a>
 <script>
   'use strict';
-  document.querySelector('#fragment1').addEventListener('load', (e) => {
+  document.querySelector('#fragment1').addEventListener('load', function(e) {
     console.log('fragment loaded detected by inline script');
   });
 </script>
