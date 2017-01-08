@@ -7,7 +7,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 (function () {
   'use strict';
 
-  var range = new Range();
+  var range = document.createRange();
   var createHTML = range.createContextualFragment.bind(range);
 
   var classAsString = 'MaterialFragment';

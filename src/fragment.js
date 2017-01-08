@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-  var range = new Range();
+  var range = document.createRange();
   var createHTML = range.createContextualFragment.bind(range);
 
   var classAsString = 'MaterialFragment';
