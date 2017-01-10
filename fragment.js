@@ -109,12 +109,15 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return fetch(src).then(function (response) {
       return response.text();
     }).then(function (text) {
+      var base = basedir(src);
       var html = createHTML(text);
       var scripts = Array.prototype.slice.call(html.querySelectorAll('script')).map(function (script) {
         return new Promise(function (resolve) {
           if (script.src === '') {
             resolve(script);
           } else {
+            var src = script.getAttribute('src');
+            script.setAttribute('src', src[0] === '/' ? src : base + src);
             script.addEventListener('load', function () {
               resolve(script);
             });
@@ -125,7 +128,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       content ? content.appendChild(html) : fragment.appendChild(html); // jshint ignore:line
       return Promise.all(scripts).then(function () {
         Array.prototype.slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
-          fragment.dataset.baseURI = basedir(src);
+          fragment.dataset.baseURI = base;
           componentHandler.upgradeElement(fragment);
         });
         return fragment;

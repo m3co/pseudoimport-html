@@ -90,6 +90,7 @@
     return fetch(src).then((response) => {
       return response.text();
     }).then((text) => {
+      var base = basedir(src);
       var html = createHTML(text);
       var scripts = Array.prototype
         .slice
@@ -99,6 +100,8 @@
             if (script.src === '') {
               resolve(script);
             } else {
+              var src = script.getAttribute('src');
+              script.setAttribute('src', src[0] === '/' ? src : base + src);
               script.addEventListener('load', () => {
                 resolve(script);
               });
@@ -113,7 +116,7 @@
              .slice
              .call(fragment.querySelectorAll(selClass))
              .forEach(fragment => {
-          fragment.dataset.baseURI = basedir(src);
+          fragment.dataset.baseURI = base;
           componentHandler.upgradeElement(fragment);
         });
         return fragment;
