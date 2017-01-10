@@ -101,7 +101,7 @@
               resolve(script);
             } else {
               var src = script.getAttribute('src');
-              script.setAttribute('src', src[0] === '/' ? src : base + src);
+              script.src = src[0] === '/' ? src : base + src;
               script.addEventListener('load', () => {
                 resolve(script);
               });
