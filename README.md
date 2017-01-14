@@ -43,9 +43,9 @@ While its expected that if a resource has been fetched and parsed successfully t
 
 As intended here, __(1)__ will dispatch load event after all its content and fragments has been fetched and parsed successfully. After __(1)__ has finished, __(2)__ will dispatch load event having all its content and fragments fetched and parsed successfully, and so on...
 
-All the scripts that belong to a fragment will be executed as _async_.
+All scripts that belong to a fragment will be executed as _async_.
 
-The load event is exposed as a _Promise_ too.
+The load event is exposed as a _Promise_ through ```loaded``` property.
 
 ### Relative URIs
 
