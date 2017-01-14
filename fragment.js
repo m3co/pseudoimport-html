@@ -28,6 +28,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
      * @param {HTMLElement} element - The element that will be upgraded.
      */
     function MaterialFragment(element) {
+      var _this = this;
+
       _classCallCheck(this, MaterialFragment);
 
       var parent = element.parentElement.closest(selClass);
@@ -37,6 +39,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.isRoot_ = parent ? false : true;
       this.resolvers_ = [];
 
+      /**
+       * Load promise
+       *
+       */
+      this.load = new Promise(function (resolve) {
+        _this.resolve_ = resolve;
+      });
       this.init();
     }
 
@@ -49,21 +58,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     _createClass(MaterialFragment, [{
       key: 'init',
       value: function init() {
-        var _this = this;
+        var _this2 = this;
 
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
         this.fetch_ = fetch_(this.element_, src).then(function (element) {
           delete element.dataset.baseURI;
-          _this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+          _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
           return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
             return fragment.MaterialFragment.fetch_;
           }));
         }).then(function () {
-          if (_this.isRoot_) {
-            _this.resolvers_.forEach(function (resolver) {
+          if (_this2.isRoot_) {
+            _this2.resolvers_.forEach(function (resolver) {
               resolver();
             });
-            delete _this.resolvers_;
+            delete _this2.resolvers_;
+            delete _this2.resolve_;
+            delete _this2.fetch_;
+            delete _this2.isRoot_;
           }
         });
       }
@@ -95,6 +107,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         fragment: element
       }
     }));
+    element.MaterialFragment.resolve_(element);
   }
 
   /**

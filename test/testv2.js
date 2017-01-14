@@ -25,6 +25,7 @@ onload_test(function(e) {
   var fragment = document.querySelector(selFragment).MaterialFragment;
 
   assert_true(fragment instanceof MaterialFragment);
+  assert_true(fragment.load instanceof Promise);
 
   document.querySelector(selFragment).remove();
   this.done();
@@ -294,3 +295,28 @@ onload_test(function(e) {
 }, "Async scripts should load from a relative url");
 
 })();
+
+
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', '/test/fixtures/fragment1.html');
+  fragment.classList.add(cssFragment);
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+
+  fragment.MaterialFragment.load.then(this.step_func((fragment_) => {
+    // [verify]
+    var fragment1 = fragment.querySelector('#fragment1');
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment1.textContent, 'Fragment 1');
+    assert_equals(fragment_, fragment);
+
+    // [teardown]
+    fragment.remove();
+    console.dir(fragment.MaterialFragment);
+    this.done();
+  }));
+}, "Load event is a promise too");

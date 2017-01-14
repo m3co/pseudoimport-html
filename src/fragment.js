@@ -27,6 +27,13 @@
       this.isRoot_ = parent ? false : true;
       this.resolvers_ = [];
 
+      /**
+       * Load promise
+       *
+       */
+      this.load = new Promise((resolve) => {
+        this.resolve_ = resolve;
+      });
       this.init();
     }
 
@@ -50,6 +57,9 @@
         if (this.isRoot_) {
           this.resolvers_.forEach((resolver) => { resolver(); });
           delete this.resolvers_;
+          delete this.resolve_;
+          delete this.fetch_;
+          delete this.isRoot_;
         }
       });
     }
@@ -76,6 +86,7 @@
         fragment: element
       }
     }));
+    element.MaterialFragment.resolve_(element);
   }
 
   /**
