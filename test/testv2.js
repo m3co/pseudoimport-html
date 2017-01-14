@@ -296,7 +296,9 @@ onload_test(function(e) {
 
 })();
 
-
+/**
+ * Load event is a promise too
+ */
 onload_test(function(e) {
   // [setup]
   var fragment = document.createElement('div');
@@ -323,3 +325,39 @@ onload_test(function(e) {
     }));
   }, 100);
 }, "Load event is a promise too");
+
+/**
+ * Load event is a promise too in nested fragments
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment17.html');
+  fragment.classList.add(cssFragment);
+  fragment._index = 0;
+  var _index = 0;
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+
+  fragment.MaterialFragment.load.then(this.step_func((fragment_) => {
+    _index++;
+
+    fragment_.querySelector('.mdl-fragment').MaterialFragment.load.then(this.step_func((fragment_) => {
+      _index++;
+      assert_equals(fragment._index, 3);
+
+      fragment_.querySelector('.mdl-fragment').MaterialFragment.load.then(this.step_func((fragment_) => {
+        _index++;
+        assert_equals(fragment._index, 3);
+        assert_equals(_index, 3);
+
+        // [teardown]
+        fragment.remove();
+        this.done();
+      }));
+    }));
+    assert_equals(fragment_, fragment);
+  }));
+}, "Load event is a promise too in nested fragments");
