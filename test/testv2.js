@@ -313,10 +313,13 @@ onload_test(function(e) {
     assert_true(fragment1 instanceof HTMLElement);
     assert_equals(fragment1.textContent, 'Fragment 1');
     assert_equals(fragment_, fragment);
-
-    // [teardown]
-    fragment.remove();
-    console.dir(fragment.MaterialFragment);
-    this.done();
   }));
+
+  this.step_timeout(() => {
+    fragment.MaterialFragment.load.then(this.step_func((fragment_) => {
+      // [teardown]
+      fragment.remove();
+      this.done();
+    }));
+  }, 100);
 }, "Load event is a promise too");
