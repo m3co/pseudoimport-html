@@ -31,7 +31,7 @@
        * Load promise
        *
        */
-      this.load = new Promise((resolve) => {
+      this.loaded = new Promise((resolve) => {
         this.resolve_ = resolve;
       });
       this.init();

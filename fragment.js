@@ -43,7 +43,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * Load promise
        *
        */
-      this.load = new Promise(function (resolve) {
+      this.loaded = new Promise(function (resolve) {
         _this.resolve_ = resolve;
       });
       this.init();

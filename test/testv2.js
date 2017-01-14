@@ -25,7 +25,7 @@ onload_test(function(e) {
   var fragment = document.querySelector(selFragment).MaterialFragment;
 
   assert_true(fragment instanceof MaterialFragment);
-  assert_true(fragment.load instanceof Promise);
+  assert_true(fragment.loaded instanceof Promise);
 
   document.querySelector(selFragment).remove();
   this.done();
@@ -309,7 +309,7 @@ onload_test(function(e) {
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 
-  fragment.MaterialFragment.load.then(this.step_func((fragment_) => {
+  fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
     // [verify]
     var fragment1 = fragment.querySelector('#fragment1');
     assert_true(fragment1 instanceof HTMLElement);
@@ -318,7 +318,7 @@ onload_test(function(e) {
   }));
 
   this.step_timeout(() => {
-    fragment.MaterialFragment.load.then(this.step_func((fragment_) => {
+    fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
       // [teardown]
       fragment.remove();
       this.done();
@@ -341,14 +341,14 @@ onload_test(function(e) {
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 
-  fragment.MaterialFragment.load.then(this.step_func((fragment_) => {
+  fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
     _index++;
 
-    fragment_.querySelector('.mdl-fragment').MaterialFragment.load.then(this.step_func((fragment_) => {
+    fragment_.querySelector('.mdl-fragment').MaterialFragment.loaded.then(this.step_func((fragment_) => {
       _index++;
       assert_equals(fragment._index, 3);
 
-      fragment_.querySelector('.mdl-fragment').MaterialFragment.load.then(this.step_func((fragment_) => {
+      fragment_.querySelector('.mdl-fragment').MaterialFragment.loaded.then(this.step_func((fragment_) => {
         _index++;
         assert_equals(fragment._index, 3);
         assert_equals(_index, 3);
