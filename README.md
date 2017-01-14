@@ -43,6 +43,10 @@ While its expected that if a resource has been fetched and parsed successfully t
 
 As intended here, __(1)__ will dispatch load event after all its content and fragments has been fetched and parsed successfully. After __(1)__ has finished, __(2)__ will dispatch load event having all its content and fragments fetched and parsed successfully, and so on...
 
+All the scripts that belong to a fragment will be executed as _async_.
+
+The load event is exposed as a _Promise_ too.
+
 ### Relative URIs
 
 The resolution of relative URI is implemented by using a [baseURI](https://github.com/m3co/pseudoimport-html/blob/master/src/fragment.js#L119) attribute that is assigned while fetching. Once the content has been fetched and parsed successfully, then this attribute is [deleted](https://github.com/m3co/pseudoimport-html/blob/master/src/fragment.js#L41).
