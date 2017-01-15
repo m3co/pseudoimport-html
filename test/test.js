@@ -1,68 +1,363 @@
-;(_ => {
-  'use strict';
-  var tagImport = 'pseudoimport-html';
-  var el = document.querySelector(`${tagImport}[first]`);
-  var el2 = document.querySelector(`${tagImport}[second]`);
-  var el3 = document.querySelector(`${tagImport}[third]`);
+'use strict';
 
-  var async1 = async_test('Check if content was fetched correctly');
-  var async2 = async_test('Check if content executes an script');
-  var async3 = async_test('Check if nested content was fetched correctly');
-  var async4 = async_test('Check if nested-nested content was fetched correctly');
-  var async11 = async_test('Check if second content was fetched correctly');
-  var async5 = async_test('Check if run return a promise after fetching all tags');
-  var async6 = async_test('Check the flexibility of pseudoimport-html-src');
+const classAsString = 'MaterialFragment';
+const cssFragment = 'mdl-fragment';
+const selFragment = `.${cssFragment}`;
+const selFragmentContent = `.${cssFragment}__content`;
 
-  window.addEventListener('load', async5.step_func(e => {
-    var run = window.PseudoimportHTML.run();
-    assert_true(run.then instanceof Function);
+(() => {
+/**
+ * Do not move this test to any other place and
+ * from the index.html
+ */
+onload_test(function(e) {
+  var fragment = document.querySelector(selFragment);
 
-    run.then(async5.step_func(elements => {
-      assert_equals(elements.length, document.querySelectorAll(tagImport).length);
-      async5.done();
+  assert_true(fragment.dataset.upgraded.includes(classAsString));
+  this.done();
+}, "MDL upgrades the component from the Body");
+
+/**
+ * Do not move this test to any other place and
+ * from the index.html
+ */
+onload_test(function(e) {
+  var fragment = document.querySelector(selFragment).MaterialFragment;
+
+  assert_true(fragment instanceof MaterialFragment);
+  assert_true(fragment.loaded instanceof Promise);
+
+  document.querySelector(selFragment).remove();
+  this.done();
+}, "Check the API");
+
+/**
+ * Do a simple import from absolute path
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', '/test/fixtures/fragment1.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func((e) => {
+    // [verify]
+    var fragment1 = fragment.querySelector('#fragment1');
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment1.textContent, 'Fragment 1');
+    assert_equals(e.detail.fragment, fragment);
+
+    // [teardown]
+    fragment.remove();
+    this.done();
+  }));
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Import from src='/test/fixtures/fragment1.html' absolute path, default insertion");
+
+/**
+ * Do a simple import from relative path
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment1.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func(() => {
+    // [verify]
+    var fragment1 = fragment.querySelector('#fragment1');
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment1.textContent, 'Fragment 1');
+
+    // [teardown]
+    fragment.remove();
+    this.done();
+  }));
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Import from src='/test/fixtures/fragment1.html' relative path, default insertion");
+
+/**
+ * Do a nested import from absolute path
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', '/test/fixtures/fragment2.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func((e) => {
+    // [verify]
+    var fragment1 = fragment.querySelector(selFragment);
+    var fragment2 = fragment.querySelector('#fragment2');
+    assert_true(fragment2 instanceof HTMLElement);
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment2.textContent, 'Fragment 2');
+    assert_equals(e.detail.fragment, fragment);
+
+    fragment1.addEventListener('load', this.step_func((e) => {
+      var fragment1_ = fragment.querySelector('#fragment1');
+
+      assert_true(fragment1_ instanceof HTMLElement);
+      assert_equals(fragment1_.textContent, 'Fragment 1');
+      assert_equals(e.detail.fragment, fragment1);
+
+      // [teardown]
+      fragment.remove();
+      this.done();
     }));
   }));
 
-  el2.addEventListener('load', async11.step_func(e => {
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Import from src='/test/fixtures/fragment2.html' absolute path, nested, default insertion");
 
-    assert_true(e.detail.element.innerHTML.includes('iwhrgiuwhr3743n4398y2u3i2398h2on33oig434'));
-    async11.done();
-  }));
+/**
+ * Do a nested import from relative path
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment3.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func((e) => {
+    // [verify]
+    var fragment1 = fragment.querySelector(selFragment);
+    var fragment3 = fragment.querySelector('#fragment3');
 
-  el.addEventListener('load', async1.step_func(e => {
+    assert_true(fragment3 instanceof HTMLElement);
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment3.textContent, 'Fragment 3');
+    assert_equals(e.detail.fragment, fragment);
 
-    var el = e.detail.element.querySelector(tagImport);
-    el.addEventListener('load', async3.step_func(e => {
+    fragment1.addEventListener('load', this.step_func((e) => {
+      var fragment1_ = fragment.querySelector('#fragment1');
 
-      var el = e.detail.element.querySelector(tagImport);
-      el.addEventListener('load', async4.step_func(e => {
+      assert_true(fragment1_ instanceof HTMLElement);
+      assert_equals(fragment1_.textContent, 'Fragment 1');
+      assert_equals(e.detail.fragment, fragment1);
 
-        assert_true(e.detail.element.innerHTML.includes('jewnrgi83y4iu34ngo9834l2k3nlw98y34988y34iu34hij34h478'));
-        async4.done();
-      }));
-
-      assert_true(e.detail.element.innerHTML.includes('kjnsfvik34h8374hkjwdnv2ui38238oy19hqfwonegowui44h824'));
-      async3.done();
+      // [teardown]
+      fragment.remove();
+      this.done();
     }));
-
-    assert_true(e.detail.element.innerHTML.includes('398v2whwu024jnkjw209j2ijlkwmdlkwm029434j'));
-    async1.done();
   }));
 
-  el3.addEventListener('load', async6.step_func(e => {
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Import from src='fixtures/fragment3.html' relative path, nested, default insertion");
 
-    assert_equals(el3.childNodes.length, 7);
-    assert_true(el3.childNodes[1] instanceof HTMLDivElement);
-    assert_equals(el3.childNodes[1].id, 'div1');
+/**
+ * Do nested import following FIFO event calling
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment4.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func((e) => {
+    // [verify]
+    var fragment = e.detail.fragment;
+    assert_true(fragment.querySelector('[src="nested/fragment5.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested/fragment6.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested1/fragment7.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested1/fragment8.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested1/fragment9.html"]') instanceof HTMLElement);
+    assert_true(fragment.querySelector('[src="nested1/fragment10.html"]') instanceof HTMLElement);
 
-    assert_equals(el3.childNodes[3].localName, 'pseudoimport-html-src');
-    assert_true(el3.childNodes[3].innerHTML.includes('234it3i4uh24kln23o8t23tjkn221323'));
+    // [setup]
+    fragment.querySelector('[src="nested/fragment5.html"]')
+            .addEventListener('load', (e) => {
+      var fragment = e.detail.fragment;
+      assert_true(fragment.querySelector('[src="nested1/fragment7.html"]') instanceof HTMLElement);
+      assert_true(fragment.querySelector('[src="nested1/fragment8.html"]') instanceof HTMLElement);
+      fragment.querySelector('[src="nested1/fragment7.html"]')
+              .addEventListener('load', (e) => {
+        exit();
+      });
+      fragment.querySelector('[src="nested1/fragment8.html"]')
+              .addEventListener('load', (e) => {
+        exit();
+      });
+    });
+    fragment.querySelector('[src="nested/fragment6.html"]')
+            .addEventListener('load', (e) => {
+      var fragment = e.detail.fragment;
+      assert_true(fragment.querySelector('[src="nested1/fragment9.html"]') instanceof HTMLElement);
+      assert_true(fragment.querySelector('[src="nested1/fragment10.html"]') instanceof HTMLElement);
+      fragment.querySelector('[src="nested1/fragment9.html"]')
+              .addEventListener('load', (e) => {
+        exit();
+      });
+      fragment.querySelector('[src="nested1/fragment10.html"]')
+              .addEventListener('load', (e) => {
+        exit();
+      });
+    });
 
-    assert_true(el3.childNodes[5] instanceof HTMLDivElement);
-    assert_equals(el3.childNodes[5].id, 'div2');
-
-    async6.done();
   }));
 
-  window.async2 = async2;
+  var counterLeafs = 0;
+  var exit = this.step_func(() => {
+    if (++counterLeafs >= 4) {
+      // [teardown]
+      fragment.remove();
+      this.done();
+    }
+  });
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+
+}, "Import from src='fixtures/fragment4.html' relative path, nested directory, default insertion");
+
+/**
+ * Do an import from absolute path with custom insertion
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', '/test/fixtures/fragment11.html');
+  fragment.classList.add(cssFragment);
+  fragment.addEventListener('load', this.step_func((e) => {
+    // [verify]
+    var fragment1 = fragment.querySelector('#fragment11');
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment1.textContent, 'Fragment 11');
+    assert_equals(e.detail.fragment, fragment);
+
+    var fragment2 = fragment.querySelector('#fragment12');
+    assert_true(fragment2 instanceof HTMLElement);
+    assert_equals(fragment2.textContent, 'Fragment 12');
+
+    var fragmentContent = fragment.querySelector(selFragmentContent);
+    assert_true(fragmentContent instanceof HTMLElement);
+    assert_equals(fragment2.parentElement, fragmentContent);
+
+    // [teardown]
+    fragment.remove();
+    this.done();
+  }));
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Import from src='/test/fixtures/fragment11.html' absolute path, custom insertion");
+
+/**
+ * Inline scripts should know when fragment(parent) dispatch load event
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment13.html');
+  fragment.classList.add(cssFragment);
+  fragment.currentTest = this;
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Inline scripts should know when fragment(parent) dispatch load event");
+
+/**
+ * Async scripts should know when fragment(parent) dispatch load event
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment14.html');
+  fragment.classList.add(cssFragment);
+  fragment.currentTest = this;
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Async scripts should know when fragment(parent) dispatch load event");
+
+/**
+ * Async scripts should load from a relative url
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment15.html');
+  fragment.classList.add(cssFragment);
+  fragment.currentTest = this;
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+}, "Async scripts should load from a relative url");
+
 })();
+
+/**
+ * Load event is a promise too
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', '/test/fixtures/fragment1.html');
+  fragment.classList.add(cssFragment);
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+
+  fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
+    // [verify]
+    var fragment1 = fragment.querySelector('#fragment1');
+    assert_true(fragment1 instanceof HTMLElement);
+    assert_equals(fragment1.textContent, 'Fragment 1');
+    assert_equals(fragment_, fragment);
+  }));
+
+  this.step_timeout(() => {
+    fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
+      // [teardown]
+      fragment.remove();
+      this.done();
+    }));
+  }, 100);
+}, "Load event is a promise too");
+
+/**
+ * Load event is a promise too in nested fragments
+ */
+onload_test(function(e) {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment17.html');
+  fragment.classList.add(cssFragment);
+  fragment._index = 0;
+  var _index = 0;
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+
+  fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
+    _index++;
+
+    fragment_.querySelector('.mdl-fragment').MaterialFragment.loaded.then(this.step_func((fragment_) => {
+      _index++;
+      assert_equals(fragment._index, 3);
+
+      fragment_.querySelector('.mdl-fragment').MaterialFragment.loaded.then(this.step_func((fragment_) => {
+        _index++;
+        assert_equals(fragment._index, 3);
+        assert_equals(_index, 3);
+
+        // [teardown]
+        fragment.remove();
+        this.done();
+      }));
+    }));
+    assert_equals(fragment_, fragment);
+  }));
+}, "Load event is a promise too in nested fragments");
