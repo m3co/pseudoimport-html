@@ -6,7 +6,6 @@
   var classAsString = 'MaterialFragment';
   var cssClass = 'mdl-fragment';
   var selClass = `.${cssClass}`;
-  var selClassContent = `.${cssClass}__content`;
 
   /**
    * Class MaterialFragment
@@ -119,9 +118,7 @@
             }
           });
         });
-      var content = fragment.querySelector(selClassContent);
-      content ? content.appendChild(html) :
-        fragment.appendChild(html);  // jshint ignore:line
+      fragment.appendChild(html);
       return Promise.all(scripts).then(() => {
         Array.prototype
              .slice
