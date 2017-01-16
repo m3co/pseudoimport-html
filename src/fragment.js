@@ -1,11 +1,11 @@
 (() => {
   'use strict';
-  var range = document.createRange();
-  var createHTML = range.createContextualFragment.bind(range);
+  const range = document.createRange();
+  const createHTML = range.createContextualFragment.bind(range);
 
-  var classAsString = 'MaterialFragment';
-  var cssClass = 'mdl-fragment';
-  var selClass = `.${cssClass}`;
+  const classAsString = 'MaterialFragment';
+  const cssClass = 'mdl-fragment';
+  const selClass = `.${cssClass}`;
 
   /**
    * Class MaterialFragment
