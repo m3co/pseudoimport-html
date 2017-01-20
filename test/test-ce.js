@@ -69,12 +69,11 @@ onload_test(function(e) {
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement('div');
-  fragment.setAttribute('src', '/test/fixtures/fragment2.html');
-  fragment.classList.add(cssFragment);
+  var fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', '/test/fixtures/ce-fragment2.html');
   fragment.addEventListener('load', this.step_func((e) => {
     // [verify]
-    var fragment1 = fragment.querySelector(selFragment);
+    var fragment1 = fragment.querySelector(nameElement);
     var fragment2 = fragment.querySelector('#fragment2');
     assert_true(fragment2 instanceof HTMLElement);
     assert_true(fragment1 instanceof HTMLElement);
@@ -96,8 +95,7 @@ onload_test(function(e) {
 
   // [run]
   document.body.appendChild(fragment);
-  componentHandler.upgradeElement(fragment);
-}, "Import from src='/test/fixtures/fragment2.html' absolute path, nested, default insertion");
+}, "Import from src='/test/fixtures/ce-fragment2.html' absolute path, nested, default insertion");
 
 /**
  * Do a nested import from relative path
