@@ -5,7 +5,7 @@
 
   const classAsString = 'HTMLXFragmentElement';
   const cssClass = 'x-fragment-element';
-  const selClass = `.${cssClass}`;
+  const selClass = 'x-fragment';
 
   /**
    * Class HTMLXFragmentElement
@@ -15,15 +15,10 @@
     /**
      * Constructor
      *
-     * @param {HTMLElement} element - The element that will be upgraded.
      */
-    constructor(/*element*/) {
+    constructor() {
       super();
-      var parent = this.parentElement.closest(selClass);
-
-      this.root_ = parent ? parent.MaterialFragment.root_ : this;
       this.fetch_ = null;
-      this.isRoot_ = parent ? false : true;
       this.resolvers_ = [];
 
       /**
@@ -33,24 +28,27 @@
       this.loaded = new Promise((resolve) => {
         this.resolve_ = resolve;
       });
-      this.init();
     }
 
     /**
      * Initialize element.
      *
      */
-    init() {
-      var src = preparePath(this.element_.getAttribute('src'),
-                            this.element_.dataset.baseURI);
-      this.fetch_ = fetch_(this.element_, src).then(element => {
+    connectedCallback() {
+      var parent = this.parentElement.closest(selClass);
+      this.root_ = parent ? parent.root_ : this;
+      this.isRoot_ = parent ? false : true;
+
+      var src = preparePath(this.getAttribute('src'),
+                            this.dataset.baseURI);
+      this.fetch_ = fetch_(this, src).then(element => {
         delete element.dataset.baseURI;
-        this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+        this.root_.resolvers_.push(resolve.bind(this, element));
         return Promise.all(
           Array.prototype
                .slice
                .call(element.querySelectorAll(selClass))
-               .map(fragment => fragment.MaterialFragment.fetch_)
+               .map(fragment => fragment.fetch_)
         );
       }).then(() => {
         if (this.isRoot_) {
@@ -85,7 +83,7 @@
         fragment: element
       }
     }));
-    element.MaterialFragment.resolve_(element);
+    element.resolve_(element);
   }
 
   /**
@@ -125,7 +123,6 @@
              .call(fragment.querySelectorAll(selClass))
              .forEach(fragment => {
           fragment.dataset.baseURI = base;
-          componentHandler.upgradeElement(fragment);
         });
         return fragment;
       });

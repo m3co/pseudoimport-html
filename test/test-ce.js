@@ -2,6 +2,7 @@
 
 const cssFragment = 'x-fragment-element';
 const selFragment = `.${cssFragment}`;
+const nameElement = 'x-fragment';
 
 (() => {
 /**
@@ -23,9 +24,8 @@ onload_test(function(e) {
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement('div');
+  var fragment = document.createElement(nameElement);
   fragment.setAttribute('src', '/test/fixtures/fragment1.html');
-  fragment.classList.add(cssFragment);
   fragment.addEventListener('load', this.step_func((e) => {
     // [verify]
     var fragment1 = fragment.querySelector('#fragment1');
@@ -40,17 +40,15 @@ onload_test(function(e) {
 
   // [run]
   document.body.appendChild(fragment);
-  componentHandler.upgradeElement(fragment);
-}, "Import from src='/test/fixtures/fragment1.html' absolute path, default insertion");
+}, "Import from src='/test/fixtures/ce-fragment1.html' absolute path, default insertion");
 
 /**
  * Do a simple import from relative path
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement('div');
+  var fragment = document.createElement(nameElement);
   fragment.setAttribute('src', 'fixtures/fragment1.html');
-  fragment.classList.add(cssFragment);
   fragment.addEventListener('load', this.step_func(() => {
     // [verify]
     var fragment1 = fragment.querySelector('#fragment1');
@@ -64,8 +62,7 @@ onload_test(function(e) {
 
   // [run]
   document.body.appendChild(fragment);
-  componentHandler.upgradeElement(fragment);
-}, "Import from src='/test/fixtures/fragment1.html' relative path, default insertion");
+}, "Import from src='/test/fixtures/ce-fragment1.html' relative path, default insertion");
 
 /**
  * Do a nested import from absolute path

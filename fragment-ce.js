@@ -16,7 +16,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
   var classAsString = 'HTMLXFragmentElement';
   var cssClass = 'x-fragment-element';
-  var selClass = '.' + cssClass;
+  var selClass = 'x-fragment';
 
   /**
    * Class HTMLXFragmentElement
@@ -28,18 +28,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     /**
      * Constructor
      *
-     * @param {HTMLElement} element - The element that will be upgraded.
      */
-    function HTMLXFragmentElement() /*element*/{
+    function HTMLXFragmentElement() {
       _classCallCheck(this, HTMLXFragmentElement);
 
       var _this = _possibleConstructorReturn(this, (HTMLXFragmentElement.__proto__ || Object.getPrototypeOf(HTMLXFragmentElement)).call(this));
 
-      var parent = _this.parentElement.closest(selClass);
-
-      _this.root_ = parent ? parent.MaterialFragment.root_ : _this;
       _this.fetch_ = null;
-      _this.isRoot_ = parent ? false : true;
       _this.resolvers_ = [];
 
       /**
@@ -49,7 +44,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       _this.loaded = new Promise(function (resolve) {
         _this.resolve_ = resolve;
       });
-      _this.init();
       return _this;
     }
 
@@ -60,16 +54,20 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 
     _createClass(HTMLXFragmentElement, [{
-      key: 'init',
-      value: function init() {
+      key: 'connectedCallback',
+      value: function connectedCallback() {
         var _this2 = this;
 
-        var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
-        this.fetch_ = fetch_(this.element_, src).then(function (element) {
+        var parent = this.parentElement.closest(selClass);
+        this.root_ = parent ? parent.root_ : this;
+        this.isRoot_ = parent ? false : true;
+
+        var src = preparePath(this.getAttribute('src'), this.dataset.baseURI);
+        this.fetch_ = fetch_(this, src).then(function (element) {
           delete element.dataset.baseURI;
-          _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+          _this2.root_.resolvers_.push(resolve.bind(_this2, element));
           return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
-            return fragment.MaterialFragment.fetch_;
+            return fragment.fetch_;
           }));
         }).then(function () {
           if (_this2.isRoot_) {
@@ -111,7 +109,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         fragment: element
       }
     }));
-    element.MaterialFragment.resolve_(element);
+    element.resolve_(element);
   }
 
   /**
@@ -145,7 +143,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       return Promise.all(scripts).then(function () {
         Array.prototype.slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
           fragment.dataset.baseURI = base;
-          componentHandler.upgradeElement(fragment);
         });
         return fragment;
       });
