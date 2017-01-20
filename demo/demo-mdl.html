@@ -13,33 +13,33 @@
     <script src="/bower_components/fetch/fetch.js"></script>
     <script src="/bower_components/material-design-lite/material.min.js"></script>
     <link rel="stylesheet" href="/bower_components/material-design-lite/material.min.css">
-    <script src="/fragment.js"></script>
+    <script src="/fragment-mdl.js"></script>
   </head>
   <body>
     <div>In order to import an <strong>HTML document</strong> from an URI, use the class <i>.mdl-fragment</i> in conjunction with <i>src</i> attribute.</div><br>
-    <i>demo1.html</i>
+    <i>demo-mdl.html</i>
     <pre><code class="html">
-&lt;div id="fragment1"
-     src="/trunk/demo1-fragment1.html"
+&lt;div id="fragment-mdl"
+     src="/trunk/demo-mdl-fragment.html"
      class="mdl-fragment"&gt;
 &lt;/div&gt;
     </code></pre>
-    <i>demo1-fragment1.html</i>
+    <i>demo-mdl-fragment.html</i>
     <pre><code class="html">
 &lt;!doctype html&gt;
 &lt;div&gt;Fragment 1&lt;/div&gt;
 &lt;script&gt;
   'use strict';
-  document.querySelector('#fragment1').addEventListener('load', function (e) {
+  document.querySelector('#fragment-mdl').addEventListener('load', function (e) {
     console.log('fragment loaded detected by inline script');
   });
 &lt;/script&gt;
-&lt;script src="/demo/demo1-fragment1.js"&gt;&lt;/script&gt;
+&lt;script src="/demo/demo-mdl-fragment.js"&gt;&lt;/script&gt;
     </code></pre>
-    <i>demo1-fragment1.js</i>
+    <i>demo-mdl-fragment.js</i>
     <pre><code class="javascript">
 'use strict';
-document.querySelector('#fragment1').addEventListener('load', function (e) {
+document.querySelector('#fragment-mdl').addEventListener('load', function (e) {
   console.log('fragment loaded detected by script');
 });
     </code></pre>
@@ -53,11 +53,11 @@ document.querySelector('#fragment1').addEventListener('load', function (e) {
     <div><i>The expected result of this import is</i></div>
     <img src="https://puu.sh/thXWu/280c743555.png"><br><br><br>
     <div><i>The actual result of this import is</i></div><br>
-    <div src="/trunk/demo1-fragment1.html" class="mdl-fragment" id="fragment1"></div><br>
+    <div src="/trunk/demo-mdl-fragment.html" class="mdl-fragment" id="fragment-mdl"></div><br>
     <div><i>and Console in Chrome will show</i></div>
     <pre><code>
 fragment loaded detected by inline script       VM1410:4
-fragment loaded detected by script  demo1-fragment1.js:3
+fragment loaded detected by script  demo-mdl-fragment.js:3
     </code></pre>
   </body>
 </html>
