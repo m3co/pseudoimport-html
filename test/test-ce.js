@@ -243,8 +243,6 @@ onload_test(function(e) {
   componentHandler.upgradeElement(fragment);
 }, "Async scripts should load from a relative url");
 
-})();
-
 /**
  * Load event is a promise too
  */
@@ -308,3 +306,5 @@ onload_test(function(e) {
     assert_equals(fragment_, fragment);
   }));
 }, "Load event is a promise too in nested fragments");
+
+})();
