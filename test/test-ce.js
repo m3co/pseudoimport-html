@@ -250,15 +250,13 @@ onload_test(function(e) {
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement('div');
-  fragment.setAttribute('src', '/test/fixtures/fragment1.html');
-  fragment.classList.add(cssFragment);
+  var fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', '/test/fixtures/ce-fragment1.html');
 
   // [run]
   document.body.appendChild(fragment);
-  componentHandler.upgradeElement(fragment);
 
-  fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
+  fragment.loaded.then(this.step_func((fragment_) => {
     // [verify]
     var fragment1 = fragment.querySelector('#fragment1');
     assert_true(fragment1 instanceof HTMLElement);
@@ -267,7 +265,7 @@ onload_test(function(e) {
   }));
 
   this.step_timeout(() => {
-    fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
+    fragment.loaded.then(this.step_func((fragment_) => {
       // [teardown]
       fragment.remove();
       this.done();
