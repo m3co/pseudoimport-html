@@ -1,24 +1,23 @@
-# MDL-fragment
+# MDL/CE-fragment
 
-Here's a simple _MDL component_ that allows you to import HTML code.
+Here's a simple _MDL/CE component_ that allows you to import HTML code.
 
-Check the [docs](http://pseudoimport-html.m3c.space/docs).
+Check the [docs](/docs).
 
-Check the [tests](http://pseudoimport-html.m3c.space/test).
+Check the [tests MDL](/test/test-mdl.html).
 
-Feel free to import HTML content using
+Check the [tests CE](/test/test-ce.html).
+
+Feel free to import HTML content by using
 
 ```html
 <div class="mdl-fragment" src="an_URI.html"></div>
 ```
 
-If the fetched content should be in some specific place, then
+or
 
 ```html
-<div class="mdl-fragment" src="an_URI.html">
-  <div class="mdl-fragment__content"></div>
-  <div>A custom extra content</div>
-</div>
+<x-fragment src="an_URI.html"></x-fragment>
 ```
 
 ## Assumptions
@@ -29,7 +28,7 @@ This tool allows to _import_ html code from a ```src = URI``` where that resourc
 
 ### Load event dispatching order
 
-While its expected that if a resource has been fetched and parsed successfully then a load event will be fire, this tool fetches and parses all the fragments and then will fire the load events in order of appearance. E.g:
+While its expected that if a resource has been fetched and parsed successfully then a load event will be fire, this tool fetches and parses all the fragments and then will fire the load events in order of appearance. E.g in MDL:
 
 ```html
 <div class="mdl-fragment" src="fragmentA.html"> <!-- (1) -->

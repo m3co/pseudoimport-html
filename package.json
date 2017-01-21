@@ -2,7 +2,7 @@
   "name": "pseudoimport-html",
   "version": "0.1.1",
   "description": "Yeah yeah! I know! I'm using ```innerHTML = response``` in order to import an external code from a given __URL__",
-  "main": "pseudoimport-html.js",
+  "main": "index.html",
   "directories": {
     "test": "test"
   },

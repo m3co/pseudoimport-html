@@ -49,6 +49,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     /**
      * Initialize element.
      *
+     * @private
      */
 
 
@@ -99,7 +100,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
      *
-     * @event MaterialFragment#load
+     * @event HTMLXFragmentElement#load
      * @type {CustomEvent}
      * @property {HTMLElement} fragment - The loaded fragment
      */

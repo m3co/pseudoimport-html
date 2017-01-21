@@ -32,6 +32,7 @@
     /**
      * Initialize element.
      *
+     * @private
      */
     connectedCallback() {
       var parent = this.parentElement.closest(selClass);
@@ -73,7 +74,7 @@
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
      *
-     * @event MaterialFragment#load
+     * @event HTMLXFragmentElement#load
      * @type {CustomEvent}
      * @property {HTMLElement} fragment - The loaded fragment
      */
