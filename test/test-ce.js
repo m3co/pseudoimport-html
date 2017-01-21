@@ -200,7 +200,7 @@ onload_test(function(e) {
 onload_test(function(e) {
   // [setup]
   var fragment = document.createElement(nameElement);
-  fragment.setAttribute('src', 'fixtures/ce-fragment13.html');
+  fragment.setAttribute('src', 'fixtures/fragment13.html');
   fragment.currentTest = this;
 
   // [run]
@@ -212,14 +212,12 @@ onload_test(function(e) {
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement('div');
+  var fragment = document.createElement(nameElement);
   fragment.setAttribute('src', 'fixtures/fragment14.html');
-  fragment.classList.add(cssFragment);
   fragment.currentTest = this;
 
   // [run]
   document.body.appendChild(fragment);
-  componentHandler.upgradeElement(fragment);
 }, "Async scripts should know when fragment(parent) dispatch load event");
 
 /**
@@ -227,14 +225,12 @@ onload_test(function(e) {
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement('div');
-  fragment.setAttribute('src', 'fixtures/fragment15.html');
-  fragment.classList.add(cssFragment);
+  var fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', 'fixtures/ce-fragment15.html');
   fragment.currentTest = this;
 
   // [run]
   document.body.appendChild(fragment);
-  componentHandler.upgradeElement(fragment);
 }, "Async scripts should load from a relative url");
 
 /**
