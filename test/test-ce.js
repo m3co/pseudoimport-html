@@ -266,24 +266,22 @@ onload_test(function(e) {
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement('div');
-  fragment.setAttribute('src', 'fixtures/fragment17.html');
-  fragment.classList.add(cssFragment);
+  var fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', 'fixtures/ce-fragment17.html');
   fragment._index = 0;
   var _index = 0;
 
   // [run]
   document.body.appendChild(fragment);
-  componentHandler.upgradeElement(fragment);
 
-  fragment.MaterialFragment.loaded.then(this.step_func((fragment_) => {
+  fragment.loaded.then(this.step_func((fragment_) => {
     _index++;
 
-    fragment_.querySelector('.mdl-fragment').MaterialFragment.loaded.then(this.step_func((fragment_) => {
+    fragment_.querySelector('x-fragment').loaded.then(this.step_func((fragment_) => {
       _index++;
       assert_equals(fragment._index, 3);
 
-      fragment_.querySelector('.mdl-fragment').MaterialFragment.loaded.then(this.step_func((fragment_) => {
+      fragment_.querySelector('x-fragment').loaded.then(this.step_func((fragment_) => {
         _index++;
         assert_equals(fragment._index, 3);
         assert_equals(_index, 3);
