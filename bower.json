@@ -1,6 +1,6 @@
 {
   "name": "pseudoimport-html",
-  "main": "index.js",
+  "main": "index.html",
   "homepage": "https://github.com/m3co/pseudoimport-html",
   "authors": [
     "Andres Rios <rianby64@gmail.com>"
