@@ -1,0 +1,12 @@
+<!doctype html>
+<div id="fragment13">Fragment 13</div>
+<script>
+(() => {
+  'use strict';
+  document.currentScript.parentElement.addEventListener('load', e => {
+    // [teardown]
+    e.detail.fragment.remove();
+    e.detail.fragment.currentTest.done();
+  });
+})();
+</script>
