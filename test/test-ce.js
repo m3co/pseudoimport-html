@@ -102,12 +102,11 @@ onload_test(function(e) {
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement('div');
-  fragment.setAttribute('src', 'fixtures/fragment3.html');
-  fragment.classList.add(cssFragment);
+  var fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', 'fixtures/ce-fragment3.html');
   fragment.addEventListener('load', this.step_func((e) => {
     // [verify]
-    var fragment1 = fragment.querySelector(selFragment);
+    var fragment1 = fragment.querySelector(nameElement);
     var fragment3 = fragment.querySelector('#fragment3');
 
     assert_true(fragment3 instanceof HTMLElement);
@@ -130,8 +129,7 @@ onload_test(function(e) {
 
   // [run]
   document.body.appendChild(fragment);
-  componentHandler.upgradeElement(fragment);
-}, "Import from src='fixtures/fragment3.html' relative path, nested, default insertion");
+}, "Import from src='fixtures/ce-fragment3.html' relative path, nested, default insertion");
 
 /**
  * Do nested import following FIFO event calling

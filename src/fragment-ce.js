@@ -4,7 +4,6 @@
   const createHTML = range.createContextualFragment.bind(range);
 
   const classAsString = 'HTMLXFragmentElement';
-  const cssClass = 'x-fragment-element';
   const selClass = 'x-fragment';
 
   /**
@@ -43,7 +42,7 @@
                             this.dataset.baseURI);
       this.fetch_ = fetch_(this, src).then(element => {
         delete element.dataset.baseURI;
-        this.root_.resolvers_.push(resolve.bind(this, element));
+        this.root_.resolvers_.push(resolve.bind(null, element));
         return Promise.all(
           Array.prototype
                .slice
@@ -116,14 +115,14 @@
             }
           });
         });
+      Array.prototype
+           .slice
+           .call(html.querySelectorAll(selClass))
+           .forEach(fragment => {
+        fragment.dataset.baseURI = base;
+      });
       fragment.appendChild(html);
       return Promise.all(scripts).then(() => {
-        Array.prototype
-             .slice
-             .call(fragment.querySelectorAll(selClass))
-             .forEach(fragment => {
-          fragment.dataset.baseURI = base;
-        });
         return fragment;
       });
     });

@@ -15,7 +15,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   var createHTML = range.createContextualFragment.bind(range);
 
   var classAsString = 'HTMLXFragmentElement';
-  var cssClass = 'x-fragment-element';
   var selClass = 'x-fragment';
 
   /**
@@ -65,7 +64,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var src = preparePath(this.getAttribute('src'), this.dataset.baseURI);
         this.fetch_ = fetch_(this, src).then(function (element) {
           delete element.dataset.baseURI;
-          _this2.root_.resolvers_.push(resolve.bind(_this2, element));
+          _this2.root_.resolvers_.push(resolve.bind(null, element));
           return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
             return fragment.fetch_;
           }));
@@ -139,11 +138,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
         });
       });
+      Array.prototype.slice.call(html.querySelectorAll(selClass)).forEach(function (fragment) {
+        fragment.dataset.baseURI = base;
+      });
       fragment.appendChild(html);
       return Promise.all(scripts).then(function () {
-        Array.prototype.slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
-          fragment.dataset.baseURI = base;
-        });
         return fragment;
       });
     });
