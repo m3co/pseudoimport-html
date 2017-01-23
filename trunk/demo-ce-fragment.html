@@ -1,0 +1,10 @@
+<!doctype html>
+<div>Fragment 1</div>
+<a href="/docs/tutorial-demo-ce.html">This fragment is part of Demo 1</a>
+<script>
+  'use strict';
+  document.querySelector('#fragment-ce').addEventListener('load', function(e) {
+    console.log('fragment loaded detected by inline script');
+  });
+</script>
+<script src="/trunk/demo-ce-fragment.js"></script>
