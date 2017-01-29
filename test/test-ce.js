@@ -136,11 +136,12 @@ onload_test(function(e) {
  */
 onload_test(function(e) {
   // [setup]
-  var fragment = document.createElement(nameElement);
-  fragment.setAttribute('src', 'fixtures/ce-fragment4.html');
-  fragment.addEventListener('load', this.step_func((e) => {
+  var fragment4 = document.createElement(nameElement);
+  fragment4.setAttribute('src', 'fixtures/ce-fragment4.html');
+  fragment4.addEventListener('load', this.step_func((e) => {
     // [verify]
     var fragment = e.detail.fragment;
+    if (fragment !== fragment4) return;
     assert_true(fragment.querySelector('[src="nested/ce-fragment5.html"]') instanceof HTMLElement);
     assert_true(fragment.querySelector('[src="nested/ce-fragment6.html"]') instanceof HTMLElement);
     assert_true(fragment.querySelector('[src="nested1/fragment7.html"]') instanceof HTMLElement);
@@ -149,9 +150,10 @@ onload_test(function(e) {
     assert_true(fragment.querySelector('[src="nested1/fragment10.html"]') instanceof HTMLElement);
 
     // [setup]
-    fragment.querySelector('[src="nested/ce-fragment5.html"]')
-            .addEventListener('load', (e) => {
+    var fragment5 = fragment.querySelector('[src="nested/ce-fragment5.html"]');
+    fragment5.addEventListener('load', (e) => {
       var fragment = e.detail.fragment;
+      if (fragment !== fragment5) return;
       assert_true(fragment.querySelector('[src="nested1/fragment7.html"]') instanceof HTMLElement);
       assert_true(fragment.querySelector('[src="nested1/fragment8.html"]') instanceof HTMLElement);
       fragment.querySelector('[src="nested1/fragment7.html"]')
@@ -163,9 +165,10 @@ onload_test(function(e) {
         exit();
       });
     });
-    fragment.querySelector('[src="nested/ce-fragment6.html"]')
-            .addEventListener('load', (e) => {
+    var fragment6 = fragment.querySelector('[src="nested/ce-fragment6.html"]');
+    fragment6.addEventListener('load', (e) => {
       var fragment = e.detail.fragment;
+      if (fragment !== fragment6) return;
       assert_true(fragment.querySelector('[src="nested1/fragment9.html"]') instanceof HTMLElement);
       assert_true(fragment.querySelector('[src="nested1/fragment10.html"]') instanceof HTMLElement);
       fragment.querySelector('[src="nested1/fragment9.html"]')
@@ -184,13 +187,13 @@ onload_test(function(e) {
   var exit = this.step_func(() => {
     if (++counterLeafs >= 4) {
       // [teardown]
-      fragment.remove();
+      fragment4.remove();
       this.done();
     }
   });
 
   // [run]
-  document.body.appendChild(fragment);
+  document.body.appendChild(fragment4);
 
 }, "Import from src='fixtures/cw-fragment4.html' relative path, nested directory, default insertion");
 
