@@ -104,7 +104,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     element.dispatchEvent(new CustomEvent('load', {
       detail: {
         fragment: element
-      }
+      },
+      bubbles: true
     }));
     element.MaterialFragment.resolve_(element);
   }

@@ -83,7 +83,8 @@
     element.dispatchEvent(new CustomEvent('load', {
       detail: {
         fragment: element
-      }
+      },
+      bubbles: true
     }));
     element.MaterialFragment.resolve_(element);
   }
