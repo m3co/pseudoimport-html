@@ -32,6 +32,7 @@ onload_test(function(e) {
     assert_true(fragment1 instanceof HTMLElement);
     assert_equals(fragment1.textContent, 'Fragment 1');
     assert_equals(e.detail.fragment, fragment);
+    assert_equals(e.detail.fragment.dataset.baseURI, undefined);
 
     // [teardown]
     fragment.remove();
