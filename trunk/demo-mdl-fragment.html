@@ -4,7 +4,9 @@
 <script>
   'use strict';
   document.querySelector('#fragment-mdl').addEventListener('load', function(e) {
+    console.log(e.detail);
     console.log('fragment loaded detected by inline script');
   });
 </script>
 <script src="/trunk/demo-mdl-fragment.js"></script>
+<div src="/trunk/demo-mdl-sub-fragment.html" class="mdl-fragment" id="sub-fragment-mdl"></div>
