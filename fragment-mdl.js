@@ -69,7 +69,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }).then(function () {
           if (_this2.isRoot_) {
             _this2.resolvers_.forEach(function (resolver) {
-              resolver();
+              return resolver();
             });
             delete _this2.resolvers_;
             delete _this2.resolve_;
@@ -132,7 +132,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             var src = script.getAttribute('src');
             script.src = src[0] === '/' ? src : base + src;
             script.addEventListener('load', function () {
-              resolve(script);
+              return resolve(script);
             });
           }
         });
@@ -156,7 +156,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @private
    */
   function basedir(path) {
-    return path.split('/').reduce(function (acc, curr, index, array) {
+    return path.split('#')[0].split('/').reduce(function (acc, curr, index, array) {
       if (index === array.length - 1) {
         return acc;
       }

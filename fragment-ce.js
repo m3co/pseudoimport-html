@@ -72,7 +72,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         }).then(function () {
           if (_this2.isRoot_) {
             _this2.resolvers_.forEach(function (resolver) {
-              resolver();
+              return resolver();
             });
             delete _this2.resolvers_;
             delete _this2.resolve_;
@@ -135,13 +135,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             var src = script.getAttribute('src');
             script.src = src[0] === '/' ? src : base + src;
             script.addEventListener('load', function () {
-              resolve(script);
+              return resolve(script);
             });
           }
         });
       });
       Array.prototype.slice.call(html.querySelectorAll(selClass)).forEach(function (fragment) {
-        fragment.dataset.baseURI = base;
+        return fragment.dataset.baseURI = base;
       });
       fragment.appendChild(html);
       return Promise.all(scripts).then(function () {
@@ -158,7 +158,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
    * @private
    */
   function basedir(path) {
-    return path.split('/').reduce(function (acc, curr, index, array) {
+    return path.split('#')[0].split('/').reduce(function (acc, curr, index, array) {
       if (index === array.length - 1) {
         return acc;
       }

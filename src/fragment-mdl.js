@@ -54,7 +54,7 @@
         );
       }).then(() => {
         if (this.isRoot_) {
-          this.resolvers_.forEach((resolver) => { resolver(); });
+          this.resolvers_.forEach(resolver => resolver());
           delete this.resolvers_;
           delete this.resolve_;
           delete this.fetch_;
@@ -98,27 +98,22 @@
    * @private
    */
   function fetch_(fragment, src) {
-    return fetch(src).then((response) => {
-      return response.text();
-    }).then((text) => {
+    return fetch(src).then(response => response.text())
+      .then(text => {
       var base = basedir(src);
       var html = createHTML(text);
       var scripts = Array.prototype
         .slice
         .call(html.querySelectorAll('script'))
-        .map(script => {
-          return new Promise(resolve => {
-            if (script.src === '') {
-              resolve(script);
-            } else {
-              var src = script.getAttribute('src');
-              script.src = src[0] === '/' ? src : base + src;
-              script.addEventListener('load', () => {
-                resolve(script);
-              });
-            }
-          });
-        });
+        .map(script => new Promise(resolve => {
+          if (script.src === '') {
+            resolve(script);
+          } else {
+            var src = script.getAttribute('src');
+            script.src = src[0] === '/' ? src : base + src;
+            script.addEventListener('load', () => resolve(script));
+          }
+        }));
       fragment.appendChild(html);
       return Promise.all(scripts).then(() => {
         Array.prototype
@@ -141,7 +136,9 @@
    * @private
    */
   function basedir(path) {
-    return path.split('/').reduce((acc, curr, index, array) => {
+    return path.split('#')[0]
+      .split('/')
+      .reduce((acc, curr, index, array) => {
       if (index === array.length - 1) { return acc; }
       return acc += curr + '/';
     }, '');
