@@ -340,7 +340,7 @@ onload_test(function(e) {
 
   // [setup]
   var fragment = document.createElement('div');
-  fragment.setAttribute('src', 'fixtures/fragment18.html');
+  fragment.setAttribute('src', 'fixtures/fragment20.html');
   fragment.classList.add(cssFragment);
 
   var handler = this.step_func((e) => {
