@@ -336,7 +336,7 @@ onload_test(function(e) {
 /**
  * Check circular links...
  */
-onload_test(function(e) {
+promise_test(function(e) { return new Promise((resolve, reject) => {
 
   // [setup]
   var fragment = document.createElement('div');
@@ -350,7 +350,7 @@ onload_test(function(e) {
     // [teardown]
     fragment.remove();
     window.removeEventListener('error', handler);
-    this.done();
+    resolve();
   });
   window.addEventListener('error', handler);
 
@@ -358,14 +358,12 @@ onload_test(function(e) {
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 
-}, "Circular links are not allowed if fetch same link");
+}); }, "Circular links are not allowed if fetch same link");
 
 /**
  * Check circular links...
  */
-onload_test(function(e) {
-
-  this.step_timeout(() => {  // this is an error... turn circular import tests into promise_test
+promise_test(function(e) { return new Promise((resolve, reject) => {
 
   // [setup]
   var fragment = document.createElement('div');
@@ -379,14 +377,14 @@ onload_test(function(e) {
     // [teardown]
     fragment.remove();
     window.removeEventListener('error', handler);
-    this.done();
+    resolve();
   });
   window.addEventListener('error', handler);
 
   // [run]
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
-  }, 100);
-}, "Circular links are not allowed if fetch a resource that contains a circular link");
+
+}); }, "Circular links are not allowed if fetch a resource that contains a circular link");
 
 })();
