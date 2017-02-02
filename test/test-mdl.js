@@ -345,10 +345,11 @@ onload_test(function(e) {
 
   var handler = this.step_func((e) => {
     // [verify]
-    assert_equals(e.message, 'Circular dependency detected at http://localhost:9004/test/fixtures/fragment18.html');
+    assert_equals(e.message, 'Circular dependency detected at http://localhost:9004/test/fixtures/fragment20.html');
 
     // [teardown]
     fragment.remove();
+    window.removeEventListener('error', handler);
     this.done();
   });
   window.addEventListener('error', handler);
@@ -357,6 +358,35 @@ onload_test(function(e) {
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 
-}, "Circular links are not allowed");
+}, "Circular links are not allowed if fetch same link");
+
+/**
+ * Check circular links...
+ */
+onload_test(function(e) {
+
+  this.step_timeout(() => {  // this is an error... turn circular import tests into promise_test
+
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment21.html');
+  fragment.classList.add(cssFragment);
+
+  var handler = this.step_func((e) => {
+    // [verify]
+    assert_equals(e.message, 'Circular dependency detected at http://localhost:9004/test/fixtures/fragment21.html');
+
+    // [teardown]
+    fragment.remove();
+    window.removeEventListener('error', handler);
+    this.done();
+  });
+  window.addEventListener('error', handler);
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+  }, 100);
+}, "Circular links are not allowed if fetch a resource that contains a circular link");
 
 })();
