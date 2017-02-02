@@ -25,7 +25,10 @@
       this.root_ = parent ? parent.MaterialFragment.root_ : element;
       this.isRoot_ = parent ? false : true;
       this.resolvers_ = [];
-
+      if (this.isRoot_) {
+        this.element_.fetched_ = [];
+        this.element_.isRoot_ = this.isRoot_;
+      }
       /**
        * Load promise
        *
@@ -59,6 +62,8 @@
           delete this.resolve_;
           delete this.fetch_;
           delete this.isRoot_;
+          delete this.element_.fetched_;
+          delete this.element_.isRoot_;
         }
       });
     }
@@ -98,6 +103,13 @@
    * @private
    */
   function fetch_(fragment, src) {
+    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
+    if (fetched.includes(src)) {
+      var error = new Error(`Circular dependency detected at ${src}`);
+      window.dispatchEvent(new ErrorEvent('error', error));
+      throw error;
+    }
+    fetched.push(src);
     return fetch(src).then(response => response.text())
       .then(text => {
       var base = basedir(src);

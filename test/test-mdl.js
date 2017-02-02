@@ -4,6 +4,8 @@ const classAsString = 'MaterialFragment';
 const cssFragment = 'mdl-fragment';
 const selFragment = `.${cssFragment}`;
 
+setup({allow_uncaught_exception:true});
+
 (() => {
 /**
  * Do not move this test to any other place and
