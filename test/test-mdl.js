@@ -331,4 +331,30 @@ onload_test(function(e) {
   }));
 }, "Load event is a promise too in nested fragments");
 
+/**
+ * Check circular links...
+ */
+onload_test(function(e) {
+
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.setAttribute('src', 'fixtures/fragment18.html');
+  fragment.classList.add(cssFragment);
+
+  var handler = this.step_func((e) => {
+    // [verify]
+    assert_equals(e.message, 'Circular dependency detected at http://localhost:9004/test/fixtures/fragment18.html');
+
+    // [teardown]
+    fragment.remove();
+    this.done();
+  });
+  window.addEventListener('error', handler);
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+
+}, "Circular links are not allowed");
+
 })();
