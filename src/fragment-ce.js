@@ -38,6 +38,7 @@
       var parent = this.parentElement.closest(selClass);
       this.root_ = parent ? parent.root_ : this;
       this.isRoot_ = parent ? false : true;
+      this.fetched_ = [];
 
       var src = preparePath(this.getAttribute('src'),
                             this.dataset.baseURI);
@@ -96,6 +97,13 @@
    * @private
    */
   function fetch_(fragment, src) {
+    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).root_.fetched_;
+    if (fetched.includes(src)) {
+      var error = new Error(`Circular dependency detected at ${src}`);
+      window.dispatchEvent(new window.ErrorEvent('error', error));
+      throw error;
+    }
+    fetched.push(src);
     return fetch(src).then(response => response.text())
       .then(text => {
       var base = basedir(src);

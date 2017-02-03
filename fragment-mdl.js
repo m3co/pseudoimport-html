@@ -127,7 +127,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error('Circular dependency detected at ' + src);
-      window.dispatchEvent(new ErrorEvent('error', error));
+      window.dispatchEvent(new window.ErrorEvent('error', error));
       throw error;
     }
     fetched.push(src);
