@@ -103,7 +103,9 @@
    * @private
    */
   function fetch_(fragment, src) {
-    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
+    var fetched = fragment.isRoot_ ?
+      fragment.fetched_ :
+      fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error(`Circular dependency detected at ${src}`);
       window.dispatchEvent(new window.ErrorEvent('error', error));
