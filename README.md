@@ -51,3 +51,13 @@ The load event is exposed as a _Promise_ through ```loaded``` property.
 The resolution of relative URI is implemented by using a [baseURI](https://github.com/m3co/pseudoimport-html/blob/master/src/fragment.js#L119) attribute that is assigned while fetching. Once the content has been fetched and parsed successfully, then this attribute is [deleted](https://github.com/m3co/pseudoimport-html/blob/master/src/fragment.js#L41).
 
 The above doesn't apply for ```<scripts src=relativeURI></scripts>``` inside a fragment. The reason is that the src's ```<script>``` [must be changed](https://github.com/m3co/pseudoimport-html/blob/master/src/fragment.js#L104) in order to let the browser's parser do its job.
+
+## Contribute
+
+### Install
+
+`$ git submodule init`
+
+`$ git submodule update`
+
+`$ npm start`
