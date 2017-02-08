@@ -114,9 +114,9 @@
     fetched.push(src);
     return fetch(src).then(response => response.text())
       .then(text => {
-      var base = basedir(src);
-      var html = createHTML(text);
-      var scripts = Array.prototype
+        var base = basedir(src);
+        var html = createHTML(text);
+        var scripts = Array.prototype
         .slice
         .call(html.querySelectorAll('script'))
         .map(script => new Promise(resolve => {
@@ -128,18 +128,18 @@
             script.addEventListener('load', () => resolve(script));
           }
         }));
-      fragment.appendChild(html);
-      return Promise.all(scripts).then(() => {
-        Array.prototype
+        fragment.appendChild(html);
+        return Promise.all(scripts).then(() => {
+          Array.prototype
              .slice
              .call(fragment.querySelectorAll(selClass))
              .forEach(fragment => {
-          fragment.dataset.baseURI = base;
-          componentHandler.upgradeElement(fragment);
+               fragment.dataset.baseURI = base;
+               componentHandler.upgradeElement(fragment);
+             });
+          return fragment;
         });
-        return fragment;
       });
-    });
   }
 
   /**
@@ -153,9 +153,9 @@
     return path.split('#')[0]
       .split('/')
       .reduce((acc, curr, index, array) => {
-      if (index === array.length - 1) { return acc; }
-      return acc += curr + '/';
-    }, '');
+        if (index === array.length - 1) { return acc; }
+        return acc += curr + '/';
+      }, '');
   }
 
   /**
@@ -167,7 +167,8 @@
    * @private
    */
   function preparePath(path, baseURI) {
-    return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
+    return path[0] === '/' ? path :
+      (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
   window[classAsString] = MaterialFragment;

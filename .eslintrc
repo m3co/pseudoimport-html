@@ -1,5 +1,1 @@
-{
-    "parserOptions": {
-        "ecmaVersion": 6
-    }
-}
+./resources/configs/.eslintrc

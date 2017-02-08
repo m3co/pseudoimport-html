@@ -1,3 +1,6 @@
 [submodule "resources/testharness.js"]
 	path = resources/testharness.js
 	url = https://github.com/w3c/testharness.js.git
+[submodule "resources/configs"]
+	path = resources/configs
+	url = git@github.com:m3co/configs.git
