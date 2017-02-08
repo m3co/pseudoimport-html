@@ -10,7 +10,7 @@
     "prestart": "npm install",
     "postinstall": "bower install",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "gulp"
+    "start": "gulp --port 9004"
   },
   "repository": {
     "type": "git",
@@ -31,7 +31,8 @@
     "gulp-eslint": "^3.0.1",
     "gulp-htmlhint": "^0.3.1",
     "gulp-if": "^2.0.2",
-    "gulp-jsdoc3": "^1.0.1"
+    "gulp-jsdoc3": "^1.0.1",
+    "yargs": "^6.6.0"
   },
   "dependencies": {
     "bower": "^1.8.0"
