@@ -312,7 +312,7 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
 
   var handler = this.step_func((e) => {
     // [verify]
-    assert_equals(e.message, 'Circular dependency detected at http://localhost:9004/test/fixtures/ce-fragment20.html');
+    assert_equals(e.message, `Circular dependency detected at ${window.location.origin}/test/fixtures/ce-fragment20.html`);
 
     // [teardown]
     fragment.remove();
@@ -338,7 +338,7 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
 
   var handler = this.step_func((e) => {
     // [verify]
-    assert_equals(e.message, 'Circular dependency detected at http://localhost:9004/test/fixtures/ce-fragment21.html');
+    assert_equals(e.message, `Circular dependency detected at ${window.location.origin}/test/fixtures/ce-fragment21.html`);
 
     // [teardown]
     fragment.remove();
