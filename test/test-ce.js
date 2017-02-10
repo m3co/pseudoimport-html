@@ -352,5 +352,31 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
 
 }); }, "Circular links are not allowed if fetch a resource that contains a circular link");
 
+/**
+ * Throw error if src attribute is not present...
+ */
+promise_test(function() { return new Promise((resolve, reject) => {
+
+  // [setup]
+  let handler = this.step_func((e) => {
+    // [verify]
+    assert_equals(e.message, "Uncaught Error: Src attribute is not present");
+
+    // [teardown]
+    window.removeEventListener('error', handler);
+    fragmentWithoutSrc.remove()
+    resolve();
+  });
+  window.addEventListener('error', handler);
+  var fragmentWithoutSrc = document.createElement(nameElement);
+
+  // [run]
+  document.body.appendChild(fragmentWithoutSrc);
+
+  // [teardown]
+  reject('Can\'t test presence of src attribute');
+  window.removeEventListener('error', handler);
+  fragmentWithoutSrc.remove()
+}); }, "Throw error if src attribute is not present");
 
 })();
