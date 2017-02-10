@@ -22,6 +22,11 @@
       var parent = element.parentElement.closest(selClass);
       this.fetch_ = null;
       this.element_ = element;
+
+      if (!this.element_.hasAttribute('src')) {
+        throw new Error('Src attribute is not present');
+      }
+
       this.root_ = parent ? parent.MaterialFragment.root_ : element;
       this.isRoot_ = parent ? false : true;
       this.resolvers_ = [];

@@ -35,6 +35,10 @@
      * @private
      */
     connectedCallback() {
+      if (!this.hasAttribute('src')) {
+        throw new Error('Src attribute is not present');
+      }
+
       var parent = this.parentElement.closest(selClass);
       this.root_ = parent ? parent.root_ : this;
       this.isRoot_ = parent ? false : true;
