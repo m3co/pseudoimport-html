@@ -353,6 +353,14 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
 }); }, "Circular links are not allowed if fetch a resource that contains a circular link");
 
 /**
+ * Allow config attribute omiting everything else and hiding the element
+ */
+promise_test(function() { return new Promise((resolve, reject) => {
+  assert_true(document.querySelector('x-fragment[config]').hidden);
+  resolve();
+}); }, "Accept config attribute and hide element");
+
+/**
  * Throw error if src attribute is not present...
  */
 promise_test(function() { return new Promise((resolve, reject) => {

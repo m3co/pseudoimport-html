@@ -58,6 +58,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       value: function connectedCallback() {
         var _this2 = this;
 
+        if (this.hasAttribute('config')) {
+          this.hidden = true;
+          return;
+        }
         if (!this.hasAttribute('src')) {
           throw new Error('Src attribute is not present');
         }

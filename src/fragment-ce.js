@@ -35,6 +35,10 @@
      * @private
      */
     connectedCallback() {
+      if (this.hasAttribute('config')) {
+        this.hidden = true;
+        return;
+      }
       if (!this.hasAttribute('src')) {
         throw new Error('Src attribute is not present');
       }
