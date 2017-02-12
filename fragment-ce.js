@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -16,6 +18,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
   var classAsString = 'HTMLXFragmentElement';
   var selClass = 'x-fragment';
+
+  var options = {};
 
   /**
    * Class HTMLXFragmentElement
@@ -59,13 +63,29 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         var _this2 = this;
 
         if (this.hasAttribute('config')) {
-          this.hidden = true;
-          delete this.loaded;
-          delete this.resolvers_;
-          delete this.resolve_;
-          delete this.fetch_;
-          delete this.isRoot_;
-          return;
+          var _ret = function () {
+            _this2.hidden = true;
+            delete _this2.loaded;
+            delete _this2.resolvers_;
+            delete _this2.resolve_;
+            delete _this2.fetch_;
+            delete _this2.isRoot_;
+
+            var headerNames = ['header', 'headers'];
+
+            return {
+              v: Array.prototype.slice.call(_this2.querySelectorAll('config')).forEach(function (config) {
+                if (config.hasAttribute('header') || config.hasAttribute('headers')) {
+                  options.headers = options.headers || {};
+                  Array.prototype.slice.call(config.attributes).forEach(function (attr) {
+                    return !headerNames.includes(attr.name) && (options.headers[attr.name] = attr.value);
+                  });
+                }
+              })
+            };
+          }();
+
+          if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
         }
         if (!this.hasAttribute('src')) {
           throw new Error('Src attribute is not present');
@@ -77,9 +97,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.fetched_ = [];
 
         var src = preparePath(this.getAttribute('src'), this.dataset.baseURI);
-        this.fetch_ = fetch_(this, src).then(function (element) {
+        this.fetch_ = fetch_(this, src, options).then(function (element) {
           delete element.dataset.baseURI;
-          _this2.root_.resolvers_.push(resolve.bind(null, element));
+          _this2.root_.resolvers_.push(resolve.bind(null, element, options));
           return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
             return fragment.fetch_;
           }));
@@ -90,6 +110,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             });
             delete _this2.resolvers_;
             delete _this2.resolve_;
+            delete _this2.fetched_;
             delete _this2.fetch_;
             delete _this2.isRoot_;
           }
@@ -109,7 +130,29 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
    */
 
 
-  function resolve(element) {
+  function resolve(element, options) {
+    var options_ = Object.keys(options).reduce(function (acc, key) {
+      var options_ = options[key];
+      if (key === 'header') key = 'headers';
+      var options_isObj = options_ instanceof Object;
+      if (options_isObj) {
+        Object.keys(options_).reduce(function (acc, key_) {
+          var options__ = options_[key_];
+          var options__isObj = options__ instanceof Object;
+          if (options__isObj) {
+            throw new Error('still not developed the recursion');
+          } else {
+            acc[key + '-' + key_] = options__;
+          }
+        }, acc);
+      } else {
+        acc[key] = options_;
+      }
+      return acc;
+    }, {});
+    Object.keys(options_).forEach(function (key) {
+      return element.setAttribute(key, options_[key]);
+    });
     /**
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
@@ -135,7 +178,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src) {
+  function fetch_(fragment, src, options) {
     var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error('Circular dependency detected at ' + src);
@@ -143,7 +186,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
       throw error;
     }
     fetched.push(src);
-    return fetch(src).then(function (response) {
+    return fetch(src, options).then(function (response) {
       return response.text();
     }).then(function (text) {
       var base = basedir(src);
