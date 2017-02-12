@@ -17,7 +17,7 @@ onload_test(function(e) {
   assert_true(fragment instanceof HTMLXFragmentElement);
   assert_true(fragment.loaded instanceof Promise);
 
-  document.querySelector(selFragment).remove();
+  fragment.remove();
   this.done();
 }, "Check the API");
 
@@ -358,7 +358,7 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
  * isRoot_, resolve_, resolvers_, fetch_ and loaded properties.
  */
 promise_test(function() { return new Promise((resolve, reject) => {
-  let xFragmentConfig = document.querySelector('x-fragment[config]');
+  let xFragmentConfig = document.querySelector('[config]');
   assert_true(xFragmentConfig.hidden);
   assert_false(xFragmentConfig.hasOwnProperty('isRoot_'));
   assert_false(xFragmentConfig.hasOwnProperty('resolve_'));
@@ -367,6 +367,18 @@ promise_test(function() { return new Promise((resolve, reject) => {
   assert_false(xFragmentConfig.hasOwnProperty('loaded'));
   resolve();
 }); }, "Accept config attribute and hide element");
+
+/**
+ * Check fetch's options after loading
+ */
+promise_test(function() { return new Promise((resolve, reject) => {
+
+  let fragment = document.querySelector('[src="/test/fixtures/ce-fragment23.html"]');
+  fragment.loaded.then(this.step_func((fragment) => {
+    assert_equals(fragment.getAttribute('header-cache-control'), 'no-cache');
+    resolve();
+  }));
+}); }, "Check fetch's options after loading");
 
 /**
  * Throw error if src attribute is not present...
