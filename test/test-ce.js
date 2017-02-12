@@ -353,10 +353,18 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
 }); }, "Circular links are not allowed if fetch a resource that contains a circular link");
 
 /**
- * Allow config attribute omiting everything else and hiding the element
+ * Allow config attribute omiting everything else and hiding the element.
+ * Be sure that a fragment config is not a fragment. So, it doesn't have to have
+ * isRoot_, resolve_, resolvers_, fetch_ and loaded properties.
  */
 promise_test(function() { return new Promise((resolve, reject) => {
-  assert_true(document.querySelector('x-fragment[config]').hidden);
+  let xFragmentConfig = document.querySelector('x-fragment[config]');
+  assert_true(xFragmentConfig.hidden);
+  assert_false(xFragmentConfig.hasOwnProperty('isRoot_'));
+  assert_false(xFragmentConfig.hasOwnProperty('resolve_'));
+  assert_false(xFragmentConfig.hasOwnProperty('resolvers_'));
+  assert_false(xFragmentConfig.hasOwnProperty('fetch_'));
+  assert_false(xFragmentConfig.hasOwnProperty('loaded'));
   resolve();
 }); }, "Accept config attribute and hide element");
 

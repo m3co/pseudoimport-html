@@ -60,6 +60,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
         if (this.hasAttribute('config')) {
           this.hidden = true;
+          delete this.loaded;
+          delete this.resolvers_;
+          delete this.resolve_;
+          delete this.fetch_;
+          delete this.isRoot_;
           return;
         }
         if (!this.hasAttribute('src')) {
