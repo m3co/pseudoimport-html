@@ -23,12 +23,12 @@ onload_test(function(e) {
  * from the index.html
  */
 onload_test(function(e) {
-  var fragment = document.querySelector(selFragment).MaterialFragment;
+  var fragment = document.querySelector('[src="/test/fixtures/fragment1.html"]').MaterialFragment;
 
   assert_true(fragment instanceof MaterialFragment);
   assert_true(fragment.loaded instanceof Promise);
 
-  document.querySelector(selFragment).remove();
+  fragment.element_.remove();
   this.done();
 }, "Check the API");
 
@@ -386,6 +386,34 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
   componentHandler.upgradeElement(fragment);
 
 }); }, "Circular links are not allowed if fetch a resource that contains a circular link");
+
+/**
+ * Allow config attribute omiting everything else and hiding the element.
+ * Be sure that a fragment config is not a fragment. So, it doesn't have to have
+ * isRoot_, resolve_, resolvers_, fetch_ and loaded properties.
+ */
+promise_test(function() { return new Promise((resolve, reject) => {
+  let xFragmentConfig = document.querySelector('[config]');
+  assert_true(xFragmentConfig.hidden);
+  assert_false(xFragmentConfig.MaterialFragment.hasOwnProperty('isRoot_'));
+  assert_false(xFragmentConfig.MaterialFragment.hasOwnProperty('resolve_'));
+  assert_false(xFragmentConfig.MaterialFragment.hasOwnProperty('resolvers_'));
+  assert_false(xFragmentConfig.MaterialFragment.hasOwnProperty('fetch_'));
+  assert_false(xFragmentConfig.MaterialFragment.hasOwnProperty('loaded'));
+  resolve();
+}); }, "Accept config attribute and hide element");
+
+/**
+ * Check fetch's options after loading
+ */
+promise_test(function() { return new Promise((resolve, reject) => {
+
+  let fragment = document.querySelector('[src="/test/fixtures/ce-fragment23.html"]');
+  fragment.MaterialFragment.loaded.then(this.step_func((fragment) => {
+    assert_equals(fragment.getAttribute('headers-cache-control'), 'must-revalidate');
+    resolve();
+  }));
+}); }, "Check fetch's options after loading");
 
 /**
  * Throw error if src attribute is not present...

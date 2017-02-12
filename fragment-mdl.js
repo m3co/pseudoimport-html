@@ -1,5 +1,7 @@
 'use strict';
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -13,6 +15,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var classAsString = 'MaterialFragment';
   var cssClass = 'mdl-fragment';
   var selClass = '.' + cssClass;
+
+  var options = {};
 
   /**
    * Class MaterialFragment
@@ -34,6 +38,32 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var parent = element.parentElement.closest(selClass);
       this.fetch_ = null;
       this.element_ = element;
+
+      if (this.element_.hasAttribute('config')) {
+        var _ret = function () {
+          _this.element_.hidden = true;
+          delete _this.loaded;
+          delete _this.resolvers_;
+          delete _this.resolve_;
+          delete _this.fetch_;
+          delete _this.isRoot_;
+
+          var headerNames = ['header', 'headers', 'class'];
+
+          return {
+            v: Array.prototype.slice.call(_this.element_.querySelectorAll('.mdl-fragment__param')).forEach(function (config) {
+              if (config.hasAttribute('header') || config.hasAttribute('headers')) {
+                options.headers = options.headers || {};
+                Array.prototype.slice.call(config.attributes).forEach(function (attr) {
+                  return !headerNames.includes(attr.name) && (options.headers[attr.name] = attr.value);
+                });
+              }
+            })
+          };
+        }();
+
+        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
+      }
 
       if (!this.element_.hasAttribute('src')) {
         throw new Error('Src attribute is not present');
@@ -68,9 +98,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var _this2 = this;
 
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
-        this.fetch_ = fetch_(this.element_, src).then(function (element) {
+        this.fetch_ = fetch_(this.element_, src, options).then(function (element) {
           delete element.dataset.baseURI;
-          _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+          _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element, options));
           return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
             return fragment.MaterialFragment.fetch_;
           }));
@@ -102,7 +132,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    */
 
 
-  function resolve(element) {
+  function resolve(element, options) {
+    var options_ = Object.keys(options).reduce(function (acc, key) {
+      var options_ = options[key];
+      if (key === 'header') {
+        key = 'headers';
+      }
+      var options_isObj = options_ instanceof Object;
+      if (options_isObj) {
+        Object.keys(options_).reduce(function (acc, key_) {
+          var options__ = options_[key_];
+          var options__isObj = options__ instanceof Object;
+          if (options__isObj) {
+            throw new Error('still not developed the recursion');
+          } else {
+            acc[key + '-' + key_] = options__;
+          }
+        }, acc);
+      } else {
+        acc[key] = options_;
+      }
+      return acc;
+    }, {});
+    Object.keys(options_).forEach(function (key) {
+      return element.setAttribute(key, options_[key]);
+    });
     /**
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
@@ -128,7 +182,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src) {
+  function fetch_(fragment, src, options) {
     var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error('Circular dependency detected at ' + src);
@@ -136,7 +190,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       throw error;
     }
     fetched.push(src);
-    return fetch(src).then(function (response) {
+    return fetch(src, options).then(function (response) {
       return response.text();
     }).then(function (text) {
       var base = basedir(src);

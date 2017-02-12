@@ -7,6 +7,8 @@
   const cssClass = 'mdl-fragment';
   const selClass = `.${cssClass}`;
 
+  var options = {};
+
   /**
    * Class MaterialFragment
    */
@@ -22,6 +24,33 @@
       var parent = element.parentElement.closest(selClass);
       this.fetch_ = null;
       this.element_ = element;
+
+      if (this.element_.hasAttribute('config')) {
+        this.element_.hidden = true;
+        delete this.loaded;
+        delete this.resolvers_;
+        delete this.resolve_;
+        delete this.fetch_;
+        delete this.isRoot_;
+
+        let headerNames = ['header', 'headers', 'class'];
+
+        return Array.prototype
+          .slice
+          .call(this.element_.querySelectorAll('.mdl-fragment__param'))
+          .forEach(config => {
+            if (config.hasAttribute('header') ||
+              config.hasAttribute('headers')) {
+              options.headers = options.headers || {};
+              Array.prototype
+                .slice
+                .call(config.attributes)
+                .forEach(attr => !(headerNames.includes(attr.name)) &&
+                  (options.headers[attr.name] = attr.value)
+                );
+            }
+          });
+      }
 
       if (!this.element_.hasAttribute('src')) {
         throw new Error('Src attribute is not present');
@@ -51,9 +80,10 @@
     init() {
       var src = preparePath(this.element_.getAttribute('src'),
                             this.element_.dataset.baseURI);
-      this.fetch_ = fetch_(this.element_, src).then(element => {
+      this.fetch_ = fetch_(this.element_, src, options).then(element => {
         delete element.dataset.baseURI;
-        this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+        this.root_.MaterialFragment.resolvers_
+          .push(resolve.bind(null, element, options));
         return Promise.all(
           Array.prototype
                .slice
@@ -81,7 +111,29 @@
    *   load event.
    * @private
    */
-  function resolve(element) {
+  function resolve(element, options) {
+    let options_ = Object.keys(options).reduce((acc, key)  => {
+      let options_ = options[key];
+      if (key === 'header') { key = 'headers'; }
+      let options_isObj = options_ instanceof Object;
+      if (options_isObj) {
+        Object.keys(options_).reduce((acc, key_) => {
+          let options__ = options_[key_];
+          let options__isObj = options__ instanceof Object;
+          if (options__isObj) {
+            throw new Error('still not developed the recursion');
+          } else {
+            acc[`${key}-${key_}`] = options__;
+          }
+        }, acc);
+      } else {
+        acc[key] = options_;
+      }
+      return acc;
+    }, {});
+    Object.keys(options_).forEach(key =>
+        element.setAttribute(key, options_[key])
+      );
     /**
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
@@ -107,7 +159,7 @@
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src) {
+  function fetch_(fragment, src, options) {
     var fetched = fragment.isRoot_ ?
       fragment.fetched_ :
       fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
@@ -117,7 +169,7 @@
       throw error;
     }
     fetched.push(src);
-    return fetch(src).then(response => response.text())
+    return fetch(src, options).then(response => response.text())
       .then(text => {
         var base = basedir(src);
         var html = createHTML(text);
