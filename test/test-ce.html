@@ -2,7 +2,9 @@
 <html>
   <head>
     <title>Fragment test page CE</title>
-    <meta x-fragment headers-cache-control="must-revalidate" headers-custom-header="custom-value" method="GET" mode="cors">
+    <meta x-fragment headers-cache-control="no-cache" headers-custom-header="custom-value" method="GET">
+    <meta x-fragment headers-cache-control="must-revalidate">
+    <meta x-fragment mode="cors">
     <script src="/resources/testharness.js/testharness.js"></script>
     <script src="helper.js"></script>
 

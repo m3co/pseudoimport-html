@@ -216,8 +216,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   }
 
   (function setOptions() {
-    var meta = document.querySelector('[' + selClass + ']');
-    if (meta) {
+    document.querySelectorAll('meta[' + selClass + ']').forEach(function (meta) {
       Array.prototype.slice.call(meta.attributes).forEach(function (attr) {
         if (attr.name === selClass) {
           return;
@@ -232,7 +231,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           options[type][param] = attr.value;
         }
       });
-    }
+    });
   })();
 
   window[classAsString] = HTMLXFragmentElement;

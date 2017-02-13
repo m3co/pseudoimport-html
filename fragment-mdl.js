@@ -219,8 +219,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   }
 
   (function setOptions() {
-    var meta = document.querySelector('[' + cssClass + ']');
-    if (meta) {
+    document.querySelectorAll('meta[' + cssClass + ']').forEach(function (meta) {
       Array.prototype.slice.call(meta.attributes).forEach(function (attr) {
         if (attr.name === cssClass) {
           return;
@@ -235,7 +234,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           options[type][param] = attr.value;
         }
       });
-    }
+    });
   })();
 
   window[classAsString] = MaterialFragment;

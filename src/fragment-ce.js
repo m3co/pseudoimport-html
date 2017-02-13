@@ -190,24 +190,24 @@
   }
 
   (function setOptions() {
-    let meta = document.querySelector(`[${selClass}]`);
-    if (meta) {
-      Array.prototype
-        .slice
-        .call(meta.attributes)
-        .forEach((attr) => {
-          if (attr.name === selClass) { return; }
-          let dividerPosition = attr.name.indexOf('-');
-          if (dividerPosition === -1) {
-            options[attr.name] = attr.value;
-          } else {
-            let type = attr.name.substring(0, dividerPosition);
-            let param = attr.name.substring(dividerPosition + 1);
-            options[type] = options[type] || {};
-            options[type][param] = attr.value;
-          }
-        });
-    }
+    document.querySelectorAll(`meta[${selClass}]`)
+      .forEach((meta) => {
+        Array.prototype
+          .slice
+          .call(meta.attributes)
+          .forEach((attr) => {
+            if (attr.name === selClass) { return; }
+            let dividerPosition = attr.name.indexOf('-');
+            if (dividerPosition === -1) {
+              options[attr.name] = attr.value;
+            } else {
+              let type = attr.name.substring(0, dividerPosition);
+              let param = attr.name.substring(dividerPosition + 1);
+              options[type] = options[type] || {};
+              options[type][param] = attr.value;
+            }
+          });
+      });
   }());
 
   window[classAsString] = HTMLXFragmentElement;
