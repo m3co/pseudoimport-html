@@ -55,6 +55,7 @@ The above doesn't apply for ```<scripts src=relativeURI></scripts>``` inside a f
 ### Fetch options
 
 You can provide global options for fetch request through meta-tag. In ex., you have options object:
+
 ```javascript
 let options = {
   headers: {
@@ -63,16 +64,25 @@ let options = {
   method: "GET"
 }
 ```
+
 You would be transform it to:
+
 ```html
 <!-- In custom-element (ce) -->
 <meta x-fragment headers-cache-control="no-cache" method="GET">
 ```
+
 ```html
 <!-- In material design light (mdl) -->
 <meta mdl-fragment headers-cache-control="no-cache" method="GET">
 ```
 
+Also, you can divide options to multiple meta-tags:
+
+```html
+<meta x-fragment headers-cache-control="no-cache">
+<meta x-fragment method="GET">
+```
 
 ## Contribute
 
