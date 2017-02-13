@@ -106,9 +106,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   function resolve(element, options) {
     var options_ = Object.keys(options).reduce(function (acc, key) {
       var options_ = options[key];
-      if (key === 'header') {
-        key = 'headers';
-      }
       var options_isObj = options_ instanceof Object;
       if (options_isObj) {
         Object.keys(options_).reduce(function (acc, key_) {
@@ -118,6 +115,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
             throw new Error('still not developed the recursion');
           } else {
             acc[key + '-' + key_] = options__;
+            return acc;
           }
         }, acc);
       } else {

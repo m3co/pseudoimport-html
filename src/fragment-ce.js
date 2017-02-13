@@ -80,7 +80,6 @@
   function resolve(element, options) {
     let options_ = Object.keys(options).reduce((acc, key)  => {
       let options_ = options[key];
-      if (key === 'header') { key = 'headers'; }
       let options_isObj = options_ instanceof Object;
       if (options_isObj) {
         Object.keys(options_).reduce((acc, key_) => {
@@ -90,6 +89,7 @@
             throw new Error('still not developed the recursion');
           } else {
             acc[`${key}-${key_}`] = options__;
+            return acc;
           }
         }, acc);
       } else {
@@ -193,20 +193,20 @@
     let meta = document.querySelector(`[${selClass}]`);
     if (meta) {
       Array.prototype
-          .slice
-          .call(meta.attributes)
-          .forEach((attr) => {
-            if (attr.name === selClass) { return; }
-            let dividerPosition = attr.name.indexOf('-');
-            if (dividerPosition === -1) {
-              options[attr.name] = attr.value;
-            } else {
-              let type = attr.name.substring(0, dividerPosition);
-              let param = attr.name.substring(dividerPosition + 1);
-              options[type] = options[type] || {};
-              options[type][param] = attr.value;
-            }
-          });
+        .slice
+        .call(meta.attributes)
+        .forEach((attr) => {
+          if (attr.name === selClass) { return; }
+          let dividerPosition = attr.name.indexOf('-');
+          if (dividerPosition === -1) {
+            options[attr.name] = attr.value;
+          } else {
+            let type = attr.name.substring(0, dividerPosition);
+            let param = attr.name.substring(dividerPosition + 1);
+            options[type] = options[type] || {};
+            options[type][param] = attr.value;
+          }
+        });
     }
   }());
 
