@@ -6,6 +6,8 @@
   const classAsString = 'HTMLXFragmentElement';
   const selClass = 'x-fragment';
 
+  var options = {};
+
   /**
    * Class HTMLXFragmentElement
    */
@@ -46,9 +48,9 @@
 
       var src = preparePath(this.getAttribute('src'),
                             this.dataset.baseURI);
-      this.fetch_ = fetch_(this, src).then(element => {
+      this.fetch_ = fetch_(this, src, options).then(element => {
         delete element.dataset.baseURI;
-        this.root_.resolvers_.push(resolve.bind(null, element));
+        this.root_.resolvers_.push(resolve.bind(null, element, options));
         return Promise.all(
           Array.prototype
                .slice
@@ -60,6 +62,7 @@
           this.resolvers_.forEach(resolver => resolver());
           delete this.resolvers_;
           delete this.resolve_;
+          delete this.fetched_;
           delete this.fetch_;
           delete this.isRoot_;
         }
@@ -74,7 +77,29 @@
    *   load event.
    * @private
    */
-  function resolve(element) {
+  function resolve(element, options) {
+    let options_ = Object.keys(options).reduce((acc, key)  => {
+      let options_ = options[key];
+      let options_isObj = options_ instanceof Object;
+      if (options_isObj) {
+        Object.keys(options_).reduce((acc, key_) => {
+          let options__ = options_[key_];
+          let options__isObj = options__ instanceof Object;
+          if (options__isObj) {
+            throw new Error('still not developed the recursion');
+          } else {
+            acc[`${key}-${key_}`] = options__;
+            return acc;
+          }
+        }, acc);
+      } else {
+        acc[key] = options_;
+      }
+      return acc;
+    }, {});
+    Object.keys(options_).forEach(key =>
+        element.setAttribute(key, options_[key])
+      );
     /**
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
@@ -100,7 +125,7 @@
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src) {
+  function fetch_(fragment, src, options) {
     var fetched = fragment.isRoot_ ?
       fragment.fetched_ :
       fragment.parentElement.closest(selClass).root_.fetched_;
@@ -110,7 +135,7 @@
       throw error;
     }
     fetched.push(src);
-    return fetch(src).then(response => response.text())
+    return fetch(src, options).then(response => response.text())
       .then(text => {
         var base = basedir(src);
         var html = createHTML(text);
@@ -163,6 +188,27 @@
     return path[0] === '/' ? path :
       (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
+
+  (function setOptions() {
+    let meta = document.querySelector(`[${selClass}]`);
+    if (meta) {
+      Array.prototype
+        .slice
+        .call(meta.attributes)
+        .forEach((attr) => {
+          if (attr.name === selClass) { return; }
+          let dividerPosition = attr.name.indexOf('-');
+          if (dividerPosition === -1) {
+            options[attr.name] = attr.value;
+          } else {
+            let type = attr.name.substring(0, dividerPosition);
+            let param = attr.name.substring(dividerPosition + 1);
+            options[type] = options[type] || {};
+            options[type][param] = attr.value;
+          }
+        });
+    }
+  }());
 
   window[classAsString] = HTMLXFragmentElement;
 

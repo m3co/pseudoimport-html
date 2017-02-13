@@ -7,6 +7,8 @@
   const cssClass = 'mdl-fragment';
   const selClass = `.${cssClass}`;
 
+  var options = {};
+
   /**
    * Class MaterialFragment
    */
@@ -51,9 +53,10 @@
     init() {
       var src = preparePath(this.element_.getAttribute('src'),
                             this.element_.dataset.baseURI);
-      this.fetch_ = fetch_(this.element_, src).then(element => {
+      this.fetch_ = fetch_(this.element_, src, options).then(element => {
         delete element.dataset.baseURI;
-        this.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+        this.root_.MaterialFragment.resolvers_
+          .push(resolve.bind(null, element, options));
         return Promise.all(
           Array.prototype
                .slice
@@ -81,7 +84,30 @@
    *   load event.
    * @private
    */
-  function resolve(element) {
+  function resolve(element, options) {
+    let options_ = Object.keys(options).reduce((acc, key)  => {
+
+      let options_ = options[key];
+      let options_isObj = options_ instanceof Object;
+      if (options_isObj) {
+        Object.keys(options_).reduce((acc, key_) => {
+          let options__ = options_[key_];
+          let options__isObj = options__ instanceof Object;
+          if (options__isObj) {
+            throw new Error('still not developed the recursion');
+          } else {
+            acc[`${key}-${key_}`] = options__;
+            return acc;
+          }
+        }, acc);
+      } else {
+        acc[key] = options_;
+      }
+      return acc;
+    }, {});
+    Object.keys(options_).forEach(key =>
+        element.setAttribute(key, options_[key])
+      );
     /**
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
@@ -107,7 +133,7 @@
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src) {
+  function fetch_(fragment, src, options) {
     var fetched = fragment.isRoot_ ?
       fragment.fetched_ :
       fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
@@ -117,7 +143,7 @@
       throw error;
     }
     fetched.push(src);
-    return fetch(src).then(response => response.text())
+    return fetch(src, options).then(response => response.text())
       .then(text => {
         var base = basedir(src);
         var html = createHTML(text);
@@ -175,6 +201,27 @@
     return path[0] === '/' ? path :
       (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
+
+  (function setOptions() {
+    let meta = document.querySelector(`[${cssClass}]`);
+    if (meta) {
+      Array.prototype
+        .slice
+        .call(meta.attributes)
+        .forEach((attr) => {
+          if (attr.name === cssClass) { return; }
+          let dividerPosition = attr.name.indexOf('-');
+          if (dividerPosition === -1) {
+            options[attr.name] = attr.value;
+          } else {
+            let type = attr.name.substring(0, dividerPosition);
+            let param = attr.name.substring(dividerPosition + 1);
+            options[type] = options[type] || {};
+            options[type][param] = attr.value;
+          }
+        });
+    }
+  }());
 
   window[classAsString] = MaterialFragment;
 

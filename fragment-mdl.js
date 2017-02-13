@@ -14,6 +14,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var cssClass = 'mdl-fragment';
   var selClass = '.' + cssClass;
 
+  var options = {};
+
   /**
    * Class MaterialFragment
    */
@@ -68,9 +70,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var _this2 = this;
 
         var src = preparePath(this.element_.getAttribute('src'), this.element_.dataset.baseURI);
-        this.fetch_ = fetch_(this.element_, src).then(function (element) {
+        this.fetch_ = fetch_(this.element_, src, options).then(function (element) {
           delete element.dataset.baseURI;
-          _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element));
+          _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element, options));
           return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
             return fragment.MaterialFragment.fetch_;
           }));
@@ -102,7 +104,30 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    */
 
 
-  function resolve(element) {
+  function resolve(element, options) {
+    var options_ = Object.keys(options).reduce(function (acc, key) {
+
+      var options_ = options[key];
+      var options_isObj = options_ instanceof Object;
+      if (options_isObj) {
+        Object.keys(options_).reduce(function (acc, key_) {
+          var options__ = options_[key_];
+          var options__isObj = options__ instanceof Object;
+          if (options__isObj) {
+            throw new Error('still not developed the recursion');
+          } else {
+            acc[key + '-' + key_] = options__;
+            return acc;
+          }
+        }, acc);
+      } else {
+        acc[key] = options_;
+      }
+      return acc;
+    }, {});
+    Object.keys(options_).forEach(function (key) {
+      return element.setAttribute(key, options_[key]);
+    });
     /**
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
@@ -128,7 +153,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src) {
+  function fetch_(fragment, src, options) {
     var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error('Circular dependency detected at ' + src);
@@ -136,7 +161,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       throw error;
     }
     fetched.push(src);
-    return fetch(src).then(function (response) {
+    return fetch(src, options).then(function (response) {
       return response.text();
     }).then(function (text) {
       var base = basedir(src);
@@ -192,6 +217,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   function preparePath(path, baseURI) {
     return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
+
+  (function setOptions() {
+    var meta = document.querySelector('[' + cssClass + ']');
+    if (meta) {
+      Array.prototype.slice.call(meta.attributes).forEach(function (attr) {
+        if (attr.name === cssClass) {
+          return;
+        }
+        var dividerPosition = attr.name.indexOf('-');
+        if (dividerPosition === -1) {
+          options[attr.name] = attr.value;
+        } else {
+          var type = attr.name.substring(0, dividerPosition);
+          var param = attr.name.substring(dividerPosition + 1);
+          options[type] = options[type] || {};
+          options[type][param] = attr.value;
+        }
+      });
+    }
+  })();
 
   window[classAsString] = MaterialFragment;
 

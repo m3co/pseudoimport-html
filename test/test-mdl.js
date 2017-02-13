@@ -23,12 +23,12 @@ onload_test(function(e) {
  * from the index.html
  */
 onload_test(function(e) {
-  var fragment = document.querySelector(selFragment).MaterialFragment;
+  var fragment = document.querySelector('[src="/test/fixtures/fragment1.html"]').MaterialFragment;
 
   assert_true(fragment instanceof MaterialFragment);
   assert_true(fragment.loaded instanceof Promise);
 
-  document.querySelector(selFragment).remove();
+  fragment.element_.remove();
   this.done();
 }, "Check the API");
 
@@ -386,6 +386,21 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
   componentHandler.upgradeElement(fragment);
 
 }); }, "Circular links are not allowed if fetch a resource that contains a circular link");
+
+/**
+ * Check fetch's options after loading
+ */
+promise_test(function() { return new Promise((resolve, reject) => {
+
+  let fragment = document.querySelector('[src="/test/fixtures/ce-fragment23.html"]');
+  fragment.MaterialFragment.loaded.then(this.step_func((fragment) => {
+    assert_equals(fragment.getAttribute('headers-cache-control'), 'must-revalidate');
+    assert_equals(fragment.getAttribute('headers-custom-header'), 'custom-value');
+    assert_equals(fragment.getAttribute('method'), 'GET');
+    assert_equals(fragment.getAttribute('mode'), 'cors');
+    resolve();
+  }));
+}); }, "Check fetch's options after loading");
 
 /**
  * Throw error if src attribute is not present...
