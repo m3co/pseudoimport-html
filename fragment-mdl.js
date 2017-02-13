@@ -1,7 +1,5 @@
 'use strict';
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -38,32 +36,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       var parent = element.parentElement.closest(selClass);
       this.fetch_ = null;
       this.element_ = element;
-
-      if (this.element_.hasAttribute('config')) {
-        var _ret = function () {
-          _this.element_.hidden = true;
-          delete _this.loaded;
-          delete _this.resolvers_;
-          delete _this.resolve_;
-          delete _this.fetch_;
-          delete _this.isRoot_;
-
-          var headerNames = ['header', 'headers', 'class'];
-
-          return {
-            v: Array.prototype.slice.call(_this.element_.querySelectorAll('.mdl-fragment__param')).forEach(function (config) {
-              if (config.hasAttribute('header') || config.hasAttribute('headers')) {
-                options.headers = options.headers || {};
-                Array.prototype.slice.call(config.attributes).forEach(function (attr) {
-                  return !headerNames.includes(attr.name) && (options.headers[attr.name] = attr.value);
-                });
-              }
-            })
-          };
-        }();
-
-        if ((typeof _ret === 'undefined' ? 'undefined' : _typeof(_ret)) === "object") return _ret.v;
-      }
 
       if (!this.element_.hasAttribute('src')) {
         throw new Error('Src attribute is not present');
@@ -246,6 +218,26 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   function preparePath(path, baseURI) {
     return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
+
+  (function setOptions() {
+    var meta = document.querySelector('[' + cssClass + ']');
+    if (meta) {
+      Array.prototype.slice.call(meta.attributes).forEach(function (attr) {
+        if (attr.name === cssClass) {
+          return;
+        }
+        var dividerPosition = attr.name.indexOf('-');
+        if (dividerPosition === -1) {
+          options[attr.name] = attr.value;
+        } else {
+          var type = attr.name.substring(0, dividerPosition);
+          var param = attr.name.substring(dividerPosition + 1);
+          options[type] = options[type] || {};
+          options[type][param] = attr.value;
+        }
+      });
+    }
+  })();
 
   window[classAsString] = MaterialFragment;
 
