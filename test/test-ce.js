@@ -360,6 +360,7 @@ promise_test(function() { return new Promise((resolve, reject) => {
   let fragment = document.querySelector('[src="/test/fixtures/ce-fragment23.html"]');
   fragment.loaded.then(this.step_func((fragment) => {
     assert_equals(fragment.getAttribute('headers-cache-control'), 'must-revalidate');
+    assert_equals(fragment.getAttribute('headers-custom-header'), 'custom-value');
     assert_equals(fragment.getAttribute('method'), 'GET');
     assert_equals(fragment.getAttribute('mode'), 'cors');
     resolve();
