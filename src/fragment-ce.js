@@ -37,32 +37,6 @@
      * @private
      */
     connectedCallback() {
-      if (this.hasAttribute('config')) {
-        this.hidden = true;
-        delete this.loaded;
-        delete this.resolvers_;
-        delete this.resolve_;
-        delete this.fetch_;
-        delete this.isRoot_;
-
-        let headerNames = ['header', 'headers'];
-
-        return Array.prototype
-          .slice
-          .call(this.querySelectorAll('config'))
-          .forEach(config => {
-            if (config.hasAttribute('header') ||
-              config.hasAttribute('headers')) {
-              options.headers = options.headers || {};
-              Array.prototype
-                .slice
-                .call(config.attributes)
-                .forEach(attr => !(headerNames.includes(attr.name)) &&
-                  (options.headers[attr.name] = attr.value)
-                );
-            }
-          });
-      }
       if (!this.hasAttribute('src')) {
         throw new Error('Src attribute is not present');
       }
@@ -214,6 +188,27 @@
     return path[0] === '/' ? path :
       (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
+
+  (function setOptions() {
+    let meta = document.querySelector(`[${selClass}]`);
+    if (meta) {
+      Array.prototype
+          .slice
+          .call(meta.attributes)
+          .forEach((attr) => {
+            if (attr.name === selClass) { return; }
+            let dividerPosition = attr.name.indexOf('-');
+            if (dividerPosition === -1) {
+              options[attr.name] = attr.value;
+            } else {
+              let type = attr.name.substring(0, dividerPosition);
+              let param = attr.name.substring(dividerPosition + 1);
+              options[type] = options[type] || {};
+              options[type][param] = attr.value;
+            }
+          });
+    }
+  }());
 
   window[classAsString] = HTMLXFragmentElement;
 
