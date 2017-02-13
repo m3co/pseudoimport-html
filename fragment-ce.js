@@ -13,6 +13,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
   var range = document.createRange();
   var createHTML = range.createContextualFragment.bind(range);
+  var slice = Array.prototype.slice;
 
   var classAsString = 'HTMLXFragmentElement';
   var selClass = 'x-fragment';
@@ -73,7 +74,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
         this.fetch_ = fetch_(this, src, options).then(function (element) {
           delete element.dataset.baseURI;
           _this2.root_.resolvers_.push(resolve.bind(null, element, options));
-          return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
+          return Promise.all(slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
             return fragment.fetch_;
           }));
         }).then(function () {
@@ -164,7 +165,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     }).then(function (text) {
       var base = basedir(src);
       var html = createHTML(text);
-      var scripts = Array.prototype.slice.call(html.querySelectorAll('script')).map(function (script) {
+      var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
         return new Promise(function (resolve) {
           if (script.src === '') {
             resolve(script);
@@ -177,7 +178,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
           }
         });
       });
-      Array.prototype.slice.call(html.querySelectorAll(selClass)).forEach(function (fragment) {
+      slice.call(html.querySelectorAll(selClass)).forEach(function (fragment) {
         return fragment.dataset.baseURI = base;
       });
       fragment.appendChild(html);
@@ -216,8 +217,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   }
 
   (function setOptions() {
-    document.querySelectorAll('meta[' + selClass + ']').forEach(function (meta) {
-      Array.prototype.slice.call(meta.attributes).forEach(function (attr) {
+    slice.call(document.querySelectorAll('meta[' + selClass + ']')).forEach(function (meta) {
+      slice.call(meta.attributes).forEach(function (attr) {
         if (attr.name === selClass) {
           return;
         }

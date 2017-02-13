@@ -2,6 +2,7 @@
   'use strict';
   const range = document.createRange();
   const createHTML = range.createContextualFragment.bind(range);
+  const slice = Array.prototype.slice;
 
   const classAsString = 'HTMLXFragmentElement';
   const selClass = 'x-fragment';
@@ -52,10 +53,8 @@
         delete element.dataset.baseURI;
         this.root_.resolvers_.push(resolve.bind(null, element, options));
         return Promise.all(
-          Array.prototype
-               .slice
-               .call(element.querySelectorAll(selClass))
-               .map(fragment => fragment.fetch_)
+          slice.call(element.querySelectorAll(selClass))
+            .map(fragment => fragment.fetch_)
         );
       }).then(() => {
         if (this.isRoot_) {
@@ -139,22 +138,18 @@
       .then(text => {
         var base = basedir(src);
         var html = createHTML(text);
-        var scripts = Array.prototype
-        .slice
-        .call(html.querySelectorAll('script'))
-        .map(script => new Promise(resolve => {
-          if (script.src === '') {
-            resolve(script);
-          } else {
-            var src = script.getAttribute('src');
-            script.src = src[0] === '/' ? src : base + src;
-            script.addEventListener('load', () => resolve(script));
-          }
-        }));
-        Array.prototype
-           .slice
-           .call(html.querySelectorAll(selClass))
-           .forEach(fragment => fragment.dataset.baseURI = base);
+        var scripts = slice.call(html.querySelectorAll('script'))
+          .map(script => new Promise(resolve => {
+            if (script.src === '') {
+              resolve(script);
+            } else {
+              var src = script.getAttribute('src');
+              script.src = src[0] === '/' ? src : base + src;
+              script.addEventListener('load', () => resolve(script));
+            }
+          }));
+        slice.call(html.querySelectorAll(selClass))
+          .forEach(fragment => fragment.dataset.baseURI = base);
         fragment.appendChild(html);
         return Promise.all(scripts).then(() => fragment);
       });
@@ -190,11 +185,9 @@
   }
 
   (function setOptions() {
-    document.querySelectorAll(`meta[${selClass}]`)
+    slice.call(document.querySelectorAll(`meta[${selClass}]`))
       .forEach((meta) => {
-        Array.prototype
-          .slice
-          .call(meta.attributes)
+        slice.call(meta.attributes)
           .forEach((attr) => {
             if (attr.name === selClass) { return; }
             let dividerPosition = attr.name.indexOf('-');

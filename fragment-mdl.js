@@ -9,6 +9,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
   var range = document.createRange();
   var createHTML = range.createContextualFragment.bind(range);
+  var slice = Array.prototype.slice;
 
   var classAsString = 'MaterialFragment';
   var cssClass = 'mdl-fragment';
@@ -73,7 +74,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.fetch_ = fetch_(this.element_, src, options).then(function (element) {
           delete element.dataset.baseURI;
           _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element, options));
-          return Promise.all(Array.prototype.slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
+          return Promise.all(slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
             return fragment.MaterialFragment.fetch_;
           }));
         }).then(function () {
@@ -166,7 +167,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }).then(function (text) {
       var base = basedir(src);
       var html = createHTML(text);
-      var scripts = Array.prototype.slice.call(html.querySelectorAll('script')).map(function (script) {
+      var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
         return new Promise(function (resolve) {
           if (script.src === '') {
             resolve(script);
@@ -181,7 +182,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       });
       fragment.appendChild(html);
       return Promise.all(scripts).then(function () {
-        Array.prototype.slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
+        slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
           fragment.dataset.baseURI = base;
           componentHandler.upgradeElement(fragment);
         });
@@ -219,8 +220,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   }
 
   (function setOptions() {
-    document.querySelectorAll('meta[' + cssClass + ']').forEach(function (meta) {
-      Array.prototype.slice.call(meta.attributes).forEach(function (attr) {
+    slice.call(document.querySelectorAll('meta[' + cssClass + ']')).forEach(function (meta) {
+      slice.call(meta.attributes).forEach(function (attr) {
         if (attr.name === cssClass) {
           return;
         }
