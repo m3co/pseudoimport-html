@@ -65,7 +65,12 @@ let options = {
 ```
 You would be transform it to:
 ```html
+<!-- In custom-element (ce) -->
 <meta x-fragment headers-cache-control="no-cache" method="GET">
+```
+```html
+<!-- In material design light (mdl) -->
+<meta mdl-fragment headers-cache-control="no-cache" method="GET">
 ```
 
 
