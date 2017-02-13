@@ -52,6 +52,23 @@ The resolution of relative URI is implemented by using a [baseURI](https://githu
 
 The above doesn't apply for ```<scripts src=relativeURI></scripts>``` inside a fragment. The reason is that the src's ```<script>``` [must be changed](https://github.com/m3co/pseudoimport-html/blob/master/src/fragment.js#L104) in order to let the browser's parser do its job.
 
+### Fetch options
+
+You can provide global options for fetch request through meta-tag. In ex., you have options object:
+```javascript
+let options = {
+  headers: {
+    "cache-control": "no-cache"
+  },
+  method: "GET"
+}
+```
+You would be transform it to:
+```html
+<meta x-fragment headers-cache-control="no-cache" method="GET">
+```
+
+
 ## Contribute
 
 ### Install
