@@ -219,7 +219,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
-  (function setOptions() {
+  /**
+   * Set options (IIEF) from meta x-fragment tag
+   *
+   * @private
+   */
+  (function () {
     slice.call(document.querySelectorAll('meta[' + cssClass + ']')).forEach(function (meta) {
       slice.call(meta.attributes).forEach(function (attr) {
         if (attr.name === cssClass) {

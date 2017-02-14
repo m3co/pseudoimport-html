@@ -197,7 +197,12 @@
       (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
-  (function setOptions() {
+  /**
+   * Set options (IIEF) from meta x-fragment tag
+   *
+   * @private
+   */
+  (() => {
     slice.call(document.querySelectorAll(`meta[${cssClass}]`))
       .forEach((meta) => {
         slice.call(meta.attributes)
@@ -214,7 +219,7 @@
             }
           });
       });
-  }());
+  })();
 
   window[classAsString] = MaterialFragment;
 

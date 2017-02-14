@@ -184,7 +184,7 @@
       (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
-  (function setOptions() {
+  (() => {
     slice.call(document.querySelectorAll(`meta[${selClass}]`))
       .forEach((meta) => {
         slice.call(meta.attributes)
@@ -201,7 +201,7 @@
             }
           });
       });
-  }());
+  })();
 
   window[classAsString] = HTMLXFragmentElement;
 

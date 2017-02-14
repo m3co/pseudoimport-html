@@ -216,7 +216,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
-  (function setOptions() {
+  (function () {
     slice.call(document.querySelectorAll('meta[' + selClass + ']')).forEach(function (meta) {
       slice.call(meta.attributes).forEach(function (attr) {
         if (attr.name === selClass) {
