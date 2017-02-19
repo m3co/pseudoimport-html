@@ -138,8 +138,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
     element.dispatchEvent(new CustomEvent('load', {
       detail: {
         fragment: element
-      },
-      bubbles: true
+      }
     }));
     element.resolve_(element);
   }

@@ -110,8 +110,7 @@
     element.dispatchEvent(new CustomEvent('load', {
       detail: {
         fragment: element
-      },
-      bubbles: true
+      }
     }));
     element.resolve_(element);
   }
