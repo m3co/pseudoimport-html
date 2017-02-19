@@ -102,6 +102,7 @@
     /**
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
+     * This event is not bubbled.
      *
      * @event HTMLXFragmentElement#load
      * @type {CustomEvent}
