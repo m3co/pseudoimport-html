@@ -221,12 +221,14 @@
       });
   })();
 
-  window[classAsString] = MaterialFragment;
+  if (!window[classAsString]) {
+    window[classAsString] = MaterialFragment;
 
-  componentHandler.register({
-    constructor: MaterialFragment,
-    classAsString: classAsString,
-    cssClass: cssClass,
-    widget: true
-  });
+    componentHandler.register({
+      constructor: MaterialFragment,
+      classAsString: classAsString,
+      cssClass: cssClass,
+      widget: true
+    });
+  }
 })();

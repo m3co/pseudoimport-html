@@ -203,8 +203,9 @@
       });
   })();
 
-  window[classAsString] = HTMLXFragmentElement;
-
-  window.customElements.define('x-fragment', HTMLXFragmentElement);
+  if (!window[classAsString]) {
+    window[classAsString] = HTMLXFragmentElement;
+    window.customElements.define('x-fragment', HTMLXFragmentElement);
+  }
 
 })();
