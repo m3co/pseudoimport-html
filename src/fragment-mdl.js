@@ -197,8 +197,7 @@
    */
   function craftedCreateContextualFragment(html) {
     function rewriteScripts(element) {
-      Array.prototype.slice
-        .call(element.querySelectorAll('script'))
+      slice.call(element.querySelectorAll('script'))
         .forEach(old_script => {
           let new_script = document.createElement('script');
 
@@ -207,8 +206,7 @@
           old_script.text && (new_script.text = old_script.text);
 
           // clone all attributes
-          Array.prototype.slice
-            .call(old_script.attributes)
+          slice.call(old_script.attributes)
             .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
           old_script.parentNode.replaceChild(new_script, old_script);

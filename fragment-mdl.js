@@ -216,7 +216,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    */
   function craftedCreateContextualFragment(html) {
     function rewriteScripts(element) {
-      Array.prototype.slice.call(element.querySelectorAll('script')).forEach(function (old_script) {
+      slice.call(element.querySelectorAll('script')).forEach(function (old_script) {
         var new_script = document.createElement('script');
 
         // clone text (content)
@@ -224,7 +224,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         old_script.text && (new_script.text = old_script.text);
 
         // clone all attributes
-        Array.prototype.slice.call(old_script.attributes).forEach(function (attr) {
+        slice.call(old_script.attributes).forEach(function (attr) {
           return new_script.setAttribute(attr.name, attr.value);
         });
 
