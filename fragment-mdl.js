@@ -8,8 +8,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   'use strict';
 
   var createHTML = craftedCreateContextualFragment;
-  var slice = Array.prototype.slice;
-
   var classAsString = 'MaterialFragment';
   var cssClass = 'mdl-fragment';
   var selClass = '.' + cssClass;
@@ -73,9 +71,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.fetch_ = fetch_(this.element_, src, options).then(function (element) {
           delete element.dataset.baseURI;
           _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element, options));
-          return Promise.all(slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
-            return fragment.MaterialFragment.fetch_;
-          }));
+          var fragments = element.querySelectorAll(selClass);
+          var fetchs_ = [];
+          for (var i = 0; i < fragments.length; i++) {
+            fetchs_.push(fragments[i].MaterialFragment.fetch_);
+          }
+          return Promise.all(fetchs_);
         }).then(function () {
           if (_this2.isRoot_) {
             _this2.resolvers_.forEach(function (resolver) {
@@ -187,22 +188,28 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @private
    */
   (function () {
-    slice.call(document.querySelectorAll('meta[' + cssClass + ']')).forEach(function (meta) {
-      slice.call(meta.attributes).forEach(function (attr) {
-        if (attr.name === cssClass) {
-          return;
+    var metas = document.querySelectorAll('meta[' + cssClass + ']');
+    for (var i = 0; i < metas.length; i++) {
+      (function (meta) {
+        var attrs = meta.attributes;
+        for (var i = 0; i < attrs.length; i++) {
+          (function (attr) {
+            if (attr.name === cssClass) {
+              return;
+            }
+            var dividerPosition = attr.name.indexOf('-');
+            if (dividerPosition === -1) {
+              options[attr.name] = attr.value;
+            } else {
+              var type = attr.name.substring(0, dividerPosition);
+              var param = attr.name.substring(dividerPosition + 1);
+              options[type] = options[type] || {};
+              options[type][param] = attr.value;
+            }
+          })(attrs[i]);
         }
-        var dividerPosition = attr.name.indexOf('-');
-        if (dividerPosition === -1) {
-          options[attr.name] = attr.value;
-        } else {
-          var type = attr.name.substring(0, dividerPosition);
-          var param = attr.name.substring(dividerPosition + 1);
-          options[type] = options[type] || {};
-          options[type][param] = attr.value;
-        }
-      });
-    });
+      })(metas[i]);
+    }
   })();
 
   /**
@@ -216,7 +223,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    */
   function craftedCreateContextualFragment(html) {
     function rewriteScripts(element) {
-      slice.call(element.querySelectorAll('script')).forEach(function (old_script) {
+      var old_scripts = element.querySelectorAll('script');
+      for (var i = 0; i < old_scripts.length; i++) {
+        var old_script = old_scripts[i];
         var new_script = document.createElement('script');
 
         // clone text (content)
@@ -224,12 +233,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         old_script.text && (new_script.text = old_script.text);
 
         // clone all attributes
-        slice.call(old_script.attributes).forEach(function (attr) {
-          return new_script.setAttribute(attr.name, attr.value);
-        });
+        var attrs = old_script.attributes;
+        for (var j = 0; j < attrs.length; j++) {
+          var attr = attrs[j];
+          new_script.setAttribute(attr.name, attr.value);
+        }
 
         old_script.parentNode.replaceChild(new_script, old_script);
-      });
+      }
     }
 
     // create DocumentFragment
@@ -276,25 +287,32 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }).then(function (text) {
       var base = basedir(src);
       var html = createHTML(text);
-      var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
-        return new Promise(function (resolve) {
-          if (script.src === '') {
-            resolve(script);
-          } else {
-            var src = script.getAttribute('src');
-            script.src = src[0] === '/' ? src : base + src;
-            script.addEventListener('load', function () {
-              return resolve(script);
-            });
-          }
-        });
-      });
+      var scripts_ = html.querySelectorAll('script');
+      var scripts = [];
+      for (var i = 0; i < scripts_.length; i++) {
+        (function (script) {
+          scripts.push(new Promise(function (resolve) {
+            if (script.src === '') {
+              resolve(script);
+            } else {
+              var src = script.getAttribute('src');
+              script.src = src[0] === '/' ? src : base + src;
+              script.addEventListener('load', function () {
+                return resolve(script);
+              });
+            }
+          }));
+        })(scripts_[i]);
+      }
       fragment.appendChild(html);
       return Promise.all(scripts).then(function () {
-        slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
-          fragment.dataset.baseURI = base;
-          componentHandler.upgradeElement(fragment);
-        });
+        var fragments = fragment.querySelectorAll(selClass);
+        for (var i = 0; i < fragments.length; i++) {
+          (function (fragment) {
+            fragment.dataset.baseURI = base;
+            componentHandler.upgradeElement(fragment);
+          })(fragments[i]);
+        }
         return fragment;
       });
     });
