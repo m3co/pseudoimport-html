@@ -1,6 +1,8 @@
 (() => {
   'use strict';
   const createHTML = craftedCreateContextualFragment;
+  const slice = Array.prototype.slice;
+
   const classAsString = 'MaterialFragment';
   const cssClass = 'mdl-fragment';
   const selClass = `.${cssClass}`;
@@ -55,12 +57,10 @@
         delete element.dataset.baseURI;
         this.root_.MaterialFragment.resolvers_
           .push(resolve.bind(null, element, options));
-        var fragments = element.querySelectorAll(selClass);
-        var fetchs_ = [];
-        for (var i = 0; i < fragments.length; i++) {
-          fetchs_.push(fragments[i].MaterialFragment.fetch_);
-        }
-        return Promise.all(fetchs_);
+        return Promise.all(
+          slice.call(element.querySelectorAll(selClass))
+            .map(fragment => fragment.MaterialFragment.fetch_)
+        );
       }).then(() => {
         if (this.isRoot_) {
           this.resolvers_.forEach(resolver => resolver());
@@ -168,12 +168,10 @@
    * @private
    */
   (() => {
-    var metas = document.querySelectorAll(`meta[${cssClass}]`);
-    for (var i = 0; i < metas.length; i++) {
-      (function(meta) {
-        var attrs = meta.attributes;
-        for (var i = 0; i < attrs.length; i++) {
-          (function(attr) {
+    slice.call(document.querySelectorAll(`meta[${cssClass}]`))
+      .forEach((meta) => {
+        slice.call(meta.attributes)
+          .forEach((attr) => {
             if (attr.name === cssClass) { return; }
             let dividerPosition = attr.name.indexOf('-');
             if (dividerPosition === -1) {
@@ -184,10 +182,8 @@
               options[type] = options[type] || {};
               options[type][param] = attr.value;
             }
-          })(attrs[i]);
-        }
-      })(metas[i]);
-    }
+          });
+      });
   })();
 
   /**
@@ -201,24 +197,20 @@
    */
   function craftedCreateContextualFragment(html) {
     function rewriteScripts(element) {
-      var old_scripts = element.querySelectorAll('script');
-      for (var i = 0; i < old_scripts.length; i++) {
-        var old_script = old_scripts[i];
-        let new_script = document.createElement('script');
+      slice.call(element.querySelectorAll('script'))
+        .forEach(old_script => {
+          let new_script = document.createElement('script');
 
           // clone text (content)
-        old_script.src && (new_script.src = old_script.src);
-        old_script.text && (new_script.text = old_script.text);
+          old_script.src && (new_script.src = old_script.src);
+          old_script.text && (new_script.text = old_script.text);
 
           // clone all attributes
-        var attrs = old_script.attributes;
-        for (var j = 0; j < attrs.length; j++) {
-          var attr = attrs[j];
-          new_script.setAttribute(attr.name, attr.value);
-        }
+          slice.call(old_script.attributes)
+            .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
-        old_script.parentNode.replaceChild(new_script, old_script);
-      }
+          old_script.parentNode.replaceChild(new_script, old_script);
+        });
     }
 
     // create DocumentFragment
@@ -266,30 +258,23 @@
       .then(text => {
         var base = basedir(src);
         var html = createHTML(text);
-        var scripts_ = html.querySelectorAll('script');
-        var scripts = [];
-        for (var i = 0; i < scripts_.length; i++) {
-          (function(script) {
-            scripts.push(new Promise(resolve => {
-              if (script.src === '') {
-                resolve(script);
-              } else {
-                var src = script.getAttribute('src');
-                script.src = src[0] === '/' ? src : base + src;
-                script.addEventListener('load', () => resolve(script));
-              }
-            }));
-          })(scripts_[i]);
-        }
+        var scripts = slice.call(html.querySelectorAll('script'))
+          .map(script => new Promise(resolve => {
+            if (script.src === '') {
+              resolve(script);
+            } else {
+              var src = script.getAttribute('src');
+              script.src = src[0] === '/' ? src : base + src;
+              script.addEventListener('load', () => resolve(script));
+            }
+          }));
         fragment.appendChild(html);
         return Promise.all(scripts).then(() => {
-          var fragments = fragment.querySelectorAll(selClass);
-          for (var i = 0; i < fragments.length; i++) {
-            (function(fragment) {
+          slice.call(fragment.querySelectorAll(selClass))
+            .forEach(fragment => {
               fragment.dataset.baseURI = base;
               componentHandler.upgradeElement(fragment);
-            })(fragments[i]);
-          }
+            });
           return fragment;
         });
       });
