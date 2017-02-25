@@ -95,6 +95,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return MaterialFragment;
   }();
 
+  if (!window[classAsString]) {
+    window[classAsString] = MaterialFragment;
+
+    componentHandler.register({
+      constructor: MaterialFragment,
+      classAsString: classAsString,
+      cssClass: cssClass,
+      widget: true
+    });
+  }
+
   /**
    * Resolve, in fact, dispatch load event from an element
    *
@@ -102,11 +113,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    *   load event.
    * @private
    */
-
-
   function resolve(element, options) {
     var options_ = Object.keys(options).reduce(function (acc, key) {
-
       var options_ = options[key];
       var options_isObj = options_ instanceof Object;
       if (options_isObj) {
@@ -143,51 +151,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
     }));
     element.MaterialFragment.resolve_(element);
-  }
-
-  /**
-   * Fetch HTML code from src to fragment.
-   *
-   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
-   * @param {String} src - The URI to fetch
-   * @return {Promise} - The fetch request
-   * @private
-   */
-  function fetch_(fragment, src, options) {
-    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
-    if (fetched.includes(src)) {
-      var error = new Error('Circular dependency detected at ' + src);
-      window.dispatchEvent(new window.ErrorEvent('error', error));
-      throw error;
-    }
-    fetched.push(src);
-    return fetch(src, options).then(function (response) {
-      return response.text();
-    }).then(function (text) {
-      var base = basedir(src);
-      var html = createHTML(text);
-      var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
-        return new Promise(function (resolve) {
-          if (script.src === '') {
-            resolve(script);
-          } else {
-            var src = script.getAttribute('src');
-            script.src = src[0] === '/' ? src : base + src;
-            script.addEventListener('load', function () {
-              return resolve(script);
-            });
-          }
-        });
-      });
-      fragment.appendChild(html);
-      return Promise.all(scripts).then(function () {
-        slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
-          fragment.dataset.baseURI = base;
-          componentHandler.upgradeElement(fragment);
-        });
-        return fragment;
-      });
-    });
   }
 
   /**
@@ -242,17 +205,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     });
   })();
 
-  if (!window[classAsString]) {
-    window[classAsString] = MaterialFragment;
-
-    componentHandler.register({
-      constructor: MaterialFragment,
-      classAsString: classAsString,
-      cssClass: cssClass,
-      widget: true
-    });
-  }
-
   /**
    * Please, do not use createContextualFragment from Range
    * It's an experimental fn. This function intentionally replaces
@@ -301,5 +253,50 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     // clean-up
     frag.removeChild(wrapper);
     return frag;
+  }
+
+  /**
+   * Fetch HTML code from src to fragment.
+   *
+   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
+   * @param {String} src - The URI to fetch
+   * @return {Promise} - The fetch request
+   * @private
+   */
+  function fetch_(fragment, src, options) {
+    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
+    if (fetched.includes(src)) {
+      var error = new Error('Circular dependency detected at ' + src);
+      window.dispatchEvent(new window.ErrorEvent('error', error));
+      throw error;
+    }
+    fetched.push(src);
+    return fetch(src, options).then(function (response) {
+      return response.text();
+    }).then(function (text) {
+      var base = basedir(src);
+      var html = createHTML(text);
+      var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
+        return new Promise(function (resolve) {
+          if (script.src === '') {
+            resolve(script);
+          } else {
+            var src = script.getAttribute('src');
+            script.src = src[0] === '/' ? src : base + src;
+            script.addEventListener('load', function () {
+              return resolve(script);
+            });
+          }
+        });
+      });
+      fragment.appendChild(html);
+      return Promise.all(scripts).then(function () {
+        slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
+          fragment.dataset.baseURI = base;
+          componentHandler.upgradeElement(fragment);
+        });
+        return fragment;
+      });
+    });
   }
 })();

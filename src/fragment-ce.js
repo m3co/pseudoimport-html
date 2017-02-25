@@ -68,6 +68,11 @@
     }
   }
 
+  if (!window[classAsString]) {
+    window[classAsString] = HTMLXFragmentElement;
+    window.customElements.define('x-fragment', HTMLXFragmentElement);
+  }
+
   /**
    * Resolve, in fact, dispatch load event from an element
    *
@@ -116,45 +121,6 @@
   }
 
   /**
-   * Fetch HTML code from src to fragment.
-   *
-   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
-   * @param {String} src - The URI to fetch
-   * @return {Promise} - The fetch request
-   * @private
-   */
-  function fetch_(fragment, src, options) {
-    var fetched = fragment.isRoot_ ?
-      fragment.fetched_ :
-      fragment.parentElement.closest(selClass).root_.fetched_;
-    if (fetched.includes(src)) {
-      var error = new Error(`Circular dependency detected at ${src}`);
-      window.dispatchEvent(new window.ErrorEvent('error', error));
-      throw error;
-    }
-    fetched.push(src);
-    return fetch(src, options).then(response => response.text())
-      .then(text => {
-        var base = basedir(src);
-        var html = createHTML(text);
-        var scripts = slice.call(html.querySelectorAll('script'))
-          .map(script => new Promise(resolve => {
-            if (script.src === '') {
-              resolve(script);
-            } else {
-              var src = script.getAttribute('src');
-              script.src = src[0] === '/' ? src : base + src;
-              script.addEventListener('load', () => resolve(script));
-            }
-          }));
-        slice.call(html.querySelectorAll(selClass))
-          .forEach(fragment => fragment.dataset.baseURI = base);
-        fragment.appendChild(html);
-        return Promise.all(scripts).then(() => fragment);
-      });
-  }
-
-  /**
    * Extract the base dir from path.
    *
    * @param {String} path
@@ -183,6 +149,11 @@
       (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
+  /**
+   * Set options (IIEF) from meta x-fragment tag
+   *
+   * @private
+   */
   (() => {
     slice.call(document.querySelectorAll(`meta[${selClass}]`))
       .forEach((meta) => {
@@ -201,11 +172,6 @@
           });
       });
   })();
-
-  if (!window[classAsString]) {
-    window[classAsString] = HTMLXFragmentElement;
-    window.customElements.define('x-fragment', HTMLXFragmentElement);
-  }
 
   /**
    * Please, do not use createContextualFragment from Range
@@ -257,6 +223,46 @@
     // clean-up
     frag.removeChild(wrapper);
     return frag;
+  }
+
+  /**
+   * Fetch HTML code from src to fragment.
+   *
+   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
+   * @param {String} src - The URI to fetch
+   * @return {Promise} - The fetch request
+   * @private
+   */
+  function fetch_(fragment, src, options) {
+    var fetched = fragment.isRoot_ ?
+      fragment.fetched_ :
+      fragment.parentElement.closest(selClass).root_.fetched_;
+    if (fetched.includes(src)) {
+      var error = new Error(`Circular dependency detected at ${src}`);
+      window.dispatchEvent(new window.ErrorEvent('error', error));
+      throw error;
+    }
+    fetched.push(src);
+    return fetch(src, options).then(response => response.text())
+      .then(text => {
+        var base = basedir(src);
+        var html = createHTML(text);
+        var scripts = slice.call(html.querySelectorAll('script'))
+          .map(script => new Promise(resolve => {
+            if (script.src === '') {
+              resolve(script);
+            } else {
+              var src = script.getAttribute('src');
+              script.src = src[0] === '/' ? src : base + src;
+              script.addEventListener('load', () => resolve(script));
+            }
+          }));
+        slice.call(html.querySelectorAll(selClass))
+          .forEach(fragment => fragment.dataset.baseURI = base);
+        fragment.appendChild(html);
+        return Promise.all(scripts).then(() => fragment);
+      });
+
   }
 
 })();
