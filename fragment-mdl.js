@@ -132,6 +132,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     /**
      * On load the fragment.
      * All scrips loaded from a fragment will execute asynchronously.
+     * This event is not bubbled.
      *
      * @event MaterialFragment#load
      * @type {CustomEvent}
