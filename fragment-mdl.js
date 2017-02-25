@@ -7,8 +7,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 (function () {
   'use strict';
 
-  var range = document.createRange();
-  var createHTML = range.createContextualFragment.bind(range);
+  var createHTML = craftedCreateContextualFragment;
   var slice = Array.prototype.slice;
 
   var classAsString = 'MaterialFragment';
@@ -252,5 +251,55 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       cssClass: cssClass,
       widget: true
     });
+  }
+
+  /**
+   * Please, do not use createContextualFragment from Range
+   * It's an experimental fn. This function intentionally replaces
+   * Range.createContextualFragment
+   *
+   * @param {String} html - The string that we want to convert into HTML
+   * @return {DocumentFragment}
+   * @private
+   */
+  function craftedCreateContextualFragment(html) {
+    function rewriteScripts(element) {
+      Array.prototype.slice.call(element.querySelectorAll('script')).forEach(function (old_script) {
+        var new_script = document.createElement('script');
+
+        // clone text (content)
+        old_script.src && (new_script.src = old_script.src);
+        old_script.text && (new_script.text = old_script.text);
+
+        // clone all attributes
+        Array.prototype.slice.call(old_script.attributes).forEach(function (attr) {
+          return new_script.setAttribute(attr.name, attr.value);
+        });
+
+        old_script.parentNode.replaceChild(new_script, old_script);
+      });
+    }
+
+    // create DocumentFragment
+    var frag = document.createDocumentFragment();
+
+    // create a wrapper as div (could be anything else)
+    var wrapper = document.createElement('div');
+
+    // fill with HTML
+    wrapper.innerHTML = html;
+
+    // rewrite scripts in order to make them executable
+    rewriteScripts(wrapper);
+
+    // append wrapper to fragment
+    frag.appendChild(wrapper);
+    while (wrapper.children.length > 0) {
+      // move eveything from wrapper to fragment
+      frag.appendChild(wrapper.children[0]);
+    }
+    // clean-up
+    frag.removeChild(wrapper);
+    return frag;
   }
 })();
