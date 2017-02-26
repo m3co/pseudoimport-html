@@ -1,13 +1,5 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
 (function () {
   'use strict';
 
@@ -20,96 +12,71 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
   var options = {};
 
   /**
-   * Class HTMLXFragmentElement
+   * Prototype HTMLXFragmentElement
    */
+  var HTMLXFragmentElement = Object.create(HTMLElement.prototype);
 
-  var HTMLXFragmentElement = function (_HTMLElement) {
-    _inherits(HTMLXFragmentElement, _HTMLElement);
+  /**
+   * Callback that is called when document.create(fragment) or similar
+   *
+   */
+  HTMLXFragmentElement.createdCallback = function () {
+    var _this = this;
+
+    this.fetch_ = null;
+    this.resolvers_ = [];
 
     /**
-     * Constructor
+     * Load promise
      *
-     * @private
      */
-    function HTMLXFragmentElement() {
-      _classCallCheck(this, HTMLXFragmentElement);
+    this.loaded = new Promise(function (resolve) {
+      _this.resolve_ = resolve;
+    });
+  };
 
-      return _possibleConstructorReturn(this, (HTMLXFragmentElement.__proto__ || Object.getPrototypeOf(HTMLXFragmentElement)).call(this));
-      // In fact, this function is never being called by browser
+  /**
+   * Callback that is called when attaching (appendChild or similar)
+   * this fragment into DOM
+   *
+   * @private
+   */
+  HTMLXFragmentElement.attachedCallback = function () {
+    var _this2 = this;
+
+    if (!this.hasAttribute('src')) {
+      throw new Error('Src attribute is not present');
     }
 
-    /**
-     * Callback that is called when document.create(fragment) or similar
-     *
-     */
+    var parent = this.parentElement.closest(selClass);
+    this.root_ = parent ? parent.root_ : this;
+    this.isRoot_ = parent ? false : true;
+    this.fetched_ = [];
 
-
-    _createClass(HTMLXFragmentElement, [{
-      key: 'createdCallback',
-      value: function createdCallback() {
-        var _this2 = this;
-
-        this.fetch_ = null;
-        this.resolvers_ = [];
-
-        /**
-         * Load promise
-         *
-         */
-        this.loaded = new Promise(function (resolve) {
-          _this2.resolve_ = resolve;
+    var src = preparePath(this.getAttribute('src'), this.dataset.baseURI);
+    this.fetch_ = fetch_(this, src, options).then(function (element) {
+      delete element.dataset.baseURI;
+      _this2.root_.resolvers_.push(resolve.bind(null, element, options));
+      return Promise.all(slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
+        return fragment.fetch_;
+      }));
+    }).then(function () {
+      if (_this2.isRoot_) {
+        _this2.resolvers_.forEach(function (resolver) {
+          return resolver();
         });
+        delete _this2.resolvers_;
+        delete _this2.resolve_;
+        delete _this2.fetched_;
+        delete _this2.fetch_;
+        delete _this2.isRoot_;
       }
-
-      /**
-       * Callback that is called when attaching (appendChild or similar)
-       * this fragment into DOM
-       *
-       * @private
-       */
-
-    }, {
-      key: 'attachedCallback',
-      value: function attachedCallback() {
-        var _this3 = this;
-
-        if (!this.hasAttribute('src')) {
-          throw new Error('Src attribute is not present');
-        }
-
-        var parent = this.parentElement.closest(selClass);
-        this.root_ = parent ? parent.root_ : this;
-        this.isRoot_ = parent ? false : true;
-        this.fetched_ = [];
-
-        var src = preparePath(this.getAttribute('src'), this.dataset.baseURI);
-        this.fetch_ = fetch_(this, src, options).then(function (element) {
-          delete element.dataset.baseURI;
-          _this3.root_.resolvers_.push(resolve.bind(null, element, options));
-          return Promise.all(slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
-            return fragment.fetch_;
-          }));
-        }).then(function () {
-          if (_this3.isRoot_) {
-            _this3.resolvers_.forEach(function (resolver) {
-              return resolver();
-            });
-            delete _this3.resolvers_;
-            delete _this3.resolve_;
-            delete _this3.fetched_;
-            delete _this3.fetch_;
-            delete _this3.isRoot_;
-          }
-        });
-      }
-    }]);
-
-    return HTMLXFragmentElement;
-  }(HTMLElement);
+    });
+  };
 
   if (!window[classAsString]) {
     window[classAsString] = HTMLXFragmentElement;
-    document.registerElement('x-fragment', HTMLXFragmentElement);
+    document.registerElement('x-fragment', { prototype: HTMLXFragmentElement });
   }
 
   /**

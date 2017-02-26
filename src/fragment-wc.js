@@ -9,78 +9,67 @@
   var options = {};
 
   /**
-   * Class HTMLXFragmentElement
+   * Prototype HTMLXFragmentElement
    */
-  class HTMLXFragmentElement extends HTMLElement {
+  var HTMLXFragmentElement = Object.create(HTMLElement.prototype);
 
-    /**
-     * Constructor
-     *
-     * @private
-     */
-    constructor() {
-      super();
-      // In fact, this function is never being called by browser
-    }
-
-    /**
-     * Callback that is called when document.create(fragment) or similar
-     *
-     */
-    createdCallback() {
-      this.fetch_ = null;
-      this.resolvers_ = [];
+  /**
+   * Callback that is called when document.create(fragment) or similar
+   *
+   */
+  HTMLXFragmentElement.createdCallback = function() {
+    this.fetch_ = null;
+    this.resolvers_ = [];
 
       /**
        * Load promise
        *
        */
-      this.loaded = new Promise((resolve) => {
-        this.resolve_ = resolve;
-      });
+    this.loaded = new Promise((resolve) => {
+      this.resolve_ = resolve;
+    });
+  };
+
+  /**
+   * Callback that is called when attaching (appendChild or similar)
+   * this fragment into DOM
+   *
+   * @private
+   */
+  HTMLXFragmentElement.attachedCallback = function() {
+    if (!this.hasAttribute('src')) {
+      throw new Error('Src attribute is not present');
     }
 
-    /**
-     * Callback that is called when attaching (appendChild or similar)
-     * this fragment into DOM
-     *
-     * @private
-     */
-    attachedCallback() {
-      if (!this.hasAttribute('src')) {
-        throw new Error('Src attribute is not present');
-      }
+    var parent = this.parentElement.closest(selClass);
+    this.root_ = parent ? parent.root_ : this;
+    this.isRoot_ = parent ? false : true;
+    this.fetched_ = [];
 
-      var parent = this.parentElement.closest(selClass);
-      this.root_ = parent ? parent.root_ : this;
-      this.isRoot_ = parent ? false : true;
-      this.fetched_ = [];
-
-      var src = preparePath(this.getAttribute('src'),
+    var src = preparePath(this.getAttribute('src'),
                             this.dataset.baseURI);
-      this.fetch_ = fetch_(this, src, options).then(element => {
-        delete element.dataset.baseURI;
-        this.root_.resolvers_.push(resolve.bind(null, element, options));
-        return Promise.all(
+    this.fetch_ = fetch_(this, src, options).then(element => {
+      delete element.dataset.baseURI;
+      this.root_.resolvers_.push(resolve.bind(null, element, options));
+      return Promise.all(
           slice.call(element.querySelectorAll(selClass))
             .map(fragment => fragment.fetch_)
         );
-      }).then(() => {
-        if (this.isRoot_) {
-          this.resolvers_.forEach(resolver => resolver());
-          delete this.resolvers_;
-          delete this.resolve_;
-          delete this.fetched_;
-          delete this.fetch_;
-          delete this.isRoot_;
-        }
-      });
-    }
-  }
+    }).then(() => {
+      if (this.isRoot_) {
+        this.resolvers_.forEach(resolver => resolver());
+        delete this.resolvers_;
+        delete this.resolve_;
+        delete this.fetched_;
+        delete this.fetch_;
+        delete this.isRoot_;
+      }
+    });
+  };
 
   if (!window[classAsString]) {
     window[classAsString] = HTMLXFragmentElement;
-    document.registerElement('x-fragment', HTMLXFragmentElement);
+    document.registerElement('x-fragment', { prototype: HTMLXFragmentElement });
   }
 
   /**
