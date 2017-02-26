@@ -1,0 +1,61 @@
+<!doctype html>
+<html>
+  <head>
+    <title>MDL-Fragment Demo 1</title>
+    <meta x-fragment headers-cache-control="no-cache" headers-custom-header="custom-value" method="GET">
+    <meta x-fragment headers-cache-control="must-revalidate">
+    <meta x-fragment mode="cors">
+    <script src="https://cdn.ravenjs.com/3.11.0/raven.min.js"></script>
+    <script>
+      'use strict';
+      Raven.config('https://fa54258dc11647fa901fef0aa3d38006@sentry.io/104730', {ignoreUrls: 'localhost'}).install();
+    </script>
+    <script src="/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="/bower_components/js-polyfills/polyfill.min.js"></script>
+    <script src="/bower_components/element-matches/closest.js"></script>
+    <link rel="stylesheet" href="/bower_components/material-design-lite/material.min.css">
+    <script src="/fragment-wc.js"></script>
+  </head>
+  <body>
+    <div>In order to import an <strong>HTML document</strong> from an URI, use the element <i>x-fragment</i> in conjunction with <i>src</i> attribute.</div><br>
+    <i>demo-wc.html</i>
+    <pre><code class="html">
+&lt;x-fragment id="fragment-wc"
+     src="/trunk/demo-wc-fragment.html"&gt;
+&lt;/x-fragment&gt;
+    </code></pre>
+    <i>demo-wc-fragment.html</i>
+    <pre><code class="html">
+&lt;!doctype html&gt;
+&lt;div&gt;Fragment 1&lt;/div&gt;
+&lt;script&gt;
+  'use strict';
+  document.querySelector('#fragment-wc').addEventListener('load', function (e) {
+    console.log('fragment loaded detected by inline script');
+  });
+&lt;/script&gt;
+&lt;script src="/demo/demo-wc-fragment.js"&gt;&lt;/script&gt;
+    </code></pre>
+    <i>demo-wc-fragment.js</i>
+    <pre><code class="javascript">
+'use strict';
+document.querySelector('#fragment-wc').addEventListener('load', function (e) {
+  console.log('fragment loaded detected by script');
+});
+    </code></pre>
+    <i>... and polyfills</i>
+    <pre><code class="html">
+&lt;script src="/bower_components/js-polyfills/polyfill.min.js"&lt;/script&gt;
+&lt;script src="/bower_components/element-matches/closest.js"&gt;&lt;/script&gt;
+    </code></pre>
+    <div><i>The expected result of this import is</i></div>
+    <img src="https://puu.sh/thXWu/280c743555.png"><br><br><br>
+    <div><i>The actual result of this import is</i></div><br>
+    <x-fragment src="/trunk/demo-wc-fragment.html" id="fragment-wc"></x-fragment><br>
+    <div><i>and Console in Chrome will show</i></div>
+    <pre><code>
+fragment loaded detected by inline script       VM1410:4
+fragment loaded detected by script  demo-mdl-fragment.js:3
+    </code></pre>
+  </body>
+</html>

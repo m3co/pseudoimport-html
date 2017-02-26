@@ -1,0 +1,10 @@
+<!doctype html>
+<div>Fragment 1</div>
+<a href="/docs/tutorial-demo-wc.html">This fragment is part of Demo 1</a>
+<script>
+  'use strict';
+  document.querySelector('#fragment-wc').addEventListener('load', function(e) {
+    console.log('fragment loaded detected by inline script');
+  });
+</script>
+<script src="/trunk/demo-wc-fragment.js"></script>
