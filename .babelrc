@@ -1,1 +1,4 @@
-./resources/configs/.babelrc
+{
+  "presets": ["es2015"],
+  "ignore": ["src/fragment-ce.js"]
+}
