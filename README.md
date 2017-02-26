@@ -1,6 +1,6 @@
 # MDL/CE-fragment
 
-Here's a simple _MDL/CE component_ that allows you to import HTML code.
+Here's a simple _MDL/CE/WC component_ that allows you to import HTML code.
 
 Check the [docs](/docs).
 
@@ -23,6 +23,12 @@ or
 ```
 
 ## Assumptions
+
+### Contexts are important
+
+Please, do not mix _fragment-mdl.js_ with _fragment-ce.js_ and _fragment-wc.js_. The last one is for old browsers. _MDL_ is for [Material Design Lite](https://github.com/google/material-design-lite). _CE_ is for [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/) and _WC_ is for [Web Components](https://w3c.github.io/webcomponents/spec/custom/) but instead of ```customElements.define``` it uses ```document.registerElement```.
+
+If this idea looks good to you and you want to implement it into your favorite framework, then feel free to send me a PR. I'll be glad to help you with testing and more.
 
 ### Fetch an URI
 
