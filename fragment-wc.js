@@ -1,0 +1,307 @@
+'use strict';
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+(function () {
+  'use strict';
+
+  var createHTML = craftedCreateContextualFragment;
+  var slice = Array.prototype.slice;
+
+  var classAsString = 'HTMLXFragmentElement';
+  var selClass = 'x-fragment';
+
+  var options = {};
+
+  /**
+   * Class HTMLXFragmentElement
+   */
+
+  var HTMLXFragmentElement = function (_HTMLElement) {
+    _inherits(HTMLXFragmentElement, _HTMLElement);
+
+    /**
+     * Constructor
+     *
+     * @private
+     */
+    function HTMLXFragmentElement() {
+      _classCallCheck(this, HTMLXFragmentElement);
+
+      return _possibleConstructorReturn(this, (HTMLXFragmentElement.__proto__ || Object.getPrototypeOf(HTMLXFragmentElement)).call(this));
+      // In fact, this function is never being called by browser
+    }
+
+    /**
+     * Callback that is called when document.create(fragment) or similar
+     *
+     */
+
+
+    _createClass(HTMLXFragmentElement, [{
+      key: 'createdCallback',
+      value: function createdCallback() {
+        var _this2 = this;
+
+        this.fetch_ = null;
+        this.resolvers_ = [];
+
+        /**
+         * Load promise
+         *
+         */
+        this.loaded = new Promise(function (resolve) {
+          _this2.resolve_ = resolve;
+        });
+      }
+
+      /**
+       * Callback that is called when attaching (appendChild or similar)
+       * this fragment into DOM
+       *
+       * @private
+       */
+
+    }, {
+      key: 'attachedCallback',
+      value: function attachedCallback() {
+        var _this3 = this;
+
+        if (!this.hasAttribute('src')) {
+          throw new Error('Src attribute is not present');
+        }
+
+        var parent = this.parentElement.closest(selClass);
+        this.root_ = parent ? parent.root_ : this;
+        this.isRoot_ = parent ? false : true;
+        this.fetched_ = [];
+
+        var src = preparePath(this.getAttribute('src'), this.dataset.baseURI);
+        this.fetch_ = fetch_(this, src, options).then(function (element) {
+          delete element.dataset.baseURI;
+          _this3.root_.resolvers_.push(resolve.bind(null, element, options));
+          return Promise.all(slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
+            return fragment.fetch_;
+          }));
+        }).then(function () {
+          if (_this3.isRoot_) {
+            _this3.resolvers_.forEach(function (resolver) {
+              return resolver();
+            });
+            delete _this3.resolvers_;
+            delete _this3.resolve_;
+            delete _this3.fetched_;
+            delete _this3.fetch_;
+            delete _this3.isRoot_;
+          }
+        });
+      }
+    }]);
+
+    return HTMLXFragmentElement;
+  }(HTMLElement);
+
+  if (!window[classAsString]) {
+    window[classAsString] = HTMLXFragmentElement;
+    document.registerElement('x-fragment', HTMLXFragmentElement);
+  }
+
+  /**
+   * Resolve, in fact, dispatch load event from an element
+   *
+   * @param {HTMLElement} element - The element that will dispatch the
+   *   load event.
+   * @private
+   */
+  function resolve(element, options) {
+    var options_ = Object.keys(options).reduce(function (acc, key) {
+      var options_ = options[key];
+      var options_isObj = options_ instanceof Object;
+      if (options_isObj) {
+        Object.keys(options_).reduce(function (acc, key_) {
+          var options__ = options_[key_];
+          var options__isObj = options__ instanceof Object;
+          if (options__isObj) {
+            throw new Error('still not developed the recursion');
+          } else {
+            acc[key + '-' + key_] = options__;
+            return acc;
+          }
+        }, acc);
+      } else {
+        acc[key] = options_;
+      }
+      return acc;
+    }, {});
+    Object.keys(options_).forEach(function (key) {
+      return element.setAttribute(key, options_[key]);
+    });
+    /**
+     * On load the fragment.
+     * All scrips loaded from a fragment will execute asynchronously.
+     * This event is not bubbled.
+     *
+     * @event HTMLXFragmentElement#load
+     * @type {CustomEvent}
+     * @property {HTMLElement} fragment - The loaded fragment
+     */
+    element.dispatchEvent(new CustomEvent('load', {
+      detail: {
+        fragment: element
+      }
+    }));
+    element.resolve_(element);
+  }
+
+  /**
+   * Extract the base dir from path.
+   *
+   * @param {String} path
+   * @return {String}
+   * @private
+   */
+  function basedir(path) {
+    return path.split('#')[0].split('/').reduce(function (acc, curr, index, array) {
+      if (index === array.length - 1) {
+        return acc;
+      }
+      return acc += curr + '/';
+    }, '');
+  }
+
+  /**
+   * Prepare path based on baseURI or document.baseURI
+   *
+   * @param {String} path
+   * @param {String} baseURI
+   * @return {String}
+   * @private
+   */
+  function preparePath(path, baseURI) {
+    return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
+  }
+
+  /**
+   * Set options (IIEF) from meta x-fragment tag
+   *
+   * @private
+   */
+  (function () {
+    slice.call(document.querySelectorAll('meta[' + selClass + ']')).forEach(function (meta) {
+      slice.call(meta.attributes).forEach(function (attr) {
+        if (attr.name === selClass) {
+          return;
+        }
+        var dividerPosition = attr.name.indexOf('-');
+        if (dividerPosition === -1) {
+          options[attr.name] = attr.value;
+        } else {
+          var type = attr.name.substring(0, dividerPosition);
+          var param = attr.name.substring(dividerPosition + 1);
+          options[type] = options[type] || {};
+          options[type][param] = attr.value;
+        }
+      });
+    });
+  })();
+
+  /**
+   * Please, do not use createContextualFragment from Range
+   * It's an experimental fn. This function intentionally replaces
+   * Range.createContextualFragment
+   *
+   * @param {String} html - The string that we want to convert into HTML
+   * @return {DocumentFragment}
+   * @private
+   */
+  function craftedCreateContextualFragment(html) {
+    function rewriteScripts(element) {
+      slice.call(element.querySelectorAll('script')).forEach(function (old_script) {
+        var new_script = document.createElement('script');
+
+        // clone text (content)
+        old_script.src && (new_script.src = old_script.src);
+        old_script.text && (new_script.text = old_script.text);
+
+        // clone all attributes
+        slice.call(old_script.attributes).forEach(function (attr) {
+          return new_script.setAttribute(attr.name, attr.value);
+        });
+
+        old_script.parentNode.replaceChild(new_script, old_script);
+      });
+    }
+
+    // create DocumentFragment
+    var frag = document.createDocumentFragment();
+
+    // create a wrapper as div (could be anything else)
+    var wrapper = document.createElement('div');
+
+    // fill with HTML
+    wrapper.innerHTML = html;
+
+    // rewrite scripts in order to make them executable
+    rewriteScripts(wrapper);
+
+    // append wrapper to fragment
+    frag.appendChild(wrapper);
+    while (wrapper.children.length > 0) {
+      // move eveything from wrapper to fragment
+      frag.appendChild(wrapper.children[0]);
+    }
+    // clean-up
+    frag.removeChild(wrapper);
+    return frag;
+  }
+
+  /**
+   * Fetch HTML code from src to fragment.
+   *
+   * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
+   * @param {String} src - The URI to fetch
+   * @return {Promise} - The fetch request
+   * @private
+   */
+  function fetch_(fragment, src, options) {
+    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).root_.fetched_;
+    if (fetched.includes(src)) {
+      var error = new Error('Circular dependency detected at ' + src);
+      window.dispatchEvent(new window.ErrorEvent('error', error));
+      throw error;
+    }
+    fetched.push(src);
+    return fetch(src, options).then(function (response) {
+      return response.text();
+    }).then(function (text) {
+      var base = basedir(src);
+      var html = createHTML(text);
+      var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
+        return new Promise(function (resolve) {
+          if (script.src === '') {
+            resolve(script);
+          } else {
+            var src = script.getAttribute('src');
+            script.src = src[0] === '/' ? src : base + src;
+            script.addEventListener('load', function () {
+              return resolve(script);
+            });
+          }
+        });
+      });
+      slice.call(html.querySelectorAll(selClass)).forEach(function (fragment) {
+        return fragment.dataset.baseURI = base;
+      });
+      fragment.appendChild(html);
+      return Promise.all(scripts).then(function () {
+        return fragment;
+      });
+    });
+  }
+})();

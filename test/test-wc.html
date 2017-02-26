@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Fragment test page CE</title>
+    <meta x-fragment headers-cache-control="no-cache" headers-custom-header="custom-value" method="GET">
+    <meta x-fragment headers-cache-control="must-revalidate">
+    <meta x-fragment mode="cors">
+    <script src="/resources/testharness.js/testharness.js"></script>
+    <script src="helper.js"></script>
+
+    <script src="/fragment-wc.js"></script>
+  </head>
+  <body>
+    <x-fragment class="x-fragment-element" src="/test/fixtures/ce-fragment1.html"></x-fragment>
+    <x-fragment src="/test/fixtures/ce-fragment23.html"></x-fragment>
+  </body>
+  <script src="test-wc.js"></script>
+</html>
