@@ -24,6 +24,19 @@ or
 
 ## Assumptions
 
+### Earlier content cannot be touched
+
+Let's imagine an obvious case
+```html
+<x-fragment src="URL.html">
+  <script src="something-that-could-be-important.js"></script>
+  <div class="loader-or-similar">
+    ~
+  </div>
+</x-fragment>
+```
+If the fragment would _reset_ the content, then there's no guarrante that _something-that-could-be-important_ won't brake the page after putting the fetched content from _URL.html_, right? By this simple reason, __the eariler content cannot be touched__.
+
 ### Contexts are important
 
 Please, do not mix _fragment-mdl.js_ with _fragment-ce.js_ and _fragment-wc.js_. The last one is for old browsers. _MDL_ is for [Material Design Lite](https://github.com/google/material-design-lite). _CE_ is for [Custom Elements](https://w3c.github.io/webcomponents/spec/custom/) and _WC_ is for [Web Components](https://w3c.github.io/webcomponents/spec/custom/) but instead of ```customElements.define``` it uses ```document.registerElement```.
