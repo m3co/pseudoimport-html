@@ -14,7 +14,7 @@ setup({allow_uncaught_exception:true});
 onload_test(function(e) {
   var fragment = document.querySelector(selFragment);
 
-  assert_true(fragment instanceof HTMLXFragmentElement);
+  assert_true(fragment instanceof HTMLElement);
   assert_true(fragment.loaded instanceof Promise);
 
   fragment.remove();

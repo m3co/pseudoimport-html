@@ -13,12 +13,14 @@
 
   /**
    * Prototype HTMLXFragmentElement
+   *
    */
   var HTMLXFragmentElement = Object.create(HTMLElement.prototype);
 
   /**
    * Callback that is called when document.create(fragment) or similar
    *
+   * @private
    */
   HTMLXFragmentElement.createdCallback = function () {
     var _this = this;

@@ -8,6 +8,8 @@ Check the [tests MDL](/test/test-mdl.html).
 
 Check the [tests CE](/test/test-ce.html).
 
+Check the [tests WC](/test/test-wc.html).
+
 Feel free to import HTML content by using
 
 ```html
