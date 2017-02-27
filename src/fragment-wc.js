@@ -4,7 +4,7 @@
   const slice = Array.prototype.slice;
 
   const classAsString = 'HTMLXFragmentElement';
-  const selClass = 'x-fragment';
+  const selector = 'x-fragment';
 
   var options = {};
 
@@ -43,7 +43,7 @@
       throw new Error('Src attribute is not present');
     }
 
-    var parent = this.parentElement.closest(selClass);
+    var parent = this.parentElement.closest(selector);
     this.root_ = parent ? parent.root_ : this;
     this.isRoot_ = parent ? false : true;
     this.fetched_ = [];
@@ -54,7 +54,7 @@
       delete element.dataset.baseURI;
       this.root_.resolvers_.push(resolve.bind(null, element, options));
       return Promise.all(
-          slice.call(element.querySelectorAll(selClass))
+          slice.call(element.querySelectorAll(selector))
             .map(fragment => fragment.fetch_)
         );
     }).then(() => {
@@ -156,11 +156,11 @@
    * @private
    */
   (() => {
-    slice.call(document.querySelectorAll(`meta[${selClass}]`))
+    slice.call(document.querySelectorAll(`meta[${selector}]`))
       .forEach((meta) => {
         slice.call(meta.attributes)
           .forEach((attr) => {
-            if (attr.name === selClass) { return; }
+            if (attr.name === selector) { return; }
             let dividerPosition = attr.name.indexOf('-');
             if (dividerPosition === -1) {
               options[attr.name] = attr.value;
@@ -235,7 +235,7 @@
   function fetch_(fragment, src, options) {
     var fetched = fragment.isRoot_ ?
       fragment.fetched_ :
-      fragment.parentElement.closest(selClass).root_.fetched_;
+      fragment.parentElement.closest(selector).root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error(`Circular dependency detected at ${src}`);
       window.dispatchEvent(new window.ErrorEvent('error', error));
@@ -256,7 +256,7 @@
               script.addEventListener('load', () => resolve(script));
             }
           }));
-        slice.call(html.querySelectorAll(selClass))
+        slice.call(html.querySelectorAll(selector))
           .forEach(fragment => fragment.dataset.baseURI = base);
         fragment.appendChild(html);
         return Promise.all(scripts).then(() => fragment);

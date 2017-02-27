@@ -4,8 +4,8 @@
   const slice = Array.prototype.slice;
 
   const classAsString = 'MaterialFragment';
-  const cssClass = 'mdl-fragment';
-  const selClass = `.${cssClass}`;
+  const selector = 'mdl-fragment';
+  const cssClass = `.${selector}`;
 
   var options = {};
 
@@ -21,7 +21,7 @@
      * @param {HTMLElement} element - The element that will be upgraded.
      */
     constructor(element) {
-      var parent = element.parentElement.closest(selClass);
+      var parent = element.parentElement.closest(cssClass);
       this.fetch_ = null;
       this.element_ = element;
 
@@ -58,7 +58,7 @@
         this.root_.MaterialFragment.resolvers_
           .push(resolve.bind(null, element, options));
         return Promise.all(
-          slice.call(element.querySelectorAll(selClass))
+          slice.call(element.querySelectorAll(cssClass))
             .map(fragment => fragment.MaterialFragment.fetch_)
         );
       }).then(() => {
@@ -81,7 +81,7 @@
     componentHandler.register({
       constructor: MaterialFragment,
       classAsString: classAsString,
-      cssClass: cssClass,
+      cssClass: selector,
       widget: true
     });
   }
@@ -168,11 +168,11 @@
    * @private
    */
   (() => {
-    slice.call(document.querySelectorAll(`meta[${cssClass}]`))
+    slice.call(document.querySelectorAll(`meta[${selector}]`))
       .forEach((meta) => {
         slice.call(meta.attributes)
           .forEach((attr) => {
-            if (attr.name === cssClass) { return; }
+            if (attr.name === selector) { return; }
             let dividerPosition = attr.name.indexOf('-');
             if (dividerPosition === -1) {
               options[attr.name] = attr.value;
@@ -247,7 +247,7 @@
   function fetch_(fragment, src, options) {
     var fetched = fragment.isRoot_ ?
       fragment.fetched_ :
-      fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
+      fragment.parentElement.closest(cssClass).MaterialFragment.root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error(`Circular dependency detected at ${src}`);
       window.dispatchEvent(new window.ErrorEvent('error', error));
@@ -270,7 +270,7 @@
           }));
         fragment.appendChild(html);
         return Promise.all(scripts).then(() => {
-          slice.call(fragment.querySelectorAll(selClass))
+          slice.call(fragment.querySelectorAll(cssClass))
             .forEach(fragment => {
               fragment.dataset.baseURI = base;
               componentHandler.upgradeElement(fragment);

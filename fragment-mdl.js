@@ -11,8 +11,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   var slice = Array.prototype.slice;
 
   var classAsString = 'MaterialFragment';
-  var cssClass = 'mdl-fragment';
-  var selClass = '.' + cssClass;
+  var selector = 'mdl-fragment';
+  var cssClass = '.' + selector;
 
   var options = {};
 
@@ -33,7 +33,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
       _classCallCheck(this, MaterialFragment);
 
-      var parent = element.parentElement.closest(selClass);
+      var parent = element.parentElement.closest(cssClass);
       this.fetch_ = null;
       this.element_ = element;
 
@@ -73,7 +73,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         this.fetch_ = fetch_(this.element_, src, options).then(function (element) {
           delete element.dataset.baseURI;
           _this2.root_.MaterialFragment.resolvers_.push(resolve.bind(null, element, options));
-          return Promise.all(slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
+          return Promise.all(slice.call(element.querySelectorAll(cssClass)).map(function (fragment) {
             return fragment.MaterialFragment.fetch_;
           }));
         }).then(function () {
@@ -101,7 +101,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     componentHandler.register({
       constructor: MaterialFragment,
       classAsString: classAsString,
-      cssClass: cssClass,
+      cssClass: selector,
       widget: true
     });
   }
@@ -187,9 +187,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @private
    */
   (function () {
-    slice.call(document.querySelectorAll('meta[' + cssClass + ']')).forEach(function (meta) {
+    slice.call(document.querySelectorAll('meta[' + selector + ']')).forEach(function (meta) {
       slice.call(meta.attributes).forEach(function (attr) {
-        if (attr.name === cssClass) {
+        if (attr.name === selector) {
           return;
         }
         var dividerPosition = attr.name.indexOf('-');
@@ -264,7 +264,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @private
    */
   function fetch_(fragment, src, options) {
-    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).MaterialFragment.root_.fetched_;
+    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(cssClass).MaterialFragment.root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error('Circular dependency detected at ' + src);
       window.dispatchEvent(new window.ErrorEvent('error', error));
@@ -291,7 +291,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       });
       fragment.appendChild(html);
       return Promise.all(scripts).then(function () {
-        slice.call(fragment.querySelectorAll(selClass)).forEach(function (fragment) {
+        slice.call(fragment.querySelectorAll(cssClass)).forEach(function (fragment) {
           fragment.dataset.baseURI = base;
           componentHandler.upgradeElement(fragment);
         });

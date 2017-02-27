@@ -7,7 +7,7 @@
   var slice = Array.prototype.slice;
 
   var classAsString = 'HTMLXFragmentElement';
-  var selClass = 'x-fragment';
+  var selector = 'x-fragment';
 
   var options = {};
 
@@ -50,7 +50,7 @@
       throw new Error('Src attribute is not present');
     }
 
-    var parent = this.parentElement.closest(selClass);
+    var parent = this.parentElement.closest(selector);
     this.root_ = parent ? parent.root_ : this;
     this.isRoot_ = parent ? false : true;
     this.fetched_ = [];
@@ -59,7 +59,7 @@
     this.fetch_ = fetch_(this, src, options).then(function (element) {
       delete element.dataset.baseURI;
       _this2.root_.resolvers_.push(resolve.bind(null, element, options));
-      return Promise.all(slice.call(element.querySelectorAll(selClass)).map(function (fragment) {
+      return Promise.all(slice.call(element.querySelectorAll(selector)).map(function (fragment) {
         return fragment.fetch_;
       }));
     }).then(function () {
@@ -162,9 +162,9 @@
    * @private
    */
   (function () {
-    slice.call(document.querySelectorAll('meta[' + selClass + ']')).forEach(function (meta) {
+    slice.call(document.querySelectorAll('meta[' + selector + ']')).forEach(function (meta) {
       slice.call(meta.attributes).forEach(function (attr) {
-        if (attr.name === selClass) {
+        if (attr.name === selector) {
           return;
         }
         var dividerPosition = attr.name.indexOf('-');
@@ -239,7 +239,7 @@
    * @private
    */
   function fetch_(fragment, src, options) {
-    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selClass).root_.fetched_;
+    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selector).root_.fetched_;
     if (fetched.includes(src)) {
       var error = new Error('Circular dependency detected at ' + src);
       window.dispatchEvent(new window.ErrorEvent('error', error));
@@ -264,7 +264,7 @@
           }
         });
       });
-      slice.call(html.querySelectorAll(selClass)).forEach(function (fragment) {
+      slice.call(html.querySelectorAll(selector)).forEach(function (fragment) {
         return fragment.dataset.baseURI = base;
       });
       fragment.appendChild(html);
