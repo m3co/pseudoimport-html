@@ -30,6 +30,7 @@
     "gulp-connect": "^5.0.0",
     "gulp-csslint": "^1.0.0",
     "gulp-eslint": "^3.0.1",
+    "gulp-file-include": "^1.0.0",
     "gulp-htmlhint": "^0.3.1",
     "gulp-if": "^2.0.2",
     "gulp-jsdoc3": "^1.0.1",
