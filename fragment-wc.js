@@ -267,8 +267,10 @@
       slice.call(html.querySelectorAll(selector)).forEach(function (fragment) {
         return fragment.dataset.baseURI = base;
       });
+      document.currentFragment = fragment;
       fragment.appendChild(html);
       return Promise.all(scripts).then(function () {
+        document.currentFragment = null;
         return fragment;
       });
     });
