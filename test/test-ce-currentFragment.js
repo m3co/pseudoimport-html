@@ -9,8 +9,8 @@
     var fragment1 = document.createElement('x-fragment');
     var fragment2 = document.createElement('x-fragment');
 
-    fragment1.setAttribute('src', 'currentFragment/test-1.html');
-    fragment2.setAttribute('src', 'currentFragment/test-2.html');
+    fragment1.setAttribute('src', 'ce-currentFragment/test-1.html');
+    fragment2.setAttribute('src', 'ce-currentFragment/test-2.html');
 
     window.fixtures = {
       fragment1: fragment1,
