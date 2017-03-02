@@ -1,0 +1,11 @@
+<!doctype html>
+<script>
+  'use strict';
+  // [verify]
+  test(() => {
+    assert_true(document.currentFragment instanceof HTMLElement);
+  }, 'document.currentFragment is defined');
+  test(() => {
+    assert_equals(document.currentFragment, window.currentFragmentFixture1);
+  }, 'document.currentFragment equals to "fixture1"');
+</script>
