@@ -24,6 +24,10 @@ or
 
 ## Assumptions
 
+### Scripts or Modules?
+
+The rough idea is that the fragment behaves like ```<script>```. If you _import_ two or more times the same fragment, then it'll be fetched and executed as browser does with ```scripts```. There's no complex mechanism that allows to _import_ a fragment, and reuse its code in somewhere else.
+
 ### document.currentFragment
 
 A.k.a the cousing of ```document.currentScript```. It works only once. So, while executing an script, the value of ```document.currentFragment``` is the fragment caller. Once the promise of all scripts is completed, then ```document.currentFragment = null```.
