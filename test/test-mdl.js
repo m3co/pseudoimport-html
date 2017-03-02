@@ -427,4 +427,29 @@ promise_test(function() { return new Promise((resolve, reject) => {
   reject('Can\'t test presence of src attribute');
 }); }, "Throw error if src attribute is not present");
 
+/**
+ * Check currentFragment object - case fixture1
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+  // [setup]
+  var fragment = document.createElement('div');
+  fragment.classList.add(cssFragment);
+  fragment.setAttribute('src', 'fixtures/fragment-currentFragment.html');
+  window.currentFragmentFixture1 = fragment;
+
+  // [run]
+  document.body.appendChild(fragment);
+  componentHandler.upgradeElement(fragment);
+  fragment.MaterialFragment.loaded.then(this.step_func(fragment => {
+
+    // [verify]
+    assert_equals(document.currentFragment, null);
+
+    // [teardown]
+    resolve();
+    fragment.remove();
+    delete window.currentFragmentFixture1;
+  }));
+})); }, "Check currentFragment object - case fixture1");
+
 })();

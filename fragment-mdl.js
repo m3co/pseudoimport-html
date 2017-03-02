@@ -289,12 +289,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
         });
       });
+      document.currentFragment = fragment;
       fragment.appendChild(html);
       return Promise.all(scripts).then(function () {
         slice.call(fragment.querySelectorAll(cssClass)).forEach(function (fragment) {
           fragment.dataset.baseURI = base;
           componentHandler.upgradeElement(fragment);
         });
+        document.currentFragment = null;
         return fragment;
       });
     });

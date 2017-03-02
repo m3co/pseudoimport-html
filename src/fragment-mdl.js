@@ -166,6 +166,7 @@
               script.addEventListener('load', () => resolve(script));
             }
           }));
+        document.currentFragment = fragment;
         fragment.appendChild(html);
         return Promise.all(scripts).then(() => {
           slice.call(fragment.querySelectorAll(cssClass))
@@ -173,6 +174,7 @@
               fragment.dataset.baseURI = base;
               componentHandler.upgradeElement(fragment);
             });
+          document.currentFragment = null;
           return fragment;
         });
       });
