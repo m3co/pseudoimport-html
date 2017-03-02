@@ -336,7 +336,7 @@ onload_test(function(e) {
 /**
  * Check circular links...
  */
-promise_test(function(e) { return new Promise((resolve, reject) => {
+promise_test(function(e) { return new Promise(this.step_func((resolve, reject) => {
 
   // [setup]
   var fragment = document.createElement('div');
@@ -358,12 +358,12 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 
-}); }, "Circular links are not allowed if fetch same link");
+})); }, "Circular links are not allowed if fetch same link");
 
 /**
  * Check circular links...
  */
-promise_test(function(e) { return new Promise((resolve, reject) => {
+promise_test(function(e) { return new Promise(this.step_func((resolve, reject) => {
 
   // [setup]
   var fragment = document.createElement('div');
@@ -385,12 +385,12 @@ promise_test(function(e) { return new Promise((resolve, reject) => {
   document.body.appendChild(fragment);
   componentHandler.upgradeElement(fragment);
 
-}); }, "Circular links are not allowed if fetch a resource that contains a circular link");
+})); }, "Circular links are not allowed if fetch a resource that contains a circular link");
 
 /**
  * Check fetch's options after loading
  */
-promise_test(function() { return new Promise((resolve, reject) => {
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
 
   let fragment = document.querySelector('[src="/test/fixtures/ce-fragment23.html"]');
   fragment.MaterialFragment.loaded.then(this.step_func((fragment) => {
@@ -400,12 +400,12 @@ promise_test(function() { return new Promise((resolve, reject) => {
     assert_equals(fragment.getAttribute('mode'), 'cors');
     resolve();
   }));
-}); }, "Check fetch's options after loading");
+})); }, "Check fetch's options after loading");
 
 /**
  * Throw error if src attribute is not present...
  */
-promise_test(function() { return new Promise((resolve, reject) => {
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
 
   // [setup]
   var fragmentWithoutSrc = document.createElement('div');
@@ -425,7 +425,7 @@ promise_test(function() { return new Promise((resolve, reject) => {
   // [teardown]
   fragmentWithoutSrc.remove();
   reject('Can\'t test presence of src attribute');
-}); }, "Throw error if src attribute is not present");
+})); }, "Throw error if src attribute is not present");
 
 /**
  * Check currentFragment object - case fixture1
