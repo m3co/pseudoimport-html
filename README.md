@@ -24,6 +24,10 @@ or
 
 ## Assumptions
 
+### document.currentFragment
+
+A.k.a the cousing of ```document.currentScript```. It works only once. So, while executing an script, the value of ```document.currentFragment``` is the fragment caller. Once the promise of all scripts is completed, then ```document.currentFragment = null```.
+
 ### Earlier content cannot be touched
 
 Let's imagine an obvious case
