@@ -257,8 +257,13 @@
           }));
         slice.call(html.querySelectorAll(selector))
           .forEach(fragment => fragment.dataset.baseURI = base);
+        document.currentFragment = fragment;
         fragment.appendChild(html);
-        return Promise.all(scripts).then(() => fragment);
+        return Promise.all(scripts)
+          .then(() => {
+            document.currentFragment = null;
+            return fragment;
+          });
       });
 
   }

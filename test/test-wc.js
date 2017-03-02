@@ -394,7 +394,6 @@ promise_test(function() { return new Promise((resolve, reject) => {
   fragmentWithoutSrc.remove()
 }); }, "Throw error if src attribute is not present");
 
-
 /**
  * Check currentFragment object - case fixture1
  */
