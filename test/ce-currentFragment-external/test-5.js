@@ -1,7 +1,4 @@
-'use script';
+'use strict';
 test(() => {
-  assert_true(
-    (document.currentFragment === document.querySelector('#test-5')) ||
-    (document.currentFragment === document.querySelector('#test-6'))
-  );
-}, 'Repeated url fragment points to its currentFragment');
+  assert_equals(document.currentFragment, document.querySelector('#test-5'));
+}, 'Fixture 5 see document.currentFragment - fragment5');
