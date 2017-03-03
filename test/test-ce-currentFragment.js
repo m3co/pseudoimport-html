@@ -23,6 +23,9 @@
       fragment2.loaded
     ]).then(() => {
       resolve();
+      // [teardown]
+      fragment1.remove();
+      fragment2.remove();
     });
 
   })); }, 'If two fragments were added via body.appendChild then they see their document.currentFragment');
@@ -46,6 +49,9 @@
       fragment2.loaded
     ]).then(() => {
       resolve();
+      // [teardown]
+      fragment1.remove();
+      fragment2.remove();
     });
 
   })); }, 'If two fragments have a common url they see their document.currentFragment');
