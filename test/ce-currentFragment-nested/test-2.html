@@ -1,0 +1,19 @@
+<!doctype html>
+<script src="test-2.js"></script>
+<script>
+  promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+    // [setup]
+    var fragment = document.createElement('x-fragment');
+    fragment.id = 'test-2-1';
+    fragment.setAttribute('src', 'ce-currentFragment-nested/test-2-1.html');
+
+    // [run]
+    document.body.appendChild(fragment);
+
+    fragment.loaded.then(() => {
+      resolve();
+      fragment.remove();
+    });
+
+  })); }, 'If one nested fragment was added via body.appendChild then it see their document.currentFragment');
+</script>
