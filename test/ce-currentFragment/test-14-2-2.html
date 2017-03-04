@@ -1,0 +1,10 @@
+<!doctype html>
+<script>
+  'use strict';
+  window.test14.step(() => {
+    test(() => {
+      assert_equals(document.currentFragment, document.querySelector('#test-14-2-2'));
+    }, 'Fixture 14-2-2 see document.currentFragment - fragment14-2-2');
+    window.test14.check_exit();
+  });
+</script>

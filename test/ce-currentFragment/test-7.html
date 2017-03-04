@@ -1,0 +1,10 @@
+<!doctype html>
+<script>
+  'use script';
+  test(() => {
+    assert_equals(
+      document.currentFragment,
+      document.querySelector('#' + document.currentFragment.id)
+    );
+  }, 'Repeated url fragment points to its currentFragment');
+</script>
