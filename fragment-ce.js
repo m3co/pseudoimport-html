@@ -1,6 +1,5 @@
 (() => {
   'use strict';
-  const createHTML = craftedCreateContextualFragment;
   const slice = Array.prototype.slice;
 
   const classAsString = 'HTMLXFragmentElement';
@@ -221,23 +220,6 @@
     // clean-up
     frag.removeChild(wrapper);
     return frag;
-  }
-
-  function rewriteScripts(element) {
-    slice.call(element.querySelectorAll('script'))
-      .forEach(old_script => {
-        let new_script = document.createElement('script');
-
-        // clone text (content)
-        old_script.src && (new_script.src = old_script.src);
-        old_script.text && (new_script.text = old_script.text);
-
-        // clone all attributes
-        slice.call(old_script.attributes)
-          .forEach(attr => new_script.setAttribute(attr.name, attr.value));
-
-        old_script.parentNode.replaceChild(new_script, old_script);
-      });
   }
 
   function createHTML__(html) {
