@@ -223,6 +223,47 @@
     return frag;
   }
 
+  function rewriteScripts(element) {
+    slice.call(element.querySelectorAll('script'))
+      .forEach(old_script => {
+        let new_script = document.createElement('script');
+
+        // clone text (content)
+        old_script.src && (new_script.src = old_script.src);
+        old_script.text && (new_script.text = old_script.text);
+
+        // clone all attributes
+        slice.call(old_script.attributes)
+          .forEach(attr => new_script.setAttribute(attr.name, attr.value));
+
+        old_script.parentNode.replaceChild(new_script, old_script);
+      });
+  }
+
+  function createHTML__(html) {
+
+    // create DocumentFragment
+    let frag = document.createDocumentFragment();
+
+    // create a wrapper as div (could be anything else)
+    let wrapper = document.createElement('div');
+
+    // fill with HTML
+    wrapper.innerHTML = html;
+
+    // rewrite scripts in order to make them executable
+
+    // append wrapper to fragment
+    frag.appendChild(wrapper);
+    while (wrapper.children.length > 0) {
+      // move eveything from wrapper to fragment
+      frag.appendChild(wrapper.children[0]);
+    }
+    // clean-up
+    frag.removeChild(wrapper);
+    return frag;
+  }
+
   /**
    * Fetch HTML code from src to fragment.
    *
@@ -244,15 +285,50 @@
     return fetch(src, options).then(response => response.text())
       .then(text => {
         var base = basedir(src);
-        var html = createHTML(text);
+        var html = createHTML__(text);
+        //rewriteScripts(html);
         var scripts = slice.call(html.querySelectorAll('script'))
           .map(script => new Promise(resolve => {
+            let new_script = document.createElement('script');
             if (script.src === '') {
-              resolve(script);
+
+  // clone text (content)
+  script.src && (new_script.src = script.src);
+  script.text && (new_script.text = script.text);
+
+  // clone all attributes
+  slice.call(script.attributes)
+    .forEach(attr => new_script.setAttribute(attr.name, attr.value));
+
+  document.currentFragment = fragment;
+  script.parentNode.replaceChild(new_script, script);
+  document.currentFragment = null;
+
+              resolve(new_script);
             } else {
               var src = script.getAttribute('src');
               script.src = src[0] === '/' ? src : base + src;
-              script.addEventListener('load', () => resolve(script));
+
+  // clone text (content)
+  script.src && (new_script.src = script.src);
+  script.text && (new_script.text = script.text);
+
+  // clone all attributes
+  slice.call(script.attributes)
+    .forEach(attr => new_script.setAttribute(attr.name, attr.value));
+
+  fetch(new_script.src).then(response => response.text()).then(text => {
+    document.currentFragment = fragment;
+    new_script.src = '';
+    delete new_script.src;
+    new_script.removeAttribute('src');
+    new_script.text = text;
+    script.parentNode.replaceChild(new_script, script);
+    new_script.dispatchEvent(new Event('load'));
+    document.currentFragment = null;
+  });
+
+              new_script.addEventListener('load', () => resolve(new_script));
             }
           }));
         slice.call(html.querySelectorAll(selector))
