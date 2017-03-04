@@ -37,7 +37,7 @@
 
     }));
 
-  })); }, 'If two fragments were added via body.appendChild then they see their document.currentFragment');
+  })); }, 'If three fragments were added via body.appendChild then they see their document.currentFragment');
 
   promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
     // [setup]
@@ -72,5 +72,5 @@
       fragment3.remove();
     }));
 
-  })); }, 'If two fragments have a common url they see their document.currentFragment');
+  })); }, 'If three fragments have a common url they see their document.currentFragment');
 })();
