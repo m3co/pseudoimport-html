@@ -1,10 +1,10 @@
 <!doctype html>
 <script>
   'use strict';
-  test(() => {
-    assert_equals(document.currentFragment, document.querySelector('#test-14-1'));
-  }, 'Fixture 14-1 see document.currentFragment - fragment14-1');
+  window.test14.step(() => {
+    test(() => {
+      assert_equals(document.currentFragment, document.querySelector('#test-14-2-1'));
+    }, 'Fixture 14-2-1 see document.currentFragment - fragment14-2-1');
+    window.test14.check_exit();
+  });
 </script>
-<x-fragment id="test-14-1-1" src="test-14-1-1.html"></x-fragment>
-<x-fragment id="test-14-1-2" src="test-14-1-2.html"></x-fragment>
-<x-fragment id="test-14-1-3" src="test-14-1-3.html"></x-fragment>

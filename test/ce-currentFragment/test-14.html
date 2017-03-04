@@ -1,11 +1,18 @@
 <!doctype html>
 <script>
   'use strict';
-  window.test14 = async_test('Fixture 14');
+  window.test14 = async_test('Fixture 14'); window.test14.i = 0;
+  window.test14.check_exit = function() {
+    window.test14.i++;
+    if (window.test14.i === 13) {
+      window.test14.done();
+    }
+  };
   window.test14.step(() => {
     test(() => {
       assert_equals(document.currentFragment, document.querySelector('#test-14'));
     }, 'Fixture 14 see document.currentFragment - fragment14');
+    window.test14.check_exit();
   });
 </script>
 <x-fragment id="test-14-1" src="test-14-1.html"></x-fragment>
