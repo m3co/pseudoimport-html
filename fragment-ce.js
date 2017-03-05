@@ -306,6 +306,8 @@
                 new_script.removeAttribute('src');
                 new_script.text = text;
                 script.parentNode.replaceChild(new_script, script);
+                new_script.src = script.src;
+                new_script.setAttribute('src', script.src);
                 new_script.dispatchEvent(new Event('load'));
                 document.currentFragment = null;
               });
