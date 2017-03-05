@@ -24,6 +24,10 @@ or
 
 ## Assumptions
 
+### Scripts' events
+
+Because of [replacement all fragment's scripts with executable scripts](https://github.com/m3co/pseudoimport-html/blob/2490ec33ce31b9d8eaa7b0d7ae2201f601f5d8ee/src/fragment-ce.js#L308), we encourage not to rely on script's events. [Check this demo](https://github.com/m3co/pseudoimport-html/blob/2490ec33ce31b9d8eaa7b0d7ae2201f601f5d8ee/trunk/ce-currentFragment.html)
+
 ### Scripts or Modules?
 
 The rough idea is that the fragment behaves like ```<script>```. If you _import_ two or more times the same fragment, then it'll be fetched and executed as browser does with ```scripts```. There's no complex mechanism that allows to _import_ a fragment, and reuse its code in somewhere else.
