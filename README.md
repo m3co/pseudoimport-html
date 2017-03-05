@@ -21,6 +21,41 @@ or
 ```html
 <x-fragment src="an_URI.html"></x-fragment>
 ```
+## Concept
+
+A fragment is an HTMLElement like a _container_. It's defined as follows:
+
+```html
+<x-fragment id="fragment-id" src="an_URL.html"></x-fragment>
+```
+
+The expected behavior here's to fetch the HTML code at _an_URL.html_ then put this code inside the fragment.
+A fragment exposes a simple interface:
+
+```javascript
+var fragment = document.querySelector('#fragment-id');
+fragment.addEventListener('load', e => {
+  // here you see that
+  // e.detail.fragment === fragment
+  // and this callback is reached once the HTML code from fragment.src has been fetched and appended to fragment
+});
+
+fragment.loaded.then((fragment_) => {
+  // here you see that
+  // fragment_ === fragment
+  // and this promise is ready once the HTML code from fragment.src has been fetched and appended to fragment
+});
+```
+
+Scripts that are inside a ```<x-fragment>``` see an special variable called ```document.currentFragment```. This variable behaves as ```document.currentScript```.
+
+Also, due to lack of ```beforescriptexecute``` event, here the scripts that are shipped inside a ```<x-fragment>``` are threated in a special way. See below.
+
+So, a fragment forces you to keep in mind an small set of features
+- load event
+- loaded promise
+- currentFragment
+- special threatment of scripts
 
 ## Assumptions
 
