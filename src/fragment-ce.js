@@ -197,7 +197,7 @@
               slice.call(script.attributes)
     .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
-              fetch(new_script.src).then(response => response.text()).then(text => {
+              fetch(new_script.src, options).then(response => response.text()).then(text => {
                 document.currentFragment = fragment;
                 new_script.src = '';
                 delete new_script.src;
