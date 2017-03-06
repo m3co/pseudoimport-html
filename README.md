@@ -37,13 +37,15 @@ var fragment = document.querySelector('#fragment-id');
 fragment.addEventListener('load', e => {
   // here you see that
   // e.detail.fragment === fragment
-  // and this callback is reached once the HTML code from fragment.src has been fetched and appended to fragment
+  // and this callback is reached once the HTML code
+  // from fragment.src has been fetched and appended to fragment
 });
 
 fragment.loaded.then((fragment_) => {
   // here you see that
   // fragment_ === fragment
-  // and this promise is ready once the HTML code from fragment.src has been fetched and appended to fragment
+  // and this promise is ready once the HTML code
+  // from fragment.src has been fetched and appended to fragment
 });
 ```
 
