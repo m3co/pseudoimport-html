@@ -141,9 +141,8 @@
     }
     fetched.push(src);
     return fetch(src, options).then(response => response.text())
-      .then(text => {
+      .then(text => createHTML(text).then((html) => {
         var base = basedir(src);
-        var html = createHTML(text);
         var scripts = slice.call(html.querySelectorAll('script'))
           .map(script => new Promise(resolve => {
             if (script.src === '') {
@@ -163,8 +162,7 @@
             document.currentFragment = null;
             return fragment;
           });
-      });
-
+      }));
   }
 
 })();

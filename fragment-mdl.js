@@ -232,27 +232,29 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       });
     }
 
-    // create DocumentFragment
-    var frag = document.createDocumentFragment();
+    return new Promise(function (resolve, reject) {
+      // create DocumentFragment
+      var frag = document.createDocumentFragment();
 
-    // create a wrapper as div (could be anything else)
-    var wrapper = document.createElement('div');
+      // create a wrapper as div (could be anything else)
+      var wrapper = document.createElement('div');
 
-    // fill with HTML
-    wrapper.innerHTML = html;
+      // fill with HTML
+      wrapper.innerHTML = html;
 
-    // rewrite scripts in order to make them executable
-    rewriteScripts(wrapper);
+      // rewrite scripts in order to make them executable
+      rewriteScripts(wrapper);
 
-    // append wrapper to fragment
-    frag.appendChild(wrapper);
-    while (wrapper.children.length > 0) {
-      // move eveything from wrapper to fragment
-      frag.appendChild(wrapper.children[0]);
-    }
-    // clean-up
-    frag.removeChild(wrapper);
-    return frag;
+      // append wrapper to fragment
+      frag.appendChild(wrapper);
+      while (wrapper.children.length > 0) {
+        // move eveything from wrapper to fragment
+        frag.appendChild(wrapper.children[0]);
+      }
+      // clean-up
+      frag.removeChild(wrapper);
+      resolve(frag);
+    });
   }
 
   /**
@@ -274,30 +276,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     return fetch(src, options).then(function (response) {
       return response.text();
     }).then(function (text) {
-      var base = basedir(src);
-      var html = createHTML(text);
-      var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
-        return new Promise(function (resolve) {
-          if (script.src === '') {
-            resolve(script);
-          } else {
-            var src = script.getAttribute('src');
-            script.src = src[0] === '/' ? src : base + src;
-            script.addEventListener('load', function () {
-              return resolve(script);
-            });
-          }
+      return createHTML(text).then(function (html) {
+        var base = basedir(src);
+        var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
+          return new Promise(function (resolve) {
+            if (script.src === '') {
+              resolve(script);
+            } else {
+              var src = script.getAttribute('src');
+              script.src = src[0] === '/' ? src : base + src;
+              script.addEventListener('load', function () {
+                return resolve(script);
+              });
+            }
+          });
         });
-      });
-      document.currentFragment = fragment;
-      fragment.appendChild(html);
-      return Promise.all(scripts).then(function () {
-        slice.call(fragment.querySelectorAll(cssClass)).forEach(function (fragment) {
-          fragment.dataset.baseURI = base;
-          componentHandler.upgradeElement(fragment);
+        document.currentFragment = fragment;
+        fragment.appendChild(html);
+        return Promise.all(scripts).then(function () {
+          slice.call(fragment.querySelectorAll(cssClass)).forEach(function (fragment) {
+            fragment.dataset.baseURI = base;
+            componentHandler.upgradeElement(fragment);
+          });
+          document.currentFragment = null;
+          return fragment;
         });
-        document.currentFragment = null;
-        return fragment;
       });
     });
   }

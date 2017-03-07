@@ -78,25 +78,27 @@ function craftedCreateContextualFragment(html) {
       });
   }
 
-  // create DocumentFragment
-  let frag = document.createDocumentFragment();
+  return new Promise((resolve, reject) => {
+    // create DocumentFragment
+    let frag = document.createDocumentFragment();
 
-  // create a wrapper as div (could be anything else)
-  let wrapper = document.createElement('div');
+    // create a wrapper as div (could be anything else)
+    let wrapper = document.createElement('div');
 
-  // fill with HTML
-  wrapper.innerHTML = html;
+    // fill with HTML
+    wrapper.innerHTML = html;
 
-  // rewrite scripts in order to make them executable
-  rewriteScripts(wrapper);
+    // rewrite scripts in order to make them executable
+    rewriteScripts(wrapper);
 
-  // append wrapper to fragment
-  frag.appendChild(wrapper);
-  while (wrapper.children.length > 0) {
-    // move eveything from wrapper to fragment
-    frag.appendChild(wrapper.children[0]);
-  }
-  // clean-up
-  frag.removeChild(wrapper);
-  return frag;
+    // append wrapper to fragment
+    frag.appendChild(wrapper);
+    while (wrapper.children.length > 0) {
+      // move eveything from wrapper to fragment
+      frag.appendChild(wrapper.children[0]);
+    }
+    // clean-up
+    frag.removeChild(wrapper);
+    resolve(frag);
+  });
 }
