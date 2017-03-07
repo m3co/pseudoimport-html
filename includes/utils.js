@@ -67,7 +67,10 @@ function craftedCreateContextualFragment(html, base) {
         let new_script = document.createElement('script');
 
         // clone text (content)
-        old_script.src && (new_script.src = old_script.src);
+        if (old_script.src) {
+          new_script.src = old_script.src;
+          new_script.setAttribute('data-src', old_script.getAttribute('src'));
+        }
         old_script.text && (new_script.text = old_script.text);
 
         // clone all attributes

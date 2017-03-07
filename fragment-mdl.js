@@ -220,7 +220,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var new_script = document.createElement('script');
 
         // clone text (content)
-        old_script.src && (new_script.src = old_script.src);
+        if (old_script.src) {
+          new_script.src = old_script.src;
+          new_script.setAttribute('data-src', old_script.getAttribute('src'));
+        }
         old_script.text && (new_script.text = old_script.text);
 
         // clone all attributes
@@ -284,7 +287,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             if (script.src === '') {
               resolve(script);
             } else {
-              var src = script.getAttribute('src');
+              var src = script.getAttribute('data-src');
               script.src = src[0] === '/' ? src : base + src;
               script.addEventListener('load', function () {
                 return resolve(script);

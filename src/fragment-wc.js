@@ -148,7 +148,7 @@
             if (script.src === '') {
               resolve(script);
             } else {
-              var src = script.getAttribute('src');
+              var src = script.getAttribute('data-src');
               script.src = src[0] === '/' ? src : base + src;
               script.addEventListener('load', () => resolve(script));
             }
