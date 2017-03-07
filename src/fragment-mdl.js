@@ -133,7 +133,7 @@
     element.MaterialFragment.resolve_(element);
   }
 
-  @@include('../includes/utils.js')
+  //@@include('../includes/utils.js')
   /**
    * Fetch HTML code from src to fragment.
    *

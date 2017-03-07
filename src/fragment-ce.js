@@ -119,7 +119,7 @@
     element.resolve_(element);
   }
 
-  @@include('../includes/utils.js')
+  //@@include('../includes/utils.js')
   function createHTML__(html) {
 
     // create DocumentFragment
