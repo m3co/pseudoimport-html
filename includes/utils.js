@@ -62,8 +62,8 @@ function preparePath(path, baseURI) {
  */
 function craftedCreateContextualFragment(html, base) {
   function rewriteScripts(element) {
-    slice.call(element.querySelectorAll('script'))
-      .forEach(old_script => {
+    return slice.call(element.querySelectorAll('script'))
+      .map(old_script => new Promise((resolve, reject) => {
         let new_script = document.createElement('script');
 
         // clone text (content)
@@ -78,7 +78,8 @@ function craftedCreateContextualFragment(html, base) {
           .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
         old_script.parentNode.replaceChild(new_script, old_script);
-      });
+        resolve(new_script);
+      }));
   }
 
   return new Promise((resolve, reject) => {
@@ -92,17 +93,17 @@ function craftedCreateContextualFragment(html, base) {
     wrapper.innerHTML = html;
 
     // rewrite scripts in order to make them executable
-    rewriteScripts(wrapper);
-
-    // append wrapper to fragment
-    frag.appendChild(wrapper);
-    while (wrapper.children.length > 0) {
-      // move eveything from wrapper to fragment
-      frag.appendChild(wrapper.children[0]);
-    }
-    // clean-up
-    frag.removeChild(wrapper);
-    frag.BASE_URL = base;
-    resolve(frag);
+    return Promise.all(rewriteScripts(wrapper)).then(() => {
+      // append wrapper to fragment
+      frag.appendChild(wrapper);
+      while (wrapper.children.length > 0) {
+        // move eveything from wrapper to fragment
+        frag.appendChild(wrapper.children[0]);
+      }
+      // clean-up
+      frag.removeChild(wrapper);
+      frag.BASE_URL = base;
+      resolve(frag);
+    });
   });
 }

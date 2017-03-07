@@ -191,22 +191,25 @@
    */
   function craftedCreateContextualFragment(html, base) {
     function rewriteScripts(element) {
-      slice.call(element.querySelectorAll('script')).forEach(function (old_script) {
-        var new_script = document.createElement('script');
+      return slice.call(element.querySelectorAll('script')).map(function (old_script) {
+        return new Promise(function (resolve, reject) {
+          var new_script = document.createElement('script');
 
-        // clone text (content)
-        if (old_script.src) {
-          new_script.src = old_script.src;
-          new_script.setAttribute('data-src', old_script.getAttribute('src'));
-        }
-        old_script.text && (new_script.text = old_script.text);
+          // clone text (content)
+          if (old_script.src) {
+            new_script.src = old_script.src;
+            new_script.setAttribute('data-src', old_script.getAttribute('src'));
+          }
+          old_script.text && (new_script.text = old_script.text);
 
-        // clone all attributes
-        slice.call(old_script.attributes).forEach(function (attr) {
-          return new_script.setAttribute(attr.name, attr.value);
+          // clone all attributes
+          slice.call(old_script.attributes).forEach(function (attr) {
+            return new_script.setAttribute(attr.name, attr.value);
+          });
+
+          old_script.parentNode.replaceChild(new_script, old_script);
+          resolve(new_script);
         });
-
-        old_script.parentNode.replaceChild(new_script, old_script);
       });
     }
 
@@ -221,18 +224,18 @@
       wrapper.innerHTML = html;
 
       // rewrite scripts in order to make them executable
-      rewriteScripts(wrapper);
-
-      // append wrapper to fragment
-      frag.appendChild(wrapper);
-      while (wrapper.children.length > 0) {
-        // move eveything from wrapper to fragment
-        frag.appendChild(wrapper.children[0]);
-      }
-      // clean-up
-      frag.removeChild(wrapper);
-      frag.BASE_URL = base;
-      resolve(frag);
+      return Promise.all(rewriteScripts(wrapper)).then(function () {
+        // append wrapper to fragment
+        frag.appendChild(wrapper);
+        while (wrapper.children.length > 0) {
+          // move eveything from wrapper to fragment
+          frag.appendChild(wrapper.children[0]);
+        }
+        // clean-up
+        frag.removeChild(wrapper);
+        frag.BASE_URL = base;
+        resolve(frag);
+      });
     });
   }
 
