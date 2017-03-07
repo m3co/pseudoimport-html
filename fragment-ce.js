@@ -235,9 +235,9 @@
       return Promise.all(rewriteScripts(wrapper)).then(() => {
         // append wrapper to fragment
         frag.appendChild(wrapper);
-        while (wrapper.children.length > 0) {
+        while (wrapper.childNodes.length > 0) {
           // move eveything from wrapper to fragment
-          frag.appendChild(wrapper.children[0]);
+          frag.appendChild(wrapper.childNodes[0]);
         }
         // clean-up
         frag.removeChild(wrapper);
