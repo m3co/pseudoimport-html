@@ -200,7 +200,10 @@
             new_script.src = old_script.src;
             new_script.setAttribute('data-src', old_script.getAttribute('src'));
           }
-          old_script.text && (new_script.text = old_script.text);
+          if (old_script.text) {
+            new_script.setAttribute('data-src', '');
+            new_script.text = old_script.text;
+          }
 
           // clone all attributes
           slice.call(old_script.attributes).forEach(function (attr) {
@@ -262,7 +265,7 @@
         var base = html.BASE_URL;
         var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
           return new Promise(function (resolve) {
-            if (script.src === '') {
+            if (script.getAttribute('data-src') === '') {
               resolve(script);
             } else {
               var src = script.getAttribute('data-src');

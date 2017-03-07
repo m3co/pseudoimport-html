@@ -157,7 +157,7 @@
         var base = html.BASE_URL;
         var scripts = slice.call(html.querySelectorAll('script'))
           .map(script => new Promise(resolve => {
-            if (script.src === '') {
+            if (script.getAttribute('data-src') === '') {
               resolve(script);
             } else {
               var src = script.getAttribute('data-src');
