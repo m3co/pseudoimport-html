@@ -210,10 +210,20 @@
           if (old_script.text) {
             new_script.setAttribute('data-src', '');
             new_script.text = old_script.text;
+            return resolve(old_script.parentNode.replaceChild(new_script, old_script));
           }
 
-          old_script.parentNode.replaceChild(new_script, old_script);
-          resolve(new_script);
+          return fetch(new_script.src, options).then(function (response) {
+            if (response.status === 404) {
+              return Promise.reject(new Error(response.statusText));
+            }
+            return response.text();
+          }).then(function (text) {
+            delete new_script.src;
+            new_script.removeAttribute('src');
+            new_script.text = text;
+            resolve(old_script.parentNode.replaceChild(new_script, old_script));
+          });
         });
       });
     }
@@ -265,26 +275,18 @@
     }).then(function (text) {
       return createHTML(text, basedir(src)).then(function (html) {
         var base = html.BASE_URL;
-        var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
-          return new Promise(function (resolve) {
-            if (script.getAttribute('data-src') === '') {
-              resolve(script);
-            } else {
-              script.addEventListener('load', function () {
-                return resolve(script);
-              });
-            }
-          });
-        });
         slice.call(html.querySelectorAll(selector)).forEach(function (fragment) {
           return fragment.dataset.baseURI = base;
         });
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        return Promise.all(scripts).then(function () {
-          document.currentFragment = null;
-          return fragment;
+        slice.call(html.querySelectorAll('script')).forEach(function (script) {
+          if (script.getAttribute('data-src') !== '') {
+            script.dispatchEvent(new Event('load'));
+          }
         });
+        document.currentFragment = null;
+        return fragment;
       });
     });
   }

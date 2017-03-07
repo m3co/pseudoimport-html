@@ -80,10 +80,20 @@ function craftedCreateContextualFragment(html, base) {
         if (old_script.text) {
           new_script.setAttribute('data-src', '');
           new_script.text = old_script.text;
+          return resolve(old_script.parentNode.replaceChild(new_script, old_script));
         }
 
-        old_script.parentNode.replaceChild(new_script, old_script);
-        resolve(new_script);
+        return fetch(new_script.src, options).then(response => {
+          if (response.status === 404) {
+            return Promise.reject(new Error(response.statusText));
+          }
+          return response.text();
+        }).then(text => {
+          delete new_script.src;
+          new_script.removeAttribute('src');
+          new_script.text = text;
+          resolve(old_script.parentNode.replaceChild(new_script, old_script));
+        });
       }));
   }
 

@@ -155,25 +155,21 @@
     return fetch(src, options).then(response => response.text())
       .then(text => createHTML(text, basedir(src)).then(html => {
         var base = html.BASE_URL;
-        var scripts = slice.call(html.querySelectorAll('script'))
-          .map(script => new Promise(resolve => {
-            if (script.getAttribute('data-src') === '') {
-              resolve(script);
-            } else {
-              script.addEventListener('load', () => resolve(script));
-            }
-          }));
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        return Promise.all(scripts).then(() => {
-          slice.call(fragment.querySelectorAll(cssClass))
-            .forEach(fragment => {
-              fragment.dataset.baseURI = base;
-              componentHandler.upgradeElement(fragment);
-            });
-          document.currentFragment = null;
-          return fragment;
-        });
+        slice.call(html.querySelectorAll('script'))
+          .forEach(script => {
+            if (script.getAttribute('data-src') !== '') {
+              script.dispatchEvent(new Event('load'));
+            }
+          });
+        document.currentFragment = null;
+        slice.call(fragment.querySelectorAll(cssClass))
+          .forEach(fragment => {
+            fragment.dataset.baseURI = base;
+            componentHandler.upgradeElement(fragment);
+          });
+        return fragment;
       }));
   }
 
