@@ -379,7 +379,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 
     // [teardown]
     window.removeEventListener('error', handler);
-    fragmentWithoutSrc.remove()
+    fragmentWithoutSrc.remove();
     resolve();
   });
   window.addEventListener('error', handler);
@@ -391,7 +391,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
   // [teardown]
   reject('Can\'t test presence of src attribute');
   window.removeEventListener('error', handler);
-  fragmentWithoutSrc.remove()
+  fragmentWithoutSrc.remove();
 })); }, "Throw error if src attribute is not present");
 
 /**
@@ -416,5 +416,33 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
     delete window.currentFragmentFixture1;
   }));
 })); }, "Check currentFragment object - case fixture1");
+
+/**
+ * Throw error if fetching fragment script return 404
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  let handler = this.step_func((e) => {
+    // [verify]
+    assert_equals(e.reason.message, "Not Found");
+
+    // [teardown]
+    window.removeEventListener('unhandledrejection', handler);
+    fragment.remove();
+    resolve();
+  });
+  window.addEventListener("unhandledrejection", handler);
+  var fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', '/test/fixtures/ce-fragment24.html');
+
+  // [run]
+  document.body.appendChild(fragment);
+
+  // // [teardown]
+  // reject('Can\'t test fetching fragment script return 404');
+  // window.removeEventListener('unhandledrejection', handler);
+  // fragment.remove();
+})); }, "Throw error if fetching fragment script return 404");
 
 })();
