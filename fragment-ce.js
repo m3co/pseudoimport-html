@@ -274,13 +274,13 @@
             let new_script = document.createElement('script');
             if (script.src === '') {
 
-  // clone text (content)
+              // clone text (content)
               script.src && (new_script.src = script.src);
               script.text && (new_script.text = script.text);
 
-  // clone all attributes
+              // clone all attributes
               slice.call(script.attributes)
-    .forEach(attr => new_script.setAttribute(attr.name, attr.value));
+                .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
               document.currentFragment = fragment;
               script.parentNode.replaceChild(new_script, script);
@@ -291,26 +291,35 @@
               var src = script.getAttribute('src');
               script.src = src[0] === '/' ? src : base + src;
 
-  // clone text (content)
+              // clone text (content)
               script.src && (new_script.src = script.src);
               script.text && (new_script.text = script.text);
 
-  // clone all attributes
+              // clone all attributes
               slice.call(script.attributes)
-    .forEach(attr => new_script.setAttribute(attr.name, attr.value));
+                .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
-              fetch(new_script.src, options).then(response => response.text()).then(text => {
-                document.currentFragment = fragment;
-                new_script.src = '';
-                delete new_script.src;
-                new_script.removeAttribute('src');
-                new_script.text = text;
-                script.parentNode.replaceChild(new_script, script);
-                new_script.src = script.src;
-                new_script.setAttribute('src', script.src);
-                new_script.dispatchEvent(new Event('load'));
-                document.currentFragment = null;
-              });
+              fetch(new_script.src, options)
+                .then(response => {
+                  if (response.status === 404) {
+                    return Promise.reject(new Error(response.statusText));
+                  } else {
+                    return Promise.resolve(response);
+                  }
+                })
+                .then(response => response.text())
+                .then(text => {
+                  document.currentFragment = fragment;
+                  new_script.src = '';
+                  delete new_script.src;
+                  new_script.removeAttribute('src');
+                  new_script.text = text;
+                  script.parentNode.replaceChild(new_script, script);
+                  new_script.src = script.src;
+                  new_script.setAttribute('src', script.src);
+                  new_script.dispatchEvent(new Event('load'));
+                  document.currentFragment = null;
+                });
 
               new_script.addEventListener('load', () => resolve(new_script));
             }

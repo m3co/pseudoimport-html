@@ -119,7 +119,109 @@
     element.resolve_(element);
   }
 
-  @@include('../includes/utils.js')
+  /**
+   * Extract the base dir from path.
+   *
+   * @param {String} path
+   * @return {String}
+   * @private
+   */
+  function basedir(path) {
+    return path.split('#')[0]
+      .split('/')
+      .reduce((acc, curr, index, array) => {
+        if (index === array.length - 1) { return acc; }
+        return acc += curr + '/';
+      }, '');
+  }
+
+  /**
+   * Prepare path based on baseURI or document.baseURI
+   *
+   * @param {String} path
+   * @param {String} baseURI
+   * @return {String}
+   * @private
+   */
+  function preparePath(path, baseURI) {
+    return path[0] === '/' ? path :
+      (baseURI ? baseURI : basedir(document.baseURI)) + path;
+  }
+
+  /**
+   * Set options (IIEF) from meta x-fragment tag
+   *
+   * @private
+   */
+  (() => {
+    slice.call(document.querySelectorAll(`meta[${selector}]`))
+      .forEach((meta) => {
+        slice.call(meta.attributes)
+          .forEach((attr) => {
+            if (attr.name === selector) { return; }
+            let dividerPosition = attr.name.indexOf('-');
+            if (dividerPosition === -1) {
+              options[attr.name] = attr.value;
+            } else {
+              let type = attr.name.substring(0, dividerPosition);
+              let param = attr.name.substring(dividerPosition + 1);
+              options[type] = options[type] || {};
+              options[type][param] = attr.value;
+            }
+          });
+      });
+  })();
+
+  /**
+   * Please, do not use createContextualFragment from Range
+   * It's an experimental fn. This function intentionally replaces
+   * Range.createContextualFragment
+   *
+   * @param {String} html - The string that we want to convert into HTML
+   * @return {DocumentFragment}
+   * @private
+   */
+  function craftedCreateContextualFragment(html) {
+    function rewriteScripts(element) {
+      slice.call(element.querySelectorAll('script'))
+        .forEach(old_script => {
+          let new_script = document.createElement('script');
+
+          // clone text (content)
+          old_script.src && (new_script.src = old_script.src);
+          old_script.text && (new_script.text = old_script.text);
+
+          // clone all attributes
+          slice.call(old_script.attributes)
+            .forEach(attr => new_script.setAttribute(attr.name, attr.value));
+
+          old_script.parentNode.replaceChild(new_script, old_script);
+        });
+    }
+
+    // create DocumentFragment
+    let frag = document.createDocumentFragment();
+
+    // create a wrapper as div (could be anything else)
+    let wrapper = document.createElement('div');
+
+    // fill with HTML
+    wrapper.innerHTML = html;
+
+    // rewrite scripts in order to make them executable
+    rewriteScripts(wrapper);
+
+    // append wrapper to fragment
+    frag.appendChild(wrapper);
+    while (wrapper.children.length > 0) {
+      // move eveything from wrapper to fragment
+      frag.appendChild(wrapper.children[0]);
+    }
+    // clean-up
+    frag.removeChild(wrapper);
+    return frag;
+  }
+
   function createHTML__(html) {
 
     // create DocumentFragment
@@ -172,13 +274,13 @@
             let new_script = document.createElement('script');
             if (script.src === '') {
 
-  // clone text (content)
+              // clone text (content)
               script.src && (new_script.src = script.src);
               script.text && (new_script.text = script.text);
 
-  // clone all attributes
+              // clone all attributes
               slice.call(script.attributes)
-    .forEach(attr => new_script.setAttribute(attr.name, attr.value));
+                .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
               document.currentFragment = fragment;
               script.parentNode.replaceChild(new_script, script);
@@ -189,12 +291,13 @@
               var src = script.getAttribute('src');
               script.src = src[0] === '/' ? src : base + src;
 
-  // clone text (content)
+              // clone text (content)
               script.src && (new_script.src = script.src);
               script.text && (new_script.text = script.text);
 
-  // clone all attributes
+              // clone all attributes
               slice.call(script.attributes)
+<<<<<<< Updated upstream
     .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
               fetch(new_script.src, options).then(response => response.text()).then(text => {
@@ -209,6 +312,31 @@
                 new_script.dispatchEvent(new Event('load'));
                 document.currentFragment = null;
               });
+=======
+                .forEach(attr => new_script.setAttribute(attr.name, attr.value));
+
+              fetch(new_script.src, options)
+                .then(response => {
+                  if (response.status === 404) {
+                    return Promise.reject(new Error(response.statusText));
+                  } else {
+                    return Promise.resolve(response);
+                  }
+                })
+                .then(response => response.text())
+                .then(text => {
+                  document.currentFragment = fragment;
+                  new_script.src = '';
+                  delete new_script.src;
+                  new_script.removeAttribute('src');
+                  new_script.text = text;
+                  script.parentNode.replaceChild(new_script, script);
+                  new_script.src = script.src;
+                  new_script.setAttribute('src', script.src);
+                  new_script.dispatchEvent(new Event('load'));
+                  document.currentFragment = null;
+                });
+>>>>>>> Stashed changes
 
               new_script.addEventListener('load', () => resolve(new_script));
             }
