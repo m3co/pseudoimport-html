@@ -205,6 +205,7 @@
           if (old_script.src) {
             new_script.src = old_script.src;
             new_script.setAttribute('data-src', old_script.getAttribute('src'));
+            new_script.setAttribute('data-src-', old_script.getAttribute('src'));
             new_script.src = src[0] === '/' ? src : base + src;
           }
           if (old_script.text) {
@@ -280,8 +281,11 @@
         });
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        slice.call(html.querySelectorAll('script')).forEach(function (script) {
+        slice.call(fragment.querySelectorAll('script')).forEach(function (script) {
           if (script.getAttribute('data-src') !== '') {
+            script.setAttribute('src', script.getAttribute('data-src-'));
+            script.removeAttribute('data-src');
+            script.removeAttribute('data-src-');
             script.dispatchEvent(new Event('load'));
           }
         });

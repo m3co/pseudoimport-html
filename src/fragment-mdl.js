@@ -157,9 +157,12 @@
         var base = html.BASE_URL;
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        slice.call(html.querySelectorAll('script'))
+        slice.call(fragment.querySelectorAll('script'))
           .forEach(script => {
             if (script.getAttribute('data-src') !== '') {
+              script.setAttribute('src', script.getAttribute('data-src-'));
+              script.removeAttribute('data-src');
+              script.removeAttribute('data-src-');
               script.dispatchEvent(new Event('load'));
             }
           });

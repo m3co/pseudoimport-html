@@ -197,12 +197,14 @@
           if (old_script.src) {
             new_script.src = old_script.src;
             new_script.setAttribute('data-src', old_script.getAttribute('src'));
+            new_script.setAttribute('data-src-', old_script.getAttribute('src'));
             new_script.src = src[0] === '/' ? src : base + src;
           }
           if (old_script.text) {
             new_script.setAttribute('data-src', '');
             new_script.text = old_script.text;
-            return resolve(old_script.parentNode.replaceChild(new_script, old_script));
+            return resolve(old_script.parentNode
+              .replaceChild(new_script, old_script));
           }
 
           return fetch(new_script.src, options).then(response => {
@@ -270,9 +272,12 @@
           .forEach(fragment => fragment.dataset.baseURI = base);
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        slice.call(html.querySelectorAll('script'))
+        slice.call(fragment.querySelectorAll('script'))
           .forEach(script => {
             if (script.getAttribute('data-src') !== '') {
+              script.setAttribute('src', script.getAttribute('data-src-'));
+              script.removeAttribute('data-src');
+              script.removeAttribute('data-src-');
               script.dispatchEvent(new Event('load'));
             }
           });
