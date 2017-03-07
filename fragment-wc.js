@@ -189,7 +189,7 @@
    * @return {DocumentFragment}
    * @private
    */
-  function craftedCreateContextualFragment(html) {
+  function craftedCreateContextualFragment(html, base) {
     function rewriteScripts(element) {
       slice.call(element.querySelectorAll('script')).forEach(function (old_script) {
         var new_script = document.createElement('script');
@@ -228,6 +228,7 @@
       }
       // clean-up
       frag.removeChild(wrapper);
+      frag.BASE_URL = base;
       resolve(frag);
     });
   }
@@ -251,8 +252,8 @@
     return fetch(src, options).then(function (response) {
       return response.text();
     }).then(function (text) {
-      return createHTML(text).then(function (html) {
-        var base = basedir(src);
+      return createHTML(text, basedir(src)).then(function (html) {
+        var base = html.BASE_URL;
         var scripts = slice.call(html.querySelectorAll('script')).map(function (script) {
           return new Promise(function (resolve) {
             if (script.src === '') {

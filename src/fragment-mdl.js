@@ -153,8 +153,8 @@
     }
     fetched.push(src);
     return fetch(src, options).then(response => response.text())
-      .then(text => createHTML(text).then(html => {
-        var base = basedir(src);
+      .then(text => createHTML(text, basedir(src)).then(html => {
+        var base = html.BASE_URL;
         var scripts = slice.call(html.querySelectorAll('script'))
           .map(script => new Promise(resolve => {
             if (script.src === '') {

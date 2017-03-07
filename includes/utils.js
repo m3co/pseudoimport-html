@@ -60,7 +60,7 @@ function preparePath(path, baseURI) {
  * @return {DocumentFragment}
  * @private
  */
-function craftedCreateContextualFragment(html) {
+function craftedCreateContextualFragment(html, base) {
   function rewriteScripts(element) {
     slice.call(element.querySelectorAll('script'))
       .forEach(old_script => {
@@ -99,6 +99,7 @@ function craftedCreateContextualFragment(html) {
     }
     // clean-up
     frag.removeChild(wrapper);
+    frag.BASE_URL = base;
     resolve(frag);
   });
 }
