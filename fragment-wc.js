@@ -194,21 +194,23 @@
       return slice.call(element.querySelectorAll('script')).map(function (old_script) {
         return new Promise(function (resolve, reject) {
           var new_script = document.createElement('script');
-
-          // clone text (content)
-          if (old_script.src) {
-            new_script.src = old_script.src;
-            new_script.setAttribute('data-src', old_script.getAttribute('src'));
-          }
-          if (old_script.text) {
-            new_script.setAttribute('data-src', '');
-            new_script.text = old_script.text;
-          }
+          var src = old_script.getAttribute('src');
 
           // clone all attributes
           slice.call(old_script.attributes).forEach(function (attr) {
             return new_script.setAttribute(attr.name, attr.value);
           });
+
+          // clone text (content)
+          if (old_script.src) {
+            new_script.src = old_script.src;
+            new_script.setAttribute('data-src', old_script.getAttribute('src'));
+            new_script.src = src[0] === '/' ? src : base + src;
+          }
+          if (old_script.text) {
+            new_script.setAttribute('data-src', '');
+            new_script.text = old_script.text;
+          }
 
           old_script.parentNode.replaceChild(new_script, old_script);
           resolve(new_script);
@@ -268,8 +270,6 @@
             if (script.getAttribute('data-src') === '') {
               resolve(script);
             } else {
-              var src = script.getAttribute('data-src');
-              script.src = src[0] === '/' ? src : base + src;
               script.addEventListener('load', function () {
                 return resolve(script);
               });

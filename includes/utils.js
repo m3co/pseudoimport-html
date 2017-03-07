@@ -65,20 +65,22 @@ function craftedCreateContextualFragment(html, base) {
     return slice.call(element.querySelectorAll('script'))
       .map(old_script => new Promise((resolve, reject) => {
         let new_script = document.createElement('script');
+        let src = old_script.getAttribute('src');
+
+        // clone all attributes
+        slice.call(old_script.attributes)
+          .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
         // clone text (content)
         if (old_script.src) {
           new_script.src = old_script.src;
           new_script.setAttribute('data-src', old_script.getAttribute('src'));
+          new_script.src = src[0] === '/' ? src : base + src;
         }
         if (old_script.text) {
           new_script.setAttribute('data-src', '');
           new_script.text = old_script.text;
         }
-
-        // clone all attributes
-        slice.call(old_script.attributes)
-          .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
         old_script.parentNode.replaceChild(new_script, old_script);
         resolve(new_script);
