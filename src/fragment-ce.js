@@ -297,22 +297,6 @@
 
               // clone all attributes
               slice.call(script.attributes)
-<<<<<<< Updated upstream
-    .forEach(attr => new_script.setAttribute(attr.name, attr.value));
-
-              fetch(new_script.src, options).then(response => response.text()).then(text => {
-                document.currentFragment = fragment;
-                new_script.src = '';
-                delete new_script.src;
-                new_script.removeAttribute('src');
-                new_script.text = text;
-                script.parentNode.replaceChild(new_script, script);
-                new_script.src = script.src;
-                new_script.setAttribute('src', script.src);
-                new_script.dispatchEvent(new Event('load'));
-                document.currentFragment = null;
-              });
-=======
                 .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
               fetch(new_script.src, options)
@@ -336,7 +320,6 @@
                   new_script.dispatchEvent(new Event('load'));
                   document.currentFragment = null;
                 });
->>>>>>> Stashed changes
 
               new_script.addEventListener('load', () => resolve(new_script));
             }
