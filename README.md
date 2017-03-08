@@ -63,7 +63,7 @@ So, a fragment forces you to keep in mind an small set of features
 
 ### Scripts' events
 
-Because of [replacement all fragment's scripts with executable scripts](https://github.com/m3co/pseudoimport-html/blob/2490ec33ce31b9d8eaa7b0d7ae2201f601f5d8ee/src/fragment-ce.js#L308), we encourage not to rely on script's events. [Check this demo](https://github.com/m3co/pseudoimport-html/blob/2490ec33ce31b9d8eaa7b0d7ae2201f601f5d8ee/trunk/ce-currentFragment.html)
+Because of [replacement all fragment's scripts with executable scripts](https://github.com/m3co/pseudoimport-html/blob/2490ec33ce31b9d8eaa7b0d7ae2201f601f5d8ee/src/fragment-ce.js#L308), we encourage not to rely on script's events. [Check this demo](/trunk/ce-currentFragment.html)
 
 ### Scripts or Modules?
 
