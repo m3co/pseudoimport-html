@@ -1,10 +1,11 @@
 'use strict';
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
 (function () {
   'use strict';
 
   var createHTML = craftedCreateContextualFragment;
-  var slice = Array.prototype.slice;
 
   var classAsString = 'HTMLXFragmentElement';
   var selector = 'x-fragment';
@@ -59,7 +60,7 @@
     this.fetch_ = fetch_(this, src, options).then(function (element) {
       delete element.dataset.baseURI;
       _this2.root_.resolvers_.push(resolve.bind(null, element, options));
-      return Promise.all(slice.call(element.querySelectorAll(selector)).map(function (fragment) {
+      return Promise.all([].concat(_toConsumableArray(element.querySelectorAll(selector))).map(function (fragment) {
         return fragment.fetch_;
       }));
     }).then(function () {
@@ -162,8 +163,8 @@
    * @private
    */
   (function () {
-    slice.call(document.querySelectorAll('meta[' + selector + ']')).forEach(function (meta) {
-      slice.call(meta.attributes).forEach(function (attr) {
+    [].concat(_toConsumableArray(document.querySelectorAll('meta[' + selector + ']'))).forEach(function (meta) {
+      [].concat(_toConsumableArray(meta.attributes)).forEach(function (attr) {
         if (attr.name === selector) {
           return;
         }
@@ -190,45 +191,6 @@
    * @private
    */
   function craftedCreateContextualFragment(html, base) {
-    function rewriteScripts(element) {
-      return slice.call(element.querySelectorAll('script')).map(function (old_script) {
-        return new Promise(function (resolve, reject) {
-          var new_script = document.createElement('script');
-          var src = old_script.getAttribute('src');
-
-          // clone all attributes
-          slice.call(old_script.attributes).forEach(function (attr) {
-            return new_script.setAttribute(attr.name, attr.value);
-          });
-
-          // clone text (content)
-          if (old_script.src) {
-            new_script.src = old_script.src;
-            new_script.setAttribute('data-src', old_script.getAttribute('src'));
-            new_script.setAttribute('data-src-', old_script.getAttribute('src'));
-            new_script.src = src[0] === '/' ? src : base + src;
-          }
-          if (old_script.text) {
-            new_script.setAttribute('data-src', '');
-            new_script.text = old_script.text;
-            return resolve(old_script.parentNode.replaceChild(new_script, old_script));
-          }
-
-          return fetch(new_script.src, options).then(function (response) {
-            if (response.status === 404) {
-              return Promise.reject(new Error(response.statusText));
-            }
-            return response.text();
-          }).then(function (text) {
-            delete new_script.src;
-            new_script.removeAttribute('src');
-            new_script.text = text;
-            resolve(old_script.parentNode.replaceChild(new_script, old_script));
-          });
-        });
-      });
-    }
-
     return new Promise(function (resolve, reject) {
       // create DocumentFragment
       var frag = document.createDocumentFragment();
@@ -240,7 +202,44 @@
       wrapper.innerHTML = html;
 
       // rewrite scripts in order to make them executable
-      return Promise.all(rewriteScripts(wrapper)).then(function () {
+      return Promise.all(function (element) {
+        return [].concat(_toConsumableArray(element.querySelectorAll('script'))).map(function (old_script) {
+          return new Promise(function (resolve, reject) {
+            var new_script = document.createElement('script');
+            var src = old_script.getAttribute('src');
+
+            // clone all attributes
+            [].concat(_toConsumableArray(old_script.attributes)).forEach(function (attr) {
+              return new_script.setAttribute(attr.name, attr.value);
+            });
+
+            // clone text (content)
+            if (old_script.src) {
+              new_script.src = old_script.src;
+              new_script.setAttribute('data-src', old_script.getAttribute('src'));
+              new_script.setAttribute('data-src-', old_script.getAttribute('src'));
+              new_script.src = src[0] === '/' ? src : base + src;
+            }
+            if (old_script.text) {
+              new_script.setAttribute('data-src', '');
+              new_script.text = old_script.text;
+              return resolve(old_script.parentNode.replaceChild(new_script, old_script));
+            }
+
+            return fetch(new_script.src, options).then(function (response) {
+              if (response.status === 404) {
+                return reject(new Error(response.statusText));
+              }
+              return response.text();
+            }).then(function (text) {
+              delete new_script.src;
+              new_script.removeAttribute('src');
+              new_script.text = text;
+              resolve(old_script.parentNode.replaceChild(new_script, old_script));
+            });
+          });
+        });
+      }(wrapper)).then(function () {
         // append wrapper to fragment
         frag.appendChild(wrapper);
         while (wrapper.childNodes.length > 0) {
@@ -276,12 +275,12 @@
     }).then(function (text) {
       return createHTML(text, basedir(src)).then(function (html) {
         var base = html.BASE_URL;
-        slice.call(html.querySelectorAll(selector)).forEach(function (fragment) {
+        [].concat(_toConsumableArray(html.querySelectorAll(selector))).forEach(function (fragment) {
           return fragment.dataset.baseURI = base;
         });
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        slice.call(fragment.querySelectorAll('script')).forEach(function (script) {
+        [].concat(_toConsumableArray(fragment.querySelectorAll('script'))).forEach(function (script) {
           if (script.getAttribute('data-src') !== '') {
             script.setAttribute('src', script.getAttribute('data-src-'));
             script.removeAttribute('data-src');

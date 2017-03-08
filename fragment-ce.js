@@ -1,7 +1,6 @@
 (() => {
   'use strict';
   const createHTML = craftedCreateContextualFragment;
-  const slice = Array.prototype.slice;
 
   const classAsString = 'HTMLXFragmentElement';
   const selector = 'x-fragment';
@@ -52,7 +51,7 @@
         delete element.dataset.baseURI;
         this.root_.resolvers_.push(resolve.bind(null, element, options));
         return Promise.all(
-          slice.call(element.querySelectorAll(selector))
+          [...element.querySelectorAll(selector)]
             .map(fragment => fragment.fetch_)
         );
       }).then(() => {
@@ -155,9 +154,9 @@
    * @private
    */
   (() => {
-    slice.call(document.querySelectorAll(`meta[${selector}]`))
+    [...document.querySelectorAll(`meta[${selector}]`)]
       .forEach((meta) => {
-        slice.call(meta.attributes)
+        [...meta.attributes]
           .forEach((attr) => {
             if (attr.name === selector) { return; }
             let dividerPosition = attr.name.indexOf('-');
@@ -183,14 +182,24 @@
    * @private
    */
   function craftedCreateContextualFragment(html, base) {
-    function rewriteScripts(element) {
-      return slice.call(element.querySelectorAll('script'))
+    return new Promise((resolve, reject) => {
+      // create DocumentFragment
+      let frag = document.createDocumentFragment();
+
+      // create a wrapper as div (could be anything else)
+      let wrapper = document.createElement('div');
+
+      // fill with HTML
+      wrapper.innerHTML = html;
+
+      // rewrite scripts in order to make them executable
+      return Promise.all((element => [...element.querySelectorAll('script')]
         .map(old_script => new Promise((resolve, reject) => {
           let new_script = document.createElement('script');
           let src = old_script.getAttribute('src');
 
           // clone all attributes
-          slice.call(old_script.attributes)
+          [...old_script.attributes]
             .forEach(attr => new_script.setAttribute(attr.name, attr.value));
 
           // clone text (content)
@@ -209,7 +218,7 @@
 
           return fetch(new_script.src, options).then(response => {
             if (response.status === 404) {
-              return Promise.reject(new Error(response.statusText));
+              return reject(new Error(response.statusText));
             }
             return response.text();
           }).then(text => {
@@ -218,21 +227,8 @@
             new_script.text = text;
             resolve(old_script.parentNode.replaceChild(new_script, old_script));
           });
-        }));
-    }
-
-    return new Promise((resolve, reject) => {
-      // create DocumentFragment
-      let frag = document.createDocumentFragment();
-
-      // create a wrapper as div (could be anything else)
-      let wrapper = document.createElement('div');
-
-      // fill with HTML
-      wrapper.innerHTML = html;
-
-      // rewrite scripts in order to make them executable
-      return Promise.all(rewriteScripts(wrapper)).then(() => {
+        }))
+    )(wrapper)).then(() => {
         // append wrapper to fragment
         frag.appendChild(wrapper);
         while (wrapper.childNodes.length > 0) {
@@ -268,11 +264,11 @@
     return fetch(src, options).then(response => response.text())
       .then(text => createHTML(text, basedir(src)).then(html => {
         var base = html.BASE_URL;
-        slice.call(html.querySelectorAll(selector))
+        [...html.querySelectorAll(selector)]
           .forEach(fragment => fragment.dataset.baseURI = base);
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        slice.call(fragment.querySelectorAll('script'))
+        [...fragment.querySelectorAll('script')]
           .forEach(script => {
             if (script.getAttribute('data-src') !== '') {
               script.setAttribute('src', script.getAttribute('data-src-'));

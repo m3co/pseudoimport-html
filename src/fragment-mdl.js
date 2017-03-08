@@ -1,7 +1,6 @@
 (() => {
   'use strict';
   const createHTML = craftedCreateContextualFragment;
-  const slice = Array.prototype.slice;
 
   const classAsString = 'MaterialFragment';
   const selector = 'mdl-fragment';
@@ -58,7 +57,7 @@
         this.root_.MaterialFragment.resolvers_
           .push(resolve.bind(null, element, options));
         return Promise.all(
-          slice.call(element.querySelectorAll(cssClass))
+          [...element.querySelectorAll(cssClass)]
             .map(fragment => fragment.MaterialFragment.fetch_)
         );
       }).then(() => {
@@ -157,7 +156,7 @@
         var base = html.BASE_URL;
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        slice.call(fragment.querySelectorAll('script'))
+        [...fragment.querySelectorAll('script')]
           .forEach(script => {
             if (script.getAttribute('data-src') !== '') {
               script.setAttribute('src', script.getAttribute('data-src-'));
@@ -167,7 +166,7 @@
             }
           });
         document.currentFragment = null;
-        slice.call(fragment.querySelectorAll(cssClass))
+        [...fragment.querySelectorAll(cssClass)]
           .forEach(fragment => {
             fragment.dataset.baseURI = base;
             componentHandler.upgradeElement(fragment);

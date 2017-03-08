@@ -1,7 +1,6 @@
 (() => {
   'use strict';
   const createHTML = craftedCreateContextualFragment;
-  const slice = Array.prototype.slice;
 
   const classAsString = 'HTMLXFragmentElement';
   const selector = 'x-fragment';
@@ -52,7 +51,7 @@
         delete element.dataset.baseURI;
         this.root_.resolvers_.push(resolve.bind(null, element, options));
         return Promise.all(
-          slice.call(element.querySelectorAll(selector))
+          [...element.querySelectorAll(selector)]
             .map(fragment => fragment.fetch_)
         );
       }).then(() => {
@@ -142,11 +141,11 @@
     return fetch(src, options).then(response => response.text())
       .then(text => createHTML(text, basedir(src)).then(html => {
         var base = html.BASE_URL;
-        slice.call(html.querySelectorAll(selector))
+        [...html.querySelectorAll(selector)]
           .forEach(fragment => fragment.dataset.baseURI = base);
         document.currentFragment = fragment;
         fragment.appendChild(html);
-        slice.call(fragment.querySelectorAll('script'))
+        [...fragment.querySelectorAll('script')]
           .forEach(script => {
             if (script.getAttribute('data-src') !== '') {
               script.setAttribute('src', script.getAttribute('data-src-'));
