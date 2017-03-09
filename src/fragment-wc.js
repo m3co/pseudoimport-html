@@ -22,13 +22,14 @@
     this.fetch_ = null;
     this.resolvers_ = [];
 
-      /**
-       * Load promise
-       *
-       */
+    /**
+     * Load promise
+     *
+     */
     this.loaded = new Promise((resolve) => {
       this.resolve_ = resolve;
     });
+    this.loaded.status = 'pending';
   };
 
   /**
@@ -43,8 +44,8 @@
     }
 
     var parent = this.parentElement.closest(selector);
-    this.root_ = parent ? parent.root_ : this;
-    this.isRoot_ = parent ? false : true;
+    this.root_ = parent ? (parent.loaded.status === 'fulfilled' ? this : parent.root_) : this;
+    this.isRoot_ = parent ? (parent.loaded.status === 'fulfilled' ? true : false) : true;
     this.fetched_ = [];
 
     var src = preparePath(this.getAttribute('src'),
@@ -117,6 +118,7 @@
         fragment: element
       }
     }));
+    element.loaded.status = 'fulfilled';
     element.resolve_(element);
   }
 

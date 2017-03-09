@@ -42,8 +42,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         throw new Error('Src attribute is not present');
       }
 
-      this.root_ = parent ? parent.MaterialFragment.root_ : element;
-      this.isRoot_ = parent ? false : true;
+      this.root_ = parent ? parent.MaterialFragment.loaded.status === 'fulfilled' ? element : parent.MaterialFragment.root_ : element;
+      this.isRoot_ = parent ? parent.MaterialFragment.loaded.status === 'fulfilled' ? true : false : true;
       this.resolvers_ = [];
       if (this.isRoot_) {
         this.element_.fetched_ = [];
@@ -56,6 +56,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       this.loaded = new Promise(function (resolve) {
         _this.resolve_ = resolve;
       });
+      this.loaded.status = 'pending';
       this.init();
     }
 
@@ -151,6 +152,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         fragment: element
       }
     }));
+    element.MaterialFragment.loaded.status = 'fulfilled';
     element.MaterialFragment.resolve_(element);
   }
 
