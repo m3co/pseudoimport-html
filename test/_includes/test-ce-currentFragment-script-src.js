@@ -1,4 +1,3 @@
-'use strict';
 window.test1 = async_test('Fixture 1');
 window.test1.i = 0;
 window.test1.check_exit = function() {
