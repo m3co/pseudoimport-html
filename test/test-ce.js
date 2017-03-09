@@ -459,6 +459,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
     reject(e.message);
   };
   window.addEventListener('error', handlerError);
+  window.syi = 1;
 
   // [run]
   document.body.appendChild(fragment);
