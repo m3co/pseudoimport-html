@@ -445,4 +445,9 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
   // fragment.remove();
 })); }, "Throw error if fetching fragment script return 404");
 
+//@@include('test-ce-currentFragment.js')
+//@@include('test-ce-currentFragment-script-src.js')
+//@@include('test-ce-currentFragment-nested.js')
+//@@include('test-ce-currentFragment-external.js')
+
 })();

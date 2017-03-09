@@ -4,9 +4,9 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
   var fragment1 = document.createElement('x-fragment');
   var fragment2 = document.createElement('x-fragment');
   var fragment3 = document.createElement('x-fragment');
-  fragment1.id = 'test-7-1';
-  fragment2.id = 'test-7-2';
-  fragment3.id = 'test-7-3';
+  fragment1.id = 'test-7-1-nested';
+  fragment2.id = 'test-7-2-nested';
+  fragment3.id = 'test-7-3-nested';
 
   fragment1.setAttribute('src', 'ce-currentFragment-nested/test-7-1.html');
   fragment2.setAttribute('src', 'ce-currentFragment-nested/test-7-2.html');
@@ -30,5 +30,5 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 
 })); }, 'If two fragments were added via body.appendChild then they see their document.currentFragment');
 test(() => {
-  assert_equals(document.currentFragment, document.querySelector('#test-7'));
+  assert_equals(document.currentFragment, document.querySelector('#test-7-nested'));
 }, 'Fixture 7 see document.currentFragment - fragment7');

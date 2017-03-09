@@ -7,7 +7,7 @@
   promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
     // [setup]
     var fragment = document.createElement('x-fragment');
-    fragment.id = 'test-1';
+    fragment.id = 'test-1-nested';
     fragment.setAttribute('src', 'ce-currentFragment-nested/test-1.html');
 
     // [run]
@@ -30,7 +30,7 @@
   promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
     // [setup]
     var fragment = document.createElement('x-fragment');
-    fragment.id = 'test-2';
+    fragment.id = 'test-2-nested';
     fragment.setAttribute('src', 'ce-currentFragment-nested/test-2.html');
 
     // [run]
@@ -55,9 +55,9 @@
     var fragment1 = document.createElement('x-fragment');
     var fragment2 = document.createElement('x-fragment');
     var fragment3 = document.createElement('x-fragment');
-    fragment1.id = 'test-3';
-    fragment2.id = 'test-4';
-    fragment3.id = 'test-5';
+    fragment1.id = 'test-3-nested';
+    fragment2.id = 'test-4-nested';
+    fragment3.id = 'test-5-nested';
 
     fragment1.setAttribute('src', 'ce-currentFragment-nested/test-3.html');
     fragment2.setAttribute('src', 'ce-currentFragment-nested/test-4.html');
@@ -93,9 +93,9 @@
     var fragment1 = document.createElement('x-fragment');
     var fragment2 = document.createElement('x-fragment');
     var fragment3 = document.createElement('x-fragment');
-    fragment1.id = 'test-6';
-    fragment2.id = 'test-7';
-    fragment3.id = 'test-8';
+    fragment1.id = 'test-6-nested';
+    fragment2.id = 'test-7-nested';
+    fragment3.id = 'test-8-nested';
 
     fragment1.setAttribute('src', 'ce-currentFragment-nested/test-6.html');
     fragment2.setAttribute('src', 'ce-currentFragment-nested/test-7.html');

@@ -9,9 +9,9 @@
     var fragment1 = document.createElement('x-fragment');
     var fragment2 = document.createElement('x-fragment');
     var fragment3 = document.createElement('x-fragment');
-    fragment1.id = 'test-1';
-    fragment2.id = 'test-2';
-    fragment3.id = 'test-3';
+    fragment1.id = 'test-1-external';
+    fragment2.id = 'test-2-external';
+    fragment3.id = 'test-3-external';
 
     fragment1.setAttribute('src', 'ce-currentFragment-external/test-1.html');
     fragment2.setAttribute('src', 'ce-currentFragment-external/test-2.html');
@@ -44,9 +44,9 @@
     var fragment1 = document.createElement('x-fragment');
     var fragment2 = document.createElement('x-fragment');
     var fragment3 = document.createElement('x-fragment');
-    fragment1.id = 'test-10';
-    fragment2.id = 'test-11';
-    fragment3.id = 'test-12';
+    fragment1.id = 'test-10-external';
+    fragment2.id = 'test-11-external';
+    fragment3.id = 'test-12-external';
 
     fragment1.setAttribute('src', 'ce-currentFragment-external/test-8.html');
     fragment2.setAttribute('src', 'ce-currentFragment-external/test-8.html');
