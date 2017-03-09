@@ -459,11 +459,29 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
     reject(e.message);
   };
   window.addEventListener('error', handlerError);
-  window.syi = 1;
 
   // [run]
   document.body.appendChild(fragment);
 })); }, "Check delayed insertion of fragment at first level");
+
+/**
+ * Check delayed insertion of fragments at first level - repeated
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  var fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', '/test/fixtures/delay-fixture1.html');
+  window.delayFixture1_resolve = resolve;
+  let handlerError = (e) => {
+    window.removeEventListener('error', handlerError);
+    reject(e.message);
+  };
+  window.addEventListener('error', handlerError);
+
+  // [run]
+  document.body.appendChild(fragment);
+})); }, "Check delayed insertion of fragment at first level - repeated");
 
 /**
  * Two fragments added via body.appendChild see their document.currentFragment
