@@ -445,6 +445,25 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
   // fragment.remove();
 })); }, "Throw error if fetching fragment script return 404");
 
+/**
+ * Check delayed insertion of fragments at first level
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  var fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', '/test/fixtures/delay-fixture1.html');
+  window.delayFixture1_resolve = resolve;
+  let handlerError = (e) => {
+    window.removeEventListener('error', handlerError);
+    reject(e.message);
+  };
+  window.addEventListener('error', handlerError);
+
+  // [run]
+  document.body.appendChild(fragment);
+})); }, "Check delayed insertion of fragment at first level");
+
 //@@include('../_includes/test-ce-currentFragment.js')
 //@@include('../_includes/test-ce-currentFragment-script-src.js')
 //@@include('../_includes/test-ce-currentFragment-nested.js')

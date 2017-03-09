@@ -1,0 +1,13 @@
+<!doctype html>
+<div>Delay fixture 1</div>
+<div id="container">
+  <x-fragment src="/test/fixtures/delay-fixture1-1.html"></x-fragment>
+</div>
+<script>
+  'use strict';
+  document.currentFragment.loaded.then(fragment => {
+    fragment.querySelector('div#container').innerHTML = `
+      <x-fragment src="/test/fixtures/delay-fixture1-2.html"></x-fragment>
+    `;
+  });
+</script>
