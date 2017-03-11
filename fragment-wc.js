@@ -156,7 +156,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @private
    */
   function preparePath(path, baseURI) {
-    return path[0] === '/' ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
+    return path[0] === '/' || /([a-zA-Z0-9-]+:)\/\/.+/.test(path) ? path : (baseURI ? baseURI : basedir(document.baseURI)) + path;
   }
 
   /**

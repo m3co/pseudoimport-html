@@ -446,6 +446,43 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 })); }, "Throw error if fetching fragment script return 404");
 
 /**
+ * URL Scheme is interpreted as absolute path
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  let fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', '/test/fixtures/ce-urlscheme1.html');
+  let handlerError = this.step_func((e) => {
+    reject(e.message);
+  });
+  window.addEventListener('error', handlerError);
+  window.ceURLScheme1_resolve = resolve;
+
+  // [run]
+  document.body.appendChild(fragment);
+})); }, "URL Scheme is interpreted as absolute path");
+
+/**
+ * URL Scheme may become the base for relative paths
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  let fragment = document.createElement(nameElement);
+  fragment.setAttribute('src',
+    'http://localhost:9004/test/fixtures/ce-urlscheme3.html');
+  let handlerError = this.step_func((e) => {
+    reject(e.message);
+  });
+  window.addEventListener('error', handlerError);
+  window.ceURLScheme3_resolve = resolve;
+
+  // [run]
+  document.body.appendChild(fragment);
+})); }, "URL Scheme may become the base for relative paths");
+
+/**
  * Check delayed insertion of fragments at first level
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
