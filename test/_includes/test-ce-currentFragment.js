@@ -1,5 +1,6 @@
 /**
- * Two fragments added via body.appendChild see their document.currentFragment
+ * If three fragments were added via body.appendChild then they see
+ * their document.currentFragment
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
   // [setup]
@@ -36,6 +37,9 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 
 })); }, 'If three fragments were added via body.appendChild then they see their document.currentFragment');
 
+/**
+ * If three fragments have a common url they see their document.currentFragment
+ */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
   // [setup]
   var fragment1 = document.createElement('x-fragment');

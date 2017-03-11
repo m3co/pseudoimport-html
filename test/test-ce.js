@@ -522,7 +522,8 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 })); }, "Check delayed insertion of fragment at second level - repeated");
 
 /**
- * Two fragments added via body.appendChild see their document.currentFragment
+ * If three fragments were added via body.appendChild then they see
+ * their document.currentFragment
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
   // [setup]
@@ -559,6 +560,9 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 
 })); }, 'If three fragments were added via body.appendChild then they see their document.currentFragment');
 
+/**
+ * If three fragments have a common url they see their document.currentFragment
+ */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
   // [setup]
   var fragment1 = document.createElement('x-fragment');
@@ -620,7 +624,7 @@ window.test3.check_exit = function() {
 };
 
 /**
- * One fragment added via body.appendChild see their document.currentFragment
+ * One fragment added via body.appendChild see their document.currentFragment (nested)
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
   // [setup]
@@ -643,7 +647,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 })); }, 'If one fragment was added via body.appendChild then it see their document.currentFragment (nested)');
 
 /**
- * One fragment added via body.appendChild see their document.currentFragment
+ * One fragment added via body.appendChild see their document.currentFragment (dynamic nested)
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
   // [setup]
@@ -666,7 +670,8 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 })); }, 'If one fragment was added via body.appendChild then it see their document.currentFragment (dynamic nesting)');
 
 /**
- * Two fragments added via body.appendChild see their document.currentFragment
+ * If three different fragments were added via body.appendChild
+ * then they see their document.currentFragment
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
   // [setup]
@@ -701,10 +706,11 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
     fragment3.remove();
   }));
 
-})); }, 'If two different fragments were added via body.appendChild then they see their document.currentFragment');
+})); }, 'If three different fragments were added via body.appendChild then they see their document.currentFragment');
 
 /**
- * Two fragments added via body.appendChild see their document.currentFragment
+ * If three equal fragments were added via body.appendChild
+ * then they see their document.currentFragment (dynamic nesting)
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
   // [setup]
@@ -739,7 +745,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
     fragment3.remove();
   }));
 
-})); }, 'If two equal fragments were added via body.appendChild then they see their document.currentFragment (dynamic nesting)');
+})); }, 'If three equal fragments were added via body.appendChild then they see their document.currentFragment (dynamic nesting)');
 
 
 })();
