@@ -524,6 +524,5 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 //@@include('../_includes/test-ce-currentFragment.js')
 //@@include('../_includes/test-ce-currentFragment-script-src.js')
 //@@include('../_includes/test-ce-currentFragment-nested.js')
-//@@include('../_includes/test-ce-currentFragment-external.js')
 
 })();
