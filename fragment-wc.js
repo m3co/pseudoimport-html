@@ -5,8 +5,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 (function () {
   'use strict';
 
-  var createHTML = craftedCreateContextualFragment;
-
   var classAsString = 'HTMLXFragmentElement';
   var selector = 'x-fragment';
 
@@ -77,59 +75,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
     });
   };
-
-  if (!window[classAsString]) {
-    window[classAsString] = HTMLXFragmentElement;
-    document.registerElement('x-fragment', { prototype: HTMLXFragmentElement });
-  }
-
-  /**
-   * Resolve, in fact, dispatch load event from an element
-   *
-   * @param {HTMLElement} element - The element that will dispatch the
-   *   load event.
-   * @private
-   */
-  function resolve(element, options) {
-    var options_ = Object.keys(options).reduce(function (acc, key) {
-      var options_ = options[key];
-      var options_isObj = options_ instanceof Object;
-      if (options_isObj) {
-        Object.keys(options_).reduce(function (acc, key_) {
-          var options__ = options_[key_];
-          var options__isObj = options__ instanceof Object;
-          if (options__isObj) {
-            throw new Error('still not developed the recursion');
-          } else {
-            acc[key + '-' + key_] = options__;
-            return acc;
-          }
-        }, acc);
-      } else {
-        acc[key] = options_;
-      }
-      return acc;
-    }, {});
-    Object.keys(options_).forEach(function (key) {
-      return element.setAttribute(key, options_[key]);
-    });
-    /**
-     * On load the fragment.
-     * All scrips loaded from a fragment will execute asynchronously.
-     * This event is not bubbled.
-     *
-     * @event HTMLXFragmentElement#load
-     * @type {CustomEvent}
-     * @property {HTMLElement} fragment - The loaded fragment
-     */
-    element.dispatchEvent(new CustomEvent('load', {
-      detail: {
-        fragment: element
-      }
-    }));
-    element.loaded.status = 'fulfilled';
-    element.resolve_(element);
-  }
 
   /**
    * Extract the base dir from path.
@@ -256,6 +201,55 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     });
   }
 
+  var createHTML = craftedCreateContextualFragment;
+  /**
+   * Resolve, in fact, dispatch load event from an element
+   *
+   * @param {HTMLElement} element - The element that will dispatch the
+   *   load event.
+   * @private
+   */
+  function resolve(element, options) {
+    var options_ = Object.keys(options).reduce(function (acc, key) {
+      var options_ = options[key];
+      var options_isObj = options_ instanceof Object;
+      if (options_isObj) {
+        Object.keys(options_).reduce(function (acc, key_) {
+          var options__ = options_[key_];
+          var options__isObj = options__ instanceof Object;
+          if (options__isObj) {
+            throw new Error('still not developed the recursion');
+          } else {
+            acc[key + '-' + key_] = options__;
+            return acc;
+          }
+        }, acc);
+      } else {
+        acc[key] = options_;
+      }
+      return acc;
+    }, {});
+    Object.keys(options_).forEach(function (key) {
+      return element.setAttribute(key, options_[key]);
+    });
+    /**
+     * On load the fragment.
+     * All scrips loaded from a fragment will execute asynchronously.
+     * This event is not bubbled.
+     *
+     * @event HTMLXFragmentElement#load
+     * @type {CustomEvent}
+     * @property {HTMLElement} fragment - The loaded fragment
+     */
+    element.dispatchEvent(new CustomEvent('load', {
+      detail: {
+        fragment: element
+      }
+    }));
+    element.loaded.status = 'fulfilled';
+    element.resolve_(element);
+  }
+
   /**
    * Fetch HTML code from src to fragment.
    *
@@ -294,5 +288,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         return fragment;
       });
     });
+  }
+
+  if (!window[classAsString]) {
+    window[classAsString] = HTMLXFragmentElement;
+    document.registerElement('x-fragment', { prototype: HTMLXFragmentElement });
   }
 })();
