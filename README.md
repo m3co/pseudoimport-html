@@ -2,8 +2,6 @@
 
 Here's a simple _MDL/CE/WC component_ that allows you to import HTML code.
 
-Check the [docs](/docs).
-
 Check the [tests MDL](/test/test-mdl.html).
 
 Check the [tests CE](/test/test-ce.html).
