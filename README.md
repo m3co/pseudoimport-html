@@ -1,4 +1,4 @@
-# MDL/CE-fragment
+# MDL/CE/WC-fragment
 
 Here's a simple _MDL/CE/WC component_ that allows you to import HTML code.
 
