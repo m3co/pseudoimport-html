@@ -458,3 +458,38 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
   // [run]
   document.body.appendChild(fragment);
 })); }, "URL Scheme may become the base for relative paths");
+
+/**
+ * onload property
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  let fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', 'fixtures/ce-onload.html');
+  fragment.onload = this.step_func(() => {
+    resolve();
+    fragment.remove();
+  });
+
+  // [run]
+  document.body.appendChild(fragment);
+})); }, "onload property");
+
+/**
+ * onload attribute
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  let fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', 'fixtures/ce-onload.html');
+  window.onloadfixture1 = this.step_func(() => {
+    resolve();
+    fragment.remove();
+  });
+  fragment.setAttribute('onload', 'window.onloadfixture1();');
+
+  // [run]
+  document.body.appendChild(fragment);
+})); }, "onload attribute");
