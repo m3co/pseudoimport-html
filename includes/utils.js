@@ -86,7 +86,9 @@ function craftedCreateContextualFragment(html, base) {
           new_script.src = old_script.src;
           new_script.setAttribute('data-src', old_script.getAttribute('src'));
           new_script.setAttribute('data-src-', old_script.getAttribute('src'));
-          new_script.src = src[0] === '/' ? src : base + src;
+          new_script.src = (
+            src[0] === '/' || /([a-zA-Z0-9-]+:)\/\/.+/.test(src)
+            ) ? src : base + src;
         }
         if (old_script.text) {
           new_script.setAttribute('data-src', '');
