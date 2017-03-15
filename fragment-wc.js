@@ -250,6 +250,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     element.resolve_(element);
   }
 
+  var originalFetch = fetch;
   /**
    * Fetch HTML code from src to fragment.
    *
@@ -266,7 +267,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       throw error;
     }
     fetched.push(src);
-    return fetch(src, options).then(function (response) {
+    return originalFetch(src, options).then(function (response) {
       return response.text();
     }).then(function (text) {
       return createHTML(text, basedir(src)).then(function (html) {
@@ -275,7 +276,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           return fragment.dataset.baseURI = base;
         });
         document.currentFragment = fragment;
+        fetch = function fetch(url, options) {
+          return originalFetch(base + url, options);
+        };
         fragment.appendChild(html);
+        fetch = originalFetch;
         [].concat(_toConsumableArray(fragment.querySelectorAll('script'))).forEach(function (script) {
           if (script.getAttribute('data-src') !== '') {
             script.setAttribute('src', script.getAttribute('data-src-'));
