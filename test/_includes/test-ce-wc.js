@@ -483,6 +483,25 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 })); }, "URL Scheme may become the base for relative paths");
 
 /**
+ * Fetch calls with relative URLs are resolved before requesting
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  let fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', 'fixtures/ce-urlscheme7.html');
+  let handlerError = this.step_func((e) => {
+    reject(e.message);
+  });
+  window.addEventListener('error', handlerError);
+  window.ceURLScheme7_test = this;
+  window.ceURLScheme7_resolve = resolve;
+
+  // [run]
+  document.body.appendChild(fragment);
+})); }, "Fetch calls with relative URLs are resolved before requesting");
+
+/**
  * onload property
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {

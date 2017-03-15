@@ -1,0 +1,10 @@
+<!doctype html>
+<div>URL Scheme for fetch requests</div>
+<script>
+  'use strict';
+  fetch('ce-urlscheme7.txt').then(response => response.text())
+    .then(window.ceURLScheme7_test.step_func(text => {
+      assert_equals(text, 'ce-urlscheme 7 successfully fetched\n');
+      window.ceURLScheme7_resolve();
+    }));
+</script>
