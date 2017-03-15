@@ -502,6 +502,25 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 })); }, "Fetch calls with relative URLs are resolved before requesting");
 
 /**
+ * Fetch calls with relative URLs are resolved before requesting (CORS)
+ */
+promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
+
+  // [setup]
+  let fragment = document.createElement(nameElement);
+  fragment.setAttribute('src', 'http://localhost:9004/test/fixtures/ce-urlscheme8.html');
+  let handlerError = this.step_func((e) => {
+    reject(e.message);
+  });
+  window.addEventListener('error', handlerError);
+  window.ceURLScheme8_test = this;
+  window.ceURLScheme8_resolve = resolve;
+
+  // [run]
+  document.body.appendChild(fragment);
+})); }, "Fetch calls with relative URLs are resolved before requesting (CORS)");
+
+/**
  * onload property
  */
 promise_test(function() { return new Promise(this.step_func((resolve, reject) => {
