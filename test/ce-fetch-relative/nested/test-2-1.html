@@ -1,0 +1,21 @@
+<!doctype html>
+<script>
+  'use strict';
+
+  var resolve = fetchRelativeTest2.resolve;
+  var reject = fetchRelativeTest2.reject;
+  var fragment = fetchRelativeTest2.fragment;
+  fetch('nested-relative.path.json').then(response => {
+    if (response.status === 200) {
+      return response.json();
+    }
+    throw response;
+  }).then(json => {
+    assert_equals(json.status, 'ok');
+    resolve();
+    fragment.remove();
+  }).catch(error => {
+    reject(error.statusText);
+    fragment.remove();
+  });
+</script>
