@@ -22,6 +22,7 @@ onload_test(function(e) {
 }, "Check the API");
 
 //@@include('../_includes/test-ce-wc.js')
+//@@include('../_includes/test-ce-fetch-relative.js')
 //@@include('../_includes/test-ce-delayed.js')
 //@@include('../_includes/test-ce-currentFragment.js')
 //@@include('../_includes/test-ce-currentFragment-script-src.js')
