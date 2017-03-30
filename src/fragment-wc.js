@@ -1,4 +1,4 @@
-(() => {
+(!window.HTMLXFragmentElement) && (() => {
   'use strict';
   const classAsString = 'HTMLXFragmentElement';
   const selector = 'x-fragment';
@@ -70,9 +70,7 @@
   //@@include('../includes/utils.js')
   //@@include('../includes/wc-ce.js')
 
-  if (!window[classAsString]) {
-    window[classAsString] = HTMLXFragmentElement;
-    document.registerElement('x-fragment', { prototype: HTMLXFragmentElement });
-  }
+  window.HTMLXFragmentElement = HTMLXFragmentElement;
+  document.registerElement('x-fragment', { prototype: HTMLXFragmentElement });
 
 })();

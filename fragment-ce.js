@@ -1,4 +1,4 @@
-(() => {
+(!window.HTMLXFragmentElement) && (() => {
   'use strict';
   const classAsString = 'HTMLXFragmentElement';
   const selector = 'x-fragment';
@@ -284,9 +284,7 @@
   }
 
 
-  if (!window[classAsString]) {
-    window[classAsString] = HTMLXFragmentElement;
-    window.customElements.define('x-fragment', HTMLXFragmentElement);
-  }
+  window.HTMLXFragmentElement = HTMLXFragmentElement;
+  window.customElements.define('x-fragment', HTMLXFragmentElement);
 
 })();
