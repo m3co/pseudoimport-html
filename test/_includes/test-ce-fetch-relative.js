@@ -37,7 +37,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
   // [setup]
   var fragment = document.createElement('x-fragment');
   fragment.id = 'fetch-relative-test-3';
-  fragment.setAttribute('src', 'http://localhost:9004/test/ce-fetch-relative/test-3.html');
+  fragment.setAttribute('src', 'http://' + window.location.host + '/test/ce-fetch-relative/test-3.html');
 
   window.fetchRelativeTest3 = {
     test: this,

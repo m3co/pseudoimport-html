@@ -448,7 +448,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
   // [setup]
   let fragment = document.createElement(nameElement);
   fragment.setAttribute('src',
-    'http://localhost:9004/test/fixtures/ce-urlscheme5.html');
+    'http://' + window.location.host + '/test/fixtures/ce-urlscheme5.html');
   let handlerError = this.step_func((e) => {
     reject(e.message);
   });
@@ -471,7 +471,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
   // [setup]
   let fragment = document.createElement(nameElement);
   fragment.setAttribute('src',
-    'http://localhost:9004/test/fixtures/ce-urlscheme3.html');
+    'http://' + window.location.host + '/test/fixtures/ce-urlscheme3.html');
   let handlerError = this.step_func((e) => {
     reject(e.message);
   });
@@ -508,7 +508,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
 
   // [setup]
   let fragment = document.createElement(nameElement);
-  fragment.setAttribute('src', 'http://localhost:9004/test/fixtures/ce-urlscheme8.html');
+  fragment.setAttribute('src', 'http://' + window.location.host + '/test/fixtures/ce-urlscheme8.html');
   let handlerError = this.step_func((e) => {
     reject(e.message);
   });
