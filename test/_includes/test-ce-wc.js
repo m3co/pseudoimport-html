@@ -339,7 +339,7 @@ promise_test(function() { return new Promise(this.step_func((resolve, reject) =>
     assert_equals(fragment.getAttribute('headers-cache-control'), 'must-revalidate');
     assert_equals(fragment.getAttribute('headers-custom-header'), 'custom-value');
     assert_equals(fragment.getAttribute('method'), 'GET');
-    assert_equals(fragment.getAttribute('mode'), 'cors');
+    assert_equals(fragment.getAttribute('mode'), 'no-cors');
     resolve();
   }));
 })); }, "Check fetch's options after loading");
