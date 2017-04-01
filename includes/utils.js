@@ -61,7 +61,7 @@ function preparePath(path, baseURI) {
  * @private
  */
 function craftedCreateContextualFragment(html, base) {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     // create DocumentFragment
     let frag = document.createDocumentFragment();
 
@@ -109,7 +109,7 @@ function craftedCreateContextualFragment(html, base) {
           resolve(old_script.parentNode.replaceChild(new_script, old_script));
         });
       }))
-  )(wrapper)).then(() => {
+    )(wrapper)).then(() => {
       // append wrapper to fragment
       frag.appendChild(wrapper);
       while (wrapper.childNodes.length > 0) {

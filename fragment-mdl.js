@@ -218,7 +218,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
    * @private
    */
   function craftedCreateContextualFragment(html, base) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
       // create DocumentFragment
       var frag = document.createDocumentFragment();
 

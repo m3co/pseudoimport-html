@@ -5,7 +5,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 !window.HTMLXFragmentElement && function () {
   'use strict';
 
-  var classAsString = 'HTMLXFragmentElement';
   var selector = 'x-fragment';
 
   var options = {};
@@ -138,7 +137,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @private
    */
   function craftedCreateContextualFragment(html, base) {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function (resolve) {
       // create DocumentFragment
       var frag = document.createDocumentFragment();
 
@@ -250,7 +249,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     element.resolve_(element);
   }
 
-  var originalFetch = fetch;
+  var originalFetch = window.fetch;
   /**
    * Fetch HTML code from src to fragment.
    *
@@ -276,11 +275,11 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
           return fragment.dataset.baseURI = base;
         });
         document.currentFragment = fragment;
-        fetch = function fetch(url, options) {
+        window.fetch = function (url, options) {
           return originalFetch(base + url, options);
         };
         fragment.appendChild(html);
-        fetch = originalFetch;
+        window.fetch = originalFetch;
         [].concat(_toConsumableArray(fragment.querySelectorAll('script'))).forEach(function (script) {
           if (script.getAttribute('data-src') !== '') {
             script.setAttribute('src', script.getAttribute('data-src-'));

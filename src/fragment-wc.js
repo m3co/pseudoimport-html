@@ -1,6 +1,5 @@
 (!window.HTMLXFragmentElement) && (() => {
   'use strict';
-  const classAsString = 'HTMLXFragmentElement';
   const selector = 'x-fragment';
 
   var options = {};
@@ -42,8 +41,10 @@
     }
 
     var parent = this.parentElement.closest(selector);
-    this.root_ = parent ? (parent.loaded.status === 'fulfilled' ? this : parent.root_) : this;
-    this.isRoot_ = parent ? (parent.loaded.status === 'fulfilled' ? true : false) : true;
+    this.root_ = parent ? (parent.loaded.status === 'fulfilled' ?
+      this : parent.root_) : this;
+    this.isRoot_ = parent ? (parent.loaded.status === 'fulfilled' ?
+      true : false) : true;
     this.fetched_ = [];
 
     var src = preparePath(this.getAttribute('src'),
@@ -69,7 +70,6 @@
 
   //@@include('../includes/utils.js')
   //@@include('../includes/wc-ce.js')
-
   window.HTMLXFragmentElement = HTMLXFragmentElement;
   document.registerElement('x-fragment', { prototype: HTMLXFragmentElement });
 

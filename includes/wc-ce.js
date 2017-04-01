@@ -47,7 +47,7 @@ function resolve(element, options) {
   element.resolve_(element);
 }
 
-var originalFetch = fetch;
+var originalFetch = window.fetch;
 /**
  * Fetch HTML code from src to fragment.
  *
@@ -72,9 +72,9 @@ function fetch_(fragment, src, options) {
       [...html.querySelectorAll(selector)]
         .forEach(fragment => fragment.dataset.baseURI = base);
       document.currentFragment = fragment;
-      fetch = (url, options) => originalFetch(base + url, options);
+      window.fetch = (url, options) => originalFetch(base + url, options);
       fragment.appendChild(html);
-      fetch = originalFetch;
+      window.fetch = originalFetch;
       [...fragment.querySelectorAll('script')]
         .forEach(script => {
           if (script.getAttribute('data-src') !== '') {

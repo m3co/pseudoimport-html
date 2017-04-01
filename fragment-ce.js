@@ -1,6 +1,5 @@
 (!window.HTMLXFragmentElement) && (() => {
   'use strict';
-  const classAsString = 'HTMLXFragmentElement';
   const selector = 'x-fragment';
 
   var options = {};
@@ -40,8 +39,10 @@
       }
 
       var parent = this.parentElement.closest(selector);
-      this.root_ = parent ? (parent.loaded.status === 'fulfilled' ? this : parent.root_) : this;
-      this.isRoot_ = parent ? (parent.loaded.status === 'fulfilled' ? true : false) : true;
+      this.root_ = parent ? (parent.loaded.status === 'fulfilled' ?
+        this : parent.root_) : this;
+      this.isRoot_ = parent ? (parent.loaded.status === 'fulfilled' ?
+        true : false) : true;
       this.fetched_ = [];
 
       var src = preparePath(this.getAttribute('src'),
@@ -129,7 +130,7 @@
    * @private
    */
   function craftedCreateContextualFragment(html, base) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       // create DocumentFragment
       let frag = document.createDocumentFragment();
 
@@ -177,7 +178,7 @@
             resolve(old_script.parentNode.replaceChild(new_script, old_script));
           });
         }))
-    )(wrapper)).then(() => {
+      )(wrapper)).then(() => {
         // append wrapper to fragment
         frag.appendChild(wrapper);
         while (wrapper.childNodes.length > 0) {
@@ -241,7 +242,7 @@
     element.resolve_(element);
   }
 
-  var originalFetch = fetch;
+  var originalFetch = window.fetch;
   /**
    * Fetch HTML code from src to fragment.
    *
@@ -266,9 +267,9 @@
         [...html.querySelectorAll(selector)]
           .forEach(fragment => fragment.dataset.baseURI = base);
         document.currentFragment = fragment;
-        fetch = (url, options) => originalFetch(base + url, options);
+        window.fetch = (url, options) => originalFetch(base + url, options);
         fragment.appendChild(html);
-        fetch = originalFetch;
+        window.fetch = originalFetch;
         [...fragment.querySelectorAll('script')]
           .forEach(script => {
             if (script.getAttribute('data-src') !== '') {
@@ -282,7 +283,6 @@
         return fragment;
       }));
   }
-
 
   window.HTMLXFragmentElement = HTMLXFragmentElement;
   window.customElements.define('x-fragment', HTMLXFragmentElement);

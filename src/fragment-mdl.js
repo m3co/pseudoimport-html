@@ -28,8 +28,10 @@
         throw new Error('Src attribute is not present');
       }
 
-      this.root_ = parent ? (parent.MaterialFragment.loaded.status === 'fulfilled' ? element : parent.MaterialFragment.root_) : element;
-      this.isRoot_ = parent ? (parent.MaterialFragment.loaded.status === 'fulfilled' ? true : false) : true;
+      this.root_ = parent ? (parent.MaterialFragment.loaded.status === 'fulfilled' ?
+        element : parent.MaterialFragment.root_) : element;
+      this.isRoot_ = parent ? (parent.MaterialFragment.loaded.status === 'fulfilled' ?
+        true : false) : true;
       this.resolvers_ = [];
       if (this.isRoot_) {
         this.element_.fetched_ = [];
