@@ -261,10 +261,17 @@
     var ref = `${src}:${parent ?
       parent.getAttribute('src') :
       null}`;
-    if (fetched.includes(ref)) {
-      var error = new Error(`Circular dependency detected at ${src}`);
-      window.dispatchEvent(new window.ErrorEvent('error', error));
-      throw error;
+
+    var parentEl = fragment;
+    var parentElements = [fragment.getAttribute('src')];
+    while(parentEl = parentEl.parentElement.closest(selector)) { // eslint-disable-line
+      var item = parentEl.getAttribute('src');
+      if (parentElements.indexOf(item) > -1) {
+        var error = new Error(`Circular dependency detected at ${src}`);
+        window.dispatchEvent(new window.ErrorEvent('error', error));
+        throw error;
+      }
+      parentElements.push(item);
     }
     fetched.push(ref);
     return originalFetch(src, options).then(response => response.text())

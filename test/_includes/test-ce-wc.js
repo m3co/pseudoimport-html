@@ -315,7 +315,7 @@ promise_test(function(e) { return new Promise(this.step_func((resolve, reject) =
 
   var handler = this.step_func((e) => {
     // [verify]
-    assert_equals(e.message, `Circular dependency detected at ${window.location.origin}/test/fixtures/ce-fragment21.html`);
+    assert_equals(e.message, `Circular dependency detected at ${window.location.origin}/test/fixtures/ce-fragment22.html`);
 
     // [teardown]
     fragment.remove();
