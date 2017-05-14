@@ -349,7 +349,7 @@ promise_test(function(e) { return new Promise(this.step_func((resolve, reject) =
   window.addEventListener('error', handler);
   fragment.addEventListener('load', this.step_func((e) => {
     fragment.remove();
-    console.log('done');
+    resolve();
   }));
 
   // [run]
