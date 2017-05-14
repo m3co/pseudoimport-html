@@ -47,7 +47,7 @@
 
       var src = preparePath(this.getAttribute('src'),
                             this.dataset.baseURI);
-      this.fetch_ = fetch_(this, src, options).then(element => {
+      this.fetch_ = fetch_(this, src, options, parent).then(element => {
         delete element.dataset.baseURI;
         this.root_.resolvers_.push(resolve.bind(null, element, options));
         return Promise.all(
@@ -248,21 +248,27 @@
    *
    * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
    * @param {String} src - The URI to fetch
+   * @param {Object} options - The options to pass to the fetch function
+   * @param {HTMLElement} parent - The parent of the fragment that will be fetched
+   *
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src, options) {
+  function fetch_(fragment, src, options, parent) {
     var fetched = fragment.isRoot_ ?
       fragment.fetched_ :
-      fragment.parentElement.closest(selector).root_.fetched_;
-    if (fetched.includes(src)) {
+      parent.root_.fetched_;
+    var ref = `${src}:${parent ?
+      parent.getAttribute('src') :
+      null}`;
+    if (fetched.includes(ref)) {
       var error = new Error(`Circular dependency detected at ${src}`);
       window.dispatchEvent(new window.ErrorEvent('error', error));
       throw error;
     }
-    fetched.push(src);
+    fetched.push(ref);
     return originalFetch(src, options).then(response => response.text())
-      .then(text => createHTML(text, basedir(src)).then((html) => {
+      .then(text => createHTML(text, basedir(src)).then(html => {
         var base = html.BASE_URL;
         [...html.querySelectorAll(selector)]
           .forEach(fragment => fragment.dataset.baseURI = base);

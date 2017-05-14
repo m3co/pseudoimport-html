@@ -49,7 +49,7 @@
 
     var src = preparePath(this.getAttribute('src'),
                             this.dataset.baseURI);
-    this.fetch_ = fetch_(this, src, options).then(element => {
+    this.fetch_ = fetch_(this, src, options, parent).then(element => {
       delete element.dataset.baseURI;
       this.root_.resolvers_.push(resolve.bind(null, element, options));
       return Promise.all(

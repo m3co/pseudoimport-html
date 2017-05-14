@@ -55,7 +55,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     this.fetched_ = [];
 
     var src = preparePath(this.getAttribute('src'), this.dataset.baseURI);
-    this.fetch_ = fetch_(this, src, options).then(function (element) {
+    this.fetch_ = fetch_(this, src, options, parent).then(function (element) {
       delete element.dataset.baseURI;
       _this2.root_.resolvers_.push(resolve.bind(null, element, options));
       return Promise.all([].concat(_toConsumableArray(element.querySelectorAll(selector))).map(function (fragment) {
@@ -255,17 +255,21 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    *
    * @param {HTMLElement} fragment - The fragment that will hold the fetched HTML
    * @param {String} src - The URI to fetch
+   * @param {Object} options - The options to pass to the fetch function
+   * @param {HTMLElement} parent - The parent of the fragment that will be fetched
+   *
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src, options) {
-    var fetched = fragment.isRoot_ ? fragment.fetched_ : fragment.parentElement.closest(selector).root_.fetched_;
-    if (fetched.includes(src)) {
+  function fetch_(fragment, src, options, parent) {
+    var fetched = fragment.isRoot_ ? fragment.fetched_ : parent.root_.fetched_;
+    var ref = src + ':' + (parent ? parent.getAttribute('src') : null);
+    if (fetched.includes(ref)) {
       var error = new Error('Circular dependency detected at ' + src);
       window.dispatchEvent(new window.ErrorEvent('error', error));
       throw error;
     }
-    fetched.push(src);
+    fetched.push(ref);
     return originalFetch(src, options).then(function (response) {
       return response.text();
     }).then(function (text) {

@@ -1,2 +1,7 @@
 <!doctype html>
 <div>This cannot be a circular link</div>
+<script>
+  'use strict';
+  var parentEl = document.currentFragment.parentElement.closest('x-fragment');
+  document.currentFragment.querySelector('div').textContent += parentEl.getAttribute('src');
+</script>

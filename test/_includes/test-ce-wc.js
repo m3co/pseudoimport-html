@@ -343,12 +343,12 @@ promise_test(function(e) { return new Promise(this.step_func((resolve, reject) =
     assert_equals(e.message, `Circular dependency detected at ${window.location.origin}/test/fixtures/ce-fragment28.html`);
 
     // [teardown]
-    fragment.remove();
     window.removeEventListener('error', handler);
     reject('Incorrect circular dependency detected');
   });
   window.addEventListener('error', handler);
   fragment.addEventListener('load', this.step_func((e) => {
+    fragment.remove();
     console.log('done');
   }));
 
