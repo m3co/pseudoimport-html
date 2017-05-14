@@ -59,14 +59,7 @@ var originalFetch = window.fetch;
  * @return {Promise} - The fetch request
  * @private
  */
-function fetch_(fragment, src, options, parent) {
-  var fetched = fragment.isRoot_ ?
-    fragment.fetched_ :
-    parent.root_.fetched_;
-  var ref = `${src}:${parent ?
-    parent.getAttribute('src') :
-    null}`;
-
+function fetch_(fragment, src, options) {
   var parentEl = fragment;
   var parentElements = [fragment.getAttribute('src')];
   while(parentEl = parentEl.parentElement.closest(selector)) { // eslint-disable-line
@@ -78,7 +71,6 @@ function fetch_(fragment, src, options, parent) {
     }
     parentElements.push(item);
   }
-  fetched.push(ref);
   return originalFetch(src, options).then(response => response.text())
     .then(text => createHTML(text, basedir(src)).then(html => {
       var base = html.BASE_URL;

@@ -52,10 +52,9 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
     var parent = this.parentElement.closest(selector);
     this.root_ = parent ? parent.loaded.status === 'fulfilled' ? this : parent.root_ : this;
     this.isRoot_ = parent ? parent.loaded.status === 'fulfilled' ? true : false : true;
-    this.fetched_ = [];
 
     var src = preparePath(this.getAttribute('src'), this.dataset.baseURI);
-    this.fetch_ = fetch_(this, src, options, parent).then(function (element) {
+    this.fetch_ = fetch_(this, src, options).then(function (element) {
       delete element.dataset.baseURI;
       _this2.root_.resolvers_.push(resolve.bind(null, element, options));
       return Promise.all([].concat(_toConsumableArray(element.querySelectorAll(selector))).map(function (fragment) {
@@ -68,7 +67,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
         });
         delete _this2.resolvers_;
         delete _this2.resolve_;
-        delete _this2.fetched_;
         delete _this2.fetch_;
         delete _this2.isRoot_;
       }
@@ -261,10 +259,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src, options, parent) {
-    var fetched = fragment.isRoot_ ? fragment.fetched_ : parent.root_.fetched_;
-    var ref = src + ':' + (parent ? parent.getAttribute('src') : null);
-
+  function fetch_(fragment, src, options) {
     var parentEl = fragment;
     var parentElements = [fragment.getAttribute('src')];
     while (parentEl = parentEl.parentElement.closest(selector)) {
@@ -277,7 +272,6 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
       }
       parentElements.push(item);
     }
-    fetched.push(ref);
     return originalFetch(src, options).then(function (response) {
       return response.text();
     }).then(function (text) {

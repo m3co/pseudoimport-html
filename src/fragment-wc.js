@@ -45,11 +45,10 @@
       this : parent.root_) : this;
     this.isRoot_ = parent ? (parent.loaded.status === 'fulfilled' ?
       true : false) : true;
-    this.fetched_ = [];
 
     var src = preparePath(this.getAttribute('src'),
                             this.dataset.baseURI);
-    this.fetch_ = fetch_(this, src, options, parent).then(element => {
+    this.fetch_ = fetch_(this, src, options).then(element => {
       delete element.dataset.baseURI;
       this.root_.resolvers_.push(resolve.bind(null, element, options));
       return Promise.all(
@@ -61,7 +60,6 @@
         this.resolvers_.forEach(resolver => resolver());
         delete this.resolvers_;
         delete this.resolve_;
-        delete this.fetched_;
         delete this.fetch_;
         delete this.isRoot_;
       }

@@ -43,11 +43,10 @@
         this : parent.root_) : this;
       this.isRoot_ = parent ? (parent.loaded.status === 'fulfilled' ?
         true : false) : true;
-      this.fetched_ = [];
 
       var src = preparePath(this.getAttribute('src'),
                             this.dataset.baseURI);
-      this.fetch_ = fetch_(this, src, options, parent).then(element => {
+      this.fetch_ = fetch_(this, src, options).then(element => {
         delete element.dataset.baseURI;
         this.root_.resolvers_.push(resolve.bind(null, element, options));
         return Promise.all(
@@ -59,7 +58,6 @@
           this.resolvers_.forEach(resolver => resolver());
           delete this.resolvers_;
           delete this.resolve_;
-          delete this.fetched_;
           delete this.fetch_;
           delete this.isRoot_;
         }
@@ -254,14 +252,7 @@
    * @return {Promise} - The fetch request
    * @private
    */
-  function fetch_(fragment, src, options, parent) {
-    var fetched = fragment.isRoot_ ?
-      fragment.fetched_ :
-      parent.root_.fetched_;
-    var ref = `${src}:${parent ?
-      parent.getAttribute('src') :
-      null}`;
-
+  function fetch_(fragment, src, options) {
     var parentEl = fragment;
     var parentElements = [fragment.getAttribute('src')];
     while(parentEl = parentEl.parentElement.closest(selector)) { // eslint-disable-line
@@ -273,7 +264,6 @@
       }
       parentElements.push(item);
     }
-    fetched.push(ref);
     return originalFetch(src, options).then(response => response.text())
       .then(text => createHTML(text, basedir(src)).then(html => {
         var base = html.BASE_URL;
