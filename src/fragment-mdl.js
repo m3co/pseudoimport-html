@@ -146,15 +146,17 @@
    * @private
    */
   function fetch_(fragment, src, options) {
-    var fetched = fragment.isRoot_ ?
-      fragment.fetched_ :
-      fragment.parentElement.closest(cssClass).MaterialFragment.root_.fetched_;
-    if (fetched.includes(src)) {
-      var error = new Error(`Circular dependency detected at ${src}`);
-      window.dispatchEvent(new window.ErrorEvent('error', error));
-      throw error;
+    var parentEl = fragment;
+    var parentElements = [fragment.getAttribute('src')];
+    while(parentEl = parentEl.parentElement.closest(cssClass)) { // eslint-disable-line
+      var item = parentEl.getAttribute('src');
+      if (parentElements.indexOf(item) > -1) {
+        var error = new Error(`Circular dependency detected at ${src}`);
+        window.dispatchEvent(new window.ErrorEvent('error', error));
+        throw error;
+      }
+      parentElements.push(item);
     }
-    fetched.push(src);
     return fetch(src, options).then(response => response.text())
       .then(text => createHTML(text, basedir(src)).then(html => {
         var base = html.BASE_URL;

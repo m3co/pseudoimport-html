@@ -49,7 +49,7 @@ fragment.loaded.then((fragment_) => {
 
 Scripts that are inside a ```<x-fragment>``` see an special variable called ```document.currentFragment```. This variable behaves as ```document.currentScript```.
 
-Also, due to lack of ```beforescriptexecute``` event, here the scripts that are shipped inside a ```<x-fragment>``` are threated in a special way. See below.
+Also, due to lack of ```beforescriptexecute``` event, here the scripts that are shipped inside a ```<x-fragment>``` are treated in a special way. See below.
 
 So, a fragment forces you to keep in mind an small set of features
 - load event
